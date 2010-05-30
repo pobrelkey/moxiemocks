@@ -1,0 +1,277 @@
+/*
+ * Copyright (c) 2010 Moxie contributors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+package moxie;
+
+import org.hamcrest.Matcher;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+class MoxieImpl implements MoxieMethods {
+
+    private final IdentityHashMap<Object, Verifiable> mocksAndGroups = new IdentityHashMap<Object, Verifiable>();
+    private final LinkedList<MatcherReport> matchers = new LinkedList<MatcherReport>();
+    private final IdentityHashMap<Object, Map<String, Object>> valuesOverwrittenByAutoMock = new IdentityHashMap<Object, Map<String, Object>>();
+    private final List<Invocation> invocations = Collections.synchronizedList(new ArrayList<Invocation>());
+    private int groupNameCounter = 0;
+
+
+    public <T> T mock(Class<T> clazz, String name, MoxieOptions... options) {
+        if (name == null || name.length() == 0) {
+            name = clazz.getSimpleName();
+        }
+        MockImpl<T> mock = new MockImpl(clazz, name, MoxieOptions.mergeWithDefaults(MoxieOptions.MOCK_DEFAULTS, options), invocations);
+        T result = mock.proxy();
+        mocksAndGroups.put(result, mock);
+        return result;
+    }
+
+    public <T> T spy(T realObject, String name, MoxieOptions... options) {
+        if (name == null || name.length() == 0) {
+            name = realObject.getClass().getSimpleName();
+        }
+        SpyImpl<T> spy = new SpyImpl(realObject, name, MoxieOptions.mergeWithDefaults(MoxieOptions.MOCK_DEFAULTS, options), invocations);
+        T result = spy.proxy();
+        mocksAndGroups.put(result, spy);
+        return result;
+    }
+
+    public Group group(String name, MoxieOptions... options) {
+        if (name == null) {
+            name = "[unnamed group " + (groupNameCounter++);
+            String externalCallerString = MoxieUtils.getExternalCallerString();
+            if (externalCallerString != null) {
+                name += " (" + externalCallerString + ") ";
+            }
+            name += ']';
+        }
+        GroupImpl group = new GroupImpl(name, MoxieOptions.mergeWithDefaults(MoxieOptions.GROUP_DEFAULTS, options));
+        mocksAndGroups.put(group, group);
+        return group;
+    }
+
+    public <T> Expectation<T> expect(T mockObject) {
+        return getInterceptionFromProxy(mockObject).expect();
+    }
+
+    public <T> Check<T> check(T mockObject) {
+        return getInterceptionFromProxy(mockObject).check();
+    }
+
+    public void checkNothingElseHappened(Object... mockObjects) {
+        for (Invocation invocation : invocations) {
+            if (invocation.getCheckSatisfied() == null) {
+                throw new MoxieError("unchecked invocation detected");
+            }
+        }
+    }
+
+    public void checkNothingElseUnexpectedHappened(Object... mockObjects) {
+        for (Invocation invocation : invocations) {
+            if (invocation.getCheckSatisfied() == null && invocation.getExpectationSatisfied() == null) {
+                throw new MoxieError("unchecked and unexpected invocation detected");
+            }
+        }
+    }
+
+    private Verifiable getVerifiableFromProxy(Object mockProxy) {
+        Verifiable verifiable = mocksAndGroups.get(mockProxy);
+        if (verifiable == null) {
+            throw new IllegalArgumentException("object is not a mock object or group, or is no longer active: " + mockProxy);
+        }
+        return verifiable;
+    }
+
+    private Interception getInterceptionFromProxy(Object mockProxy) {
+        Verifiable interception = mocksAndGroups.get(mockProxy);
+        if (interception == null || !(interception instanceof Interception)) {
+            throw new IllegalArgumentException("object is not a mock object or has already been verified: " + interception);
+        }
+        return ((Interception) interception);
+    }
+
+    public void verify(Object... mockObjects) {
+        for (Object mockProxy : mocksFor(mockObjects)) {
+            getVerifiableFromProxy(mockProxy).verify();
+            mocksAndGroups.remove(mockProxy);
+        }
+    }
+
+    public void verifySoFar(Object... mockObjects) {
+        for (Object mockProxy : mocksFor(mockObjects)) {
+            getVerifiableFromProxy(mockProxy).verify();
+        }
+    }
+
+    public void verifyAndReset(Object... mockObjects) {
+        for (Object mockProxy : mocksFor(mockObjects)) {
+            Verifiable verifiable = getVerifiableFromProxy(mockProxy);
+            verifiable.verify();
+            verifiable.reset(null);
+        }
+    }
+
+    public void reset(Object... mockObjects) {
+        for (Object mockProxy : mocksFor(mockObjects)) {
+            Verifiable verifiable = getVerifiableFromProxy(mockProxy);
+            verifiable.reset(null);
+        }
+    }
+
+    public void deactivate(Object... mockObjects) {
+        for (Object mockProxy : mocksFor(mockObjects)) {
+            Verifiable verifiable = getVerifiableFromProxy(mockProxy);
+            verifiable.reset(MoxieOptions.PRESCRIPTIVE);
+            mocksAndGroups.remove(mockProxy);
+        }
+    }
+
+    private Collection mocksFor(Object... mockObjects) {
+        if (mockObjects != null && mockObjects.length > 0) {
+            return Arrays.asList(mockObjects);
+        } else {
+            return new ArrayList(mocksAndGroups.keySet());
+        }
+    }
+
+    public void verifyAndReset(Object mockObject, MoxieOptions firstOption, MoxieOptions... otherOptions) {
+        Verifiable verifiable = getVerifiableFromProxy(mockObject);
+        verifiable.verify();
+        verifiable.reset(MoxieOptions.merge(firstOption, MoxieOptions.merge(otherOptions)));
+    }
+
+    public void reset(Object mockObject, MoxieOptions firstOption, MoxieOptions... otherOptions) {
+        Verifiable verifiable = getVerifiableFromProxy(mockObject);
+        verifiable.reset(MoxieOptions.merge(firstOption, MoxieOptions.merge(otherOptions)));
+    }
+
+    public void checkNoActiveMocks() {
+        if (!mocksAndGroups.isEmpty()) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            pw.append("The following mocks/sequences were not verified:\n");
+            for (Verifiable v : mocksAndGroups.values()) {
+                v.getWhereInstantiated().printStackTrace(pw);
+            }
+            pw.flush();
+            throw new IllegalStateException(sw.toString());
+        }
+    }
+
+    public void autoMock(Object... testComponents) {
+        for (Object testInstance : testComponents) {
+            if (valuesOverwrittenByAutoMock.containsKey(testInstance)) {
+                throw new IllegalArgumentException("object has already been autoMock()'ed: " + testInstance);
+            }
+        }
+        for (Object testInstance : testComponents) {
+            Map<String, Object> oldValues = new HashMap<String, Object>();
+            valuesOverwrittenByAutoMock.put(testInstance, oldValues);
+            for (Class c = testInstance.getClass(); c != null; c = c.getSuperclass()) {
+                for (Field f : c.getDeclaredFields()) {
+                    Mock mockAnnotation = f.getAnnotation(Mock.class);
+                    Spy spyAnnotation = f.getAnnotation(Spy.class);
+                    AutoMock autoMockAnnotation = f.getAnnotation(AutoMock.class);
+                    boolean isGroup = Group.class.equals(f.getType());
+                    if (mockAnnotation != null || spyAnnotation != null || autoMockAnnotation != null || isGroup) {
+                        if (!f.isAccessible()) {
+                            f.setAccessible(true);
+                        }
+                        try {
+                            Object testObject;
+                            if (autoMockAnnotation != null) {
+                                autoMock(f.get(testInstance));
+                                continue;
+                            } else if (isGroup) {
+                                GroupOptions optionsAnnotation = f.getAnnotation(GroupOptions.class);
+                                testObject = Moxie.group(f.getName(), optionsAnnotation != null ? optionsAnnotation.options() : new MoxieOptions[0]);
+                            } else if (spyAnnotation != null) {
+                                testObject = Moxie.spy(f.get(testInstance), f.getName(), spyAnnotation.options());
+                            } else {
+                                testObject = Moxie.mock(f.getType(), f.getName(), mockAnnotation.options());
+                            }
+                            oldValues.put(f.getName(), f.get(testInstance));
+                            f.set(testInstance, testObject);
+                        } catch (Exception ex) {
+                            throw new MoxieError("Reflection error when auto-mocking field " + f.getName() + " on object " + testInstance, ex);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void autoUnMock(Object... testComponents) {
+        Collection components;
+        if (testComponents != null && testComponents.length > 0) {
+            for (Object testInstance : testComponents) {
+                if (!valuesOverwrittenByAutoMock.containsKey(testInstance)) {
+                    throw new IllegalArgumentException("object was not autoMock()'ed: " + testInstance);
+                }
+            }
+            components = Arrays.asList(testComponents);
+        } else {
+            components = new ArrayList(valuesOverwrittenByAutoMock.keySet());
+        }
+
+        for (Object testInstance : components) {
+            Map<String, Object> oldValues = valuesOverwrittenByAutoMock.remove(testInstance);
+            for (Class c = testInstance.getClass(); c != null; c = c.getSuperclass()) {
+                for (Field f : c.getDeclaredFields()) {
+                    if (f.isAnnotationPresent(Mock.class) || f.isAnnotationPresent(Spy.class) || f.isAnnotationPresent(AutoMock.class) || Group.class.equals(f.getType())) {
+                        if (!f.isAccessible()) {
+                            f.setAccessible(true);
+                        }
+                        try {
+                            if (f.isAnnotationPresent(AutoMock.class)) {
+                                autoUnMock(f.get(testInstance));
+                                continue;
+                            }
+                            f.set(testInstance, oldValues.get(f.getName()));
+                        } catch (Exception ex) {
+                            throw new MoxieError("Reflection error when auto-unmocking field " + f.getName() + " on object " + testInstance, ex);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void reportMatcher(Matcher matcher, Class expectedType) {
+        matchers.add(new MatcherReport(matcher, expectedType));
+    }
+
+    public LinkedList<MatcherReport> getMatcherReports() {
+        return matchers;
+    }
+}
