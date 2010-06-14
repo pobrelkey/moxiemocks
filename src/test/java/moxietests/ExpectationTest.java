@@ -22,11 +22,7 @@
 
 package moxietests;
 
-import moxie.Mock;
-import moxie.Moxie;
-import moxie.MoxieError;
-import moxie.MoxieRunner;
-import moxie.Spy;
+import moxie.*;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -46,6 +42,8 @@ public class ExpectationTest {
 
     @Spy
     private List<String> spy = new ArrayList<String>(Arrays.asList("zero", "one", "two", "three", "four"));
+
+    private Group group;
 
     @Test
     public void never_happyPath() {
@@ -354,6 +352,120 @@ public class ExpectationTest {
         };
         Moxie.expect(mock).andHandleWith(italianHandler).when().get(2);
         Assert.assertEquals("due", mock.get(2));
+    }
+
+    @Test
+    @Ignore("BROKEN - cardinality of groups needs work")
+    public void groupedExpectations_happyPath1() {
+        Moxie.expect(spy).inGroup(group).on().get(0);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("zero");
+        Moxie.expect(spy).inGroup(group).on().get(1);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("one");
+        Moxie.expect(spy).inGroup(group).on().get(2);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("two");
+
+        mock.add(spy.get(0));
+        mock.add(spy.get(1));
+        mock.add(spy.get(2));
+    }
+
+    @Test(expected=MoxieError.class)
+    public void groupedExpectations_sadPath1() {
+        Moxie.expect(spy).inGroup(group).on().get(0);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("zero");
+        Moxie.expect(spy).inGroup(group).on().get(1);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("one");
+        Moxie.expect(spy).inGroup(group).on().get(2);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("two");
+
+        mock.add(spy.get(2));
+        mock.add(spy.get(1));
+        mock.add(spy.get(0));
+    }
+
+    @Test
+    @Ignore("BROKEN - cardinality of groups needs work")
+    public void groupedExpectations_happyPath2() {
+        group.willBeCalled().times(3);
+        Moxie.expect(spy).inGroup(group).on().get(0);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("zero");
+        Moxie.expect(spy).inGroup(group).on().get(1);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("one");
+        Moxie.expect(spy).inGroup(group).on().get(2);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("two");
+
+        mock.add(spy.get(0));
+        mock.add(spy.get(1));
+        mock.add(spy.get(2));
+        mock.add(spy.get(0));
+        mock.add(spy.get(1));
+        mock.add(spy.get(2));
+        mock.add(spy.get(0));
+        mock.add(spy.get(1));
+        mock.add(spy.get(2));
+    }
+
+    @Test(expected=MoxieError.class)
+    public void groupedExpectations_sadPath2() {
+        group.willBeCalled().times(3);
+        Moxie.expect(spy).inGroup(group).on().get(0);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("zero");
+        Moxie.expect(spy).inGroup(group).on().get(1);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("one");
+        Moxie.expect(spy).inGroup(group).on().get(2);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("two");
+
+        mock.add(spy.get(2));
+        mock.add(spy.get(1));
+        mock.add(spy.get(0));
+        mock.add(spy.get(2));
+        mock.add(spy.get(1));
+        mock.add(spy.get(0));
+        mock.add(spy.get(2));
+        mock.add(spy.get(1));
+        mock.add(spy.get(0));
+    }
+
+    @Test(expected=MoxieError.class)
+    public void groupedExpectations_sadPath3() {
+        group.willBeCalled().times(3);
+        Moxie.expect(spy).inGroup(group).on().get(0);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("zero");
+        Moxie.expect(spy).inGroup(group).on().get(1);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("one");
+        Moxie.expect(spy).inGroup(group).on().get(2);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("two");
+
+        mock.add(spy.get(0));
+        mock.add(spy.get(1));
+        mock.add(spy.get(2));
+        mock.add(spy.get(0));
+        mock.add(spy.get(1));
+        mock.add(spy.get(2));
+        mock.add(spy.get(0));
+        mock.add(spy.get(1));
+        mock.add(spy.get(2));
+        mock.add(spy.get(0));
+        mock.add(spy.get(1));
+        mock.add(spy.get(2));
+    }
+
+    @Test(expected=MoxieError.class)
+    public void groupedExpectations_sadPath4() {
+        group.willBeCalled().times(3);
+        Moxie.expect(spy).inGroup(group).on().get(0);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("zero");
+        Moxie.expect(spy).inGroup(group).on().get(1);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("one");
+        Moxie.expect(spy).inGroup(group).on().get(2);
+        Moxie.expect(mock).inGroup(group).andReturn(true).when().add("two");
+
+        mock.add(spy.get(0));
+        mock.add(spy.get(1));
+        mock.add(spy.get(2));
+        mock.add(spy.get(0));
+        mock.add(spy.get(1));
+        mock.add(spy.get(2));
     }
 
 }
