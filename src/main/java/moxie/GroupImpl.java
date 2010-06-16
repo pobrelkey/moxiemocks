@@ -32,8 +32,8 @@ class GroupImpl implements Group, Verifiable {
 
     private final String name;
     private final InstantiationStackTrace whereInstantiated;
-    private final List<ExpectationImpl> expectations = new ArrayList<ExpectationImpl>();
-//    private final Set<ExpectationImpl> matchedUnordered = new HashSet<ExpectationImpl>();
+    private final Set<ExpectationImpl> unorderedExpectations = new HashSet<ExpectationImpl>();
+    private final List<ExpectationImpl> orderedExpectations = new ArrayList<ExpectationImpl>();
     private boolean defaultCardinality;
     private CardinalityImpl cardinality;
     private int cursor;
@@ -62,8 +62,8 @@ class GroupImpl implements Group, Verifiable {
 
     public void reset(MoxieFlags flags) {
         this.flags = flags;
-        expectations.clear();
-//        matchedUnordered.clear();
+        unorderedExpectations.clear();
+        orderedExpectations.clear();
         defaultCardinality = true;
         cardinality = new CardinalityImpl<CardinalityImpl>().once();
         cursor = -1;
@@ -74,34 +74,22 @@ class GroupImpl implements Group, Verifiable {
     }
 
     public void add(ExpectationImpl expectation) {
-        expectations.add(expectation);
-    }
-
-
-    private Set<ExpectationImpl> getUnorderedExpectations() {
-        HashSet<ExpectationImpl> result = new HashSet<ExpectationImpl>();
-        if (!flags.isStrictlyOrdered()) {
-            result.addAll(expectations);
+        if (flags.isStrictlyOrdered() && !expectation.isUnordered()) {
+            orderedExpectations.add(expectation);
         } else {
-            for (ExpectationImpl expectation : expectations) {
-                if (expectation.isUnordered()) {
-                    result.add(expectation);
-                }
-            }
+            unorderedExpectations.add(expectation);
         }
-        return result;
     }
 
     public void verify() {
-        Set<ExpectationImpl> unmatchedUnordered = getUnorderedExpectations();
-        for (ExpectationImpl expectation : unmatchedUnordered) {
+        for (ExpectationImpl expectation : unorderedExpectations) {
             if (!expectation.isSatisfied()) {
                 // TODO nicer exception
                 throw new MoxieError("not all methods in expectation invoked");
             }
         }
-        if (flags.isStrictlyOrdered()) {
-            if (expectations.isEmpty() || ((cursor == -1 || cursor == expectations.size() - 1) && cardinality.isSatisfied())) {
+        if (!orderedExpectations.isEmpty()) {
+            if ((cursor == -1 || cursor == orderedExpectations.size() - 1) && cardinality.isSatisfied()) {
                 return;
             }
             // TODO nicer exception
@@ -111,57 +99,53 @@ class GroupImpl implements Group, Verifiable {
 
     public ExpectationImpl match(Method method, Object[] args, MethodBehavior behavior) {
         ExpectationImpl result = null;
-        for (ExpectationImpl expectation : getUnorderedExpectations()) {
+        for (ExpectationImpl expectation : unorderedExpectations) {
             if (expectation.match(method, args, behavior)) {
-//                matchedUnordered.add(expectation);
                 result = expectation;
                 break;
             }
         }
-        if (result == null && flags.isStrictlyOrdered()) {
+        if (result == null && !orderedExpectations.isEmpty()) {
             if (cardinality.isViable()) {
-                if (cursor != -1 && expectations.get(cursor).match(method, args, behavior)) {
-                    result = expectations.get(cursor);
+                if (cursor != -1 && orderedExpectations.get(cursor).match(method, args, behavior)) {
+                    result = orderedExpectations.get(cursor);
                 } else if (advanceCursor()) {
                     cursor = 0;
                     cardinality.incrementCount();
-                    if (cardinality.isViable() && expectations.get(cursor).match(method, args, behavior)) {
-                        result = expectations.get(cursor);
+                    if (cardinality.isViable() && orderedExpectations.get(cursor).match(method, args, behavior)) {
+                        result = orderedExpectations.get(cursor);
                     }
                 }
             }
         }
         if (result != null) {
             for (GroupImpl group : (Set<GroupImpl>) result.getGroups()) {
-                group.match(result, method, args);
+                group.match(result);
             }
         }
         return result;
     }
 
     private boolean advanceCursor() {
-        while (++cursor < expectations.size()) {
-            if (!expectations.get(cursor).isUnordered()) {
+        while (++cursor < orderedExpectations.size()) {
+            if (!orderedExpectations.get(cursor).isUnordered()) {
                 return false;
             }
         }
         return true;
     }
 
-    public void match(ExpectationImpl expectation, Method method, Object[] args) {
-//        if (expectation.isUnordered() || !flags.isStrictlyOrdered()) {
-//            matchedUnordered.add(expectation);
-//        } else
-        if (flags.isStrictlyOrdered()) {
+    public void match(ExpectationImpl expectation) {
+        if (!orderedExpectations.isEmpty()) {
             if (cardinality.isViable()) {
-                if (cursor != -1 && expectations.get(cursor) == expectation) {
+                if (cursor != -1 && orderedExpectations.get(cursor) == expectation) {
                     return;
                 }
                 if (advanceCursor()) {
                     cursor = 0;
                     cardinality.incrementCount();
                 }
-                if (cardinality.isViable() && expectations.get(cursor) == expectation) {
+                if (cardinality.isViable() && orderedExpectations.get(cursor) == expectation) {
                     return;
                 }
             }
