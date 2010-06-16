@@ -22,8 +22,11 @@
 
 package moxie;
 
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -131,11 +134,9 @@ class CheckImpl<T> implements Check<T> {
                 }
 
                 if (cardinality.isSatisfied() && negated) {
-                    // TODO nicer exception
-                    throw new MoxieError("check matched one or more method invocations");
+                    die("check matched one or more method invocations", method, argMatchers);
                 } else if (!cardinality.isSatisfied() && !negated) {
-                    // TODO nicer exception
-                    throw new MoxieError("check failed to match the correct number of method invocations");
+                    die("check failed to match the correct number of method invocations", method, argMatchers);
                 }
 
                 if (lastMatch != null && groups != null && !negated) {
@@ -221,4 +222,34 @@ class CheckImpl<T> implements Check<T> {
         return newCardinality().atMost(times);
     }
 
+    private void die(String message, Method checkedMethod, List<Matcher> argMatchers) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        pw.println(message);
+
+        pw.println("Checked:");
+        pw.print("    expected ");
+        PrintWriterAdaptingDescription desc = new PrintWriterAdaptingDescription(pw);
+        cardinality.describeTo(desc);
+        pw.print(": ");
+        pw.print(checkedMethod.getName());
+        desc.appendValueList("(", ", ", ")", argMatchers);
+        if (throwableMatcher != null) {
+            pw.print(", throws ");
+            throwableMatcher.describeTo(desc);
+        } else if (resultMatcher != null) {
+            pw.print(", returns ");
+            resultMatcher.describeTo(desc);
+        }
+        pw.println();
+
+        pw.println("Invoked:");
+        for (Invocation invocation : invocations) {
+            pw.print("    ");
+            invocation.describeTo(desc);
+            pw.println();
+        }
+
+        throw new MoxieError(sw.toString());
+    }
 }
