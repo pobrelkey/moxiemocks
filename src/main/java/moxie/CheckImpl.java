@@ -29,6 +29,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -244,7 +245,7 @@ class CheckImpl<T> implements Check<T> {
         pw.println();
 
         pw.println("Invoked:");
-        for (Invocation invocation : invocations) {
+        for (Invocation invocation : new ArrayList<Invocation>(invocations)) {
             pw.print("    ");
             invocation.describeTo(desc);
             pw.println();

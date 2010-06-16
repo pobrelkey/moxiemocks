@@ -125,7 +125,7 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
     }
 
     public void verify() {
-        methods.verify();
+        methods.verify(allInvocations);
     }
 
     public Throwable getWhereInstantiated() {

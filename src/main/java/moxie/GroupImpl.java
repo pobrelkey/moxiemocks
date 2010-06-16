@@ -84,10 +84,14 @@ class GroupImpl implements Group, Verifiable {
     }
 
     public void verify() {
+        // keep track of invocations so we can report them nicely when we fail
+        verify(null);
+    }
+
+    void verify(List<Invocation> invocations) {
         for (ExpectationImpl expectation : unorderedExpectations) {
             if (!expectation.isSatisfied()) {
-                // TODO nicer exception
-                throw new MoxieError("not all methods in expectation invoked");
+                die("not all expected methods invoked or cardinality not satisfied", invocations);
             }
         }
         if (!orderedExpectations.isEmpty()) {
@@ -98,8 +102,7 @@ class GroupImpl implements Group, Verifiable {
             if (cursor == 0 && cardinality.isSatisfied()) {
                 return;
             }
-            // TODO nicer exception
-            throw new MoxieError("not all expected methods invoked or cardinality not satisfied");
+            die("not all expected methods invoked or cardinality not satisfied", invocations);
         }
     }
 
@@ -129,13 +132,13 @@ class GroupImpl implements Group, Verifiable {
         }
         if (result != null) {
             for (GroupImpl group : (Set<GroupImpl>) result.getGroups()) {
-                group.match(result);
+                group.match(result, method, args);
             }
         }
         return result;
     }
 
-    public void match(ExpectationImpl expectation) {
+    public void match(ExpectationImpl expectation, Method method, Object[] args) {
         if (!orderedExpectations.isEmpty()) {
             if (cardinality.isViable()) {
                 if (orderedExpectations.get(cursor) == expectation) {
@@ -150,8 +153,7 @@ class GroupImpl implements Group, Verifiable {
                     return;
                 }
             }
-            // TODO nicer exception
-            throw new MoxieError("out of sequence expectation or too many times through sequence");
+            die("out of sequence expectation or too many times through sequence", method, args);
         }
     }
 
@@ -170,7 +172,7 @@ class GroupImpl implements Group, Verifiable {
     void die(String message, Method invokedMethod, Object[] invocationArgs) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        pw.println(message);
+        pw.println("On \"" + name + "\": " + message);
         PrintWriterAdaptingDescription desc = new PrintWriterAdaptingDescription(pw);
         if (invokedMethod != null) {
             pw.println("Invoked:");
@@ -179,6 +181,28 @@ class GroupImpl implements Group, Verifiable {
             desc.appendValueList("(", ", ", ")", invocationArgs);
             pw.println();
         }
+        describeExpectations(pw, desc);
+        throw new MoxieError(sw.toString());
+    }
+
+    private void die(String message, List<Invocation> invocations) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        pw.println("On \"" + name + "\": " + message);
+        PrintWriterAdaptingDescription desc = new PrintWriterAdaptingDescription(pw);
+        if (invocations != null) {
+            pw.println("Invoked:");
+            for (Invocation invocation : new ArrayList<Invocation>(invocations)) {
+                pw.print("    ");
+                invocation.describeTo(desc);
+                pw.println();
+            }
+        }
+        describeExpectations(pw, desc);
+        throw new MoxieError(sw.toString());
+    }
+
+    private void describeExpectations(PrintWriter pw, PrintWriterAdaptingDescription desc) {
         if (unorderedExpectations != null) {
             pw.println("Expected (in any order):");
             for (ExpectationImpl expectation : unorderedExpectations) {
@@ -195,6 +219,5 @@ class GroupImpl implements Group, Verifiable {
                 pw.println();
             }
         }
-        throw new MoxieError(sw.toString());
     }
 }
