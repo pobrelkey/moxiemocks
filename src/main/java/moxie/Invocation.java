@@ -94,7 +94,11 @@ class Invocation implements SelfDescribing {
 
     public void describeTo(Description description) {
         description.appendText(method.getName());
-        description.appendValueList("(", ", ", ")", arguments);
+        if (arguments != null) {
+            description.appendValueList("(", ", ", ")", arguments);
+        } else {
+            description.appendText("()");
+        }
         if (exceptionThrown != null) {
             description.appendText(", threw " + exceptionThrown);
         } else if (valueReturned != null) {
