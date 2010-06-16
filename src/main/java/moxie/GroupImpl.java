@@ -66,7 +66,7 @@ class GroupImpl implements Group, Verifiable {
         orderedExpectations.clear();
         defaultCardinality = true;
         cardinality = new CardinalityImpl<CardinalityImpl>().once();
-        cursor = -1;
+        cursor = 0;
     }
 
     public Throwable getWhereInstantiated() {
@@ -89,7 +89,11 @@ class GroupImpl implements Group, Verifiable {
             }
         }
         if (!orderedExpectations.isEmpty()) {
-            if ((cursor == -1 || cursor == orderedExpectations.size() - 1) && cardinality.isSatisfied()) {
+            if (cursor == orderedExpectations.size() - 1 && orderedExpectations.get(cursor).isSatisfied()) {
+                cursor = 0;
+                cardinality.incrementCount();
+            }
+            if (cursor == 0 && cardinality.isSatisfied()) {
                 return;
             }
             // TODO nicer exception
@@ -107,11 +111,14 @@ class GroupImpl implements Group, Verifiable {
         }
         if (result == null && !orderedExpectations.isEmpty()) {
             if (cardinality.isViable()) {
-                if (cursor != -1 && orderedExpectations.get(cursor).match(method, args, behavior)) {
+                if (orderedExpectations.get(cursor).match(method, args, behavior)) {
                     result = orderedExpectations.get(cursor);
-                } else if (advanceCursor()) {
-                    cursor = 0;
-                    cardinality.incrementCount();
+                } else {
+                    cursor++;
+                    if (cursor == orderedExpectations.size()) {
+                        cursor = 0;
+                        cardinality.incrementCount();
+                    }
                     if (cardinality.isViable() && orderedExpectations.get(cursor).match(method, args, behavior)) {
                         result = orderedExpectations.get(cursor);
                     }
@@ -126,22 +133,14 @@ class GroupImpl implements Group, Verifiable {
         return result;
     }
 
-    private boolean advanceCursor() {
-        while (++cursor < orderedExpectations.size()) {
-            if (!orderedExpectations.get(cursor).isUnordered()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public void match(ExpectationImpl expectation) {
         if (!orderedExpectations.isEmpty()) {
             if (cardinality.isViable()) {
-                if (cursor != -1 && orderedExpectations.get(cursor) == expectation) {
+                if (orderedExpectations.get(cursor) == expectation) {
                     return;
                 }
-                if (advanceCursor()) {
+                cursor++;
+                if (cursor == orderedExpectations.size()) {
                     cursor = 0;
                     cardinality.incrementCount();
                 }
