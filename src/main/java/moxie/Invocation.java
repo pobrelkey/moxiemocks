@@ -22,9 +22,12 @@
 
 package moxie;
 
+import org.hamcrest.Description;
+import org.hamcrest.SelfDescribing;
+
 import java.lang.reflect.Method;
 
-class Invocation {
+class Invocation implements SelfDescribing {
     private final Interception interception;
     private final Method method;
     private final Object[] arguments;
@@ -89,4 +92,15 @@ class Invocation {
         this.valueReturned = valueReturned;
     }
 
+    public void describeTo(Description description) {
+        description.appendText(method.getName());
+        description.appendValueList("(", ", ", ")", arguments);
+        if (exceptionThrown != null) {
+            description.appendText(", threw " + exceptionThrown);
+        } else if (valueReturned != null) {
+            description.appendText(", returned " + valueReturned);
+        } else {
+            description.appendText(", returned null");
+        }
+    }
 }

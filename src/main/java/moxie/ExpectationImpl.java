@@ -22,7 +22,9 @@
 
 package moxie;
 
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.SelfDescribing;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -32,7 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-class ExpectationImpl<T> implements Expectation<T> {
+class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
 
     private final Interception<T> interception;
     private CardinalityImpl cardinality = new CardinalityImpl<CardinalityImpl>().once();
@@ -213,7 +215,7 @@ class ExpectationImpl<T> implements Expectation<T> {
         return willHandleWith(handler);
     }
 
-    boolean match(Method method, Object[] args, MethodBehavior behavior) {
+    boolean match(Method method, Object[] args, MethodBehavior behavior, GroupImpl group) {
         if (!this.method.equals(method)) {
             return false;
         }
@@ -243,8 +245,7 @@ class ExpectationImpl<T> implements Expectation<T> {
             }
         }
         if (!cardinality.isViable()) {
-            // TODO nicer exception
-            throw new MoxieError("unexpected method invocation");
+            group.die("unexpected method invocation", method, args);
         }
         cardinality.incrementCount();
         return true;
@@ -268,6 +269,21 @@ class ExpectationImpl<T> implements Expectation<T> {
 
     boolean isSatisfied() {
         return cardinality.isSatisfied();
+    }
+
+    public void describeTo(Description description) {
+        description.appendText("expected ");
+        cardinality.describeTo(description);
+        description.appendText(": ");
+        description.appendText(method.getName());
+        description.appendList("(", ", ", ")", argMatchers);
+        if (exceptionMatcher != null) {
+            description.appendText(", throws ");
+            exceptionMatcher.describeTo(description);
+        } else if (returnValueMatcher != null) {
+            description.appendText(", returns ");
+            returnValueMatcher.describeTo(description);
+        }
     }
 
     static private class ReturnHandler implements InvocationHandler {

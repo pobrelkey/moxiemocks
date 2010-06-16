@@ -99,8 +99,7 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
                 && !OBJECT_EQUALS.equals(method)
                 && !OBJECT_HASH_CODE.equals(method)
                 && !OBJECT_TO_STRING.equals(method)) {
-            // TODO nicer exception
-            throw new MoxieError("unexpected method invocation");
+            methods.die("unexpected method invocation", method, args);
         }
 
         try {

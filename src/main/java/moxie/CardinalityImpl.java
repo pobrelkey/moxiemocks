@@ -22,10 +22,13 @@
 
 package moxie;
 
+import org.hamcrest.Description;
+import org.hamcrest.SelfDescribing;
+
 import java.util.ArrayList;
 import java.util.List;
 
-class CardinalityImpl<T> implements Cardinality<T> {
+class CardinalityImpl<T> implements Cardinality<T>, SelfDescribing {
 
     private final T returnValue;
     private Integer minTimes = null;
@@ -156,6 +159,26 @@ class CardinalityImpl<T> implements Cardinality<T> {
                 satisfactions = new ArrayList<Runnable>();
             }
             satisfactions.add(satisfaction);
+        }
+    }
+
+    public void describeTo(Description description) {
+        if (minTimes == null) {
+            if (maxTimes == null) {
+                description.appendText("any number of times");
+            } else if (maxTimes == 1) {
+                description.appendText("at most once");
+            } else {
+                description.appendText("at most " + maxTimes + " times");
+            }
+        } else if (maxTimes == null) {
+            if (minTimes == 1) {
+                description.appendText("at least once");
+            } else {
+                description.appendText("at least " + maxTimes + " times");
+            }
+        } else {
+            description.appendText("between " + minTimes + " and " + maxTimes + " times");
         }
     }
 }

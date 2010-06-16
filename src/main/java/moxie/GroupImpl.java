@@ -22,6 +22,8 @@
 
 package moxie;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -104,14 +106,14 @@ class GroupImpl implements Group, Verifiable {
     public ExpectationImpl match(Method method, Object[] args, MethodBehavior behavior) {
         ExpectationImpl result = null;
         for (ExpectationImpl expectation : unorderedExpectations) {
-            if (expectation.match(method, args, behavior)) {
+            if (expectation.match(method, args, behavior, this)) {
                 result = expectation;
                 break;
             }
         }
         if (result == null && !orderedExpectations.isEmpty()) {
             if (cardinality.isViable()) {
-                if (orderedExpectations.get(cursor).match(method, args, behavior)) {
+                if (orderedExpectations.get(cursor).match(method, args, behavior, this)) {
                     result = orderedExpectations.get(cursor);
                 } else {
                     cursor++;
@@ -119,7 +121,7 @@ class GroupImpl implements Group, Verifiable {
                         cursor = 0;
                         cardinality.incrementCount();
                     }
-                    if (cardinality.isViable() && orderedExpectations.get(cursor).match(method, args, behavior)) {
+                    if (cardinality.isViable() && orderedExpectations.get(cursor).match(method, args, behavior, this)) {
                         result = orderedExpectations.get(cursor);
                     }
                 }
@@ -163,5 +165,36 @@ class GroupImpl implements Group, Verifiable {
 
     boolean isStrictlyOrdered() {
         return flags.isStrictlyOrdered();
+    }
+
+    void die(String message, Method invokedMethod, Object[] invocationArgs) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        pw.println(message);
+        PrintWriterAdaptingDescription desc = new PrintWriterAdaptingDescription(pw);
+        if (invokedMethod != null) {
+            pw.println("Invoked:");
+            pw.print("    ");
+            pw.print(invokedMethod.getName());
+            desc.appendValueList("(", ", ", ")", invocationArgs);
+            pw.println();
+        }
+        if (unorderedExpectations != null) {
+            pw.println("Expected (in any order):");
+            for (ExpectationImpl expectation : unorderedExpectations) {
+                pw.print("    ");
+                expectation.describeTo(desc);
+                pw.println();
+            }
+        }
+        if (orderedExpectations != null) {
+            pw.println("Expected (in order):");
+            for (ExpectationImpl expectation : orderedExpectations) {
+                pw.print("    ");
+                expectation.describeTo(desc);
+                pw.println();
+            }
+        }
+        throw new MoxieError(sw.toString());
     }
 }
