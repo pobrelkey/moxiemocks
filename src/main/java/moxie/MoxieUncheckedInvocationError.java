@@ -22,15 +22,20 @@
 
 package moxie;
 
+import java.util.ArrayList;
+
 /**
- *  {@link Error} thrown by Moxie on a condition that should fail a test, such as a check or expectation failure.
+ *  {@link Error} thrown by Moxie when {@link Moxie#checkNothingElseHappened(Object...) checkNothingElseHappened()} finds one or more unchecked invocations.
  */
-public class MoxieError extends Error {
-    MoxieError(String msg) {
-        super(msg);
+public class MoxieUncheckedInvocationError extends Error {
+    MoxieUncheckedInvocationError(String message, ArrayList<Invocation> uncheckedInvocations) {
+        super(createExceptionMessage(message, uncheckedInvocations));
     }
 
-    MoxieError(String msg, Throwable t) {
-        super(msg, t);
+    private static String createExceptionMessage(String message, ArrayList<Invocation> uncheckedInvocations) {
+        SimpleDescription desc = new SimpleDescription();
+        desc.appendText(message + "\n");
+        MoxieFailedVerificationError.describeIfNonEmpty(desc, "Invoked:\n", uncheckedInvocations);
+        return desc.toString();
     }
 }

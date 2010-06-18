@@ -245,7 +245,7 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
             }
         }
         if (!cardinality.isViable()) {
-            group.die("unexpected method invocation", method, args);
+            group.throwUnexpectedInvocationError("unexpected method invocation", method, args);
         }
         cardinality.incrementCount();
         return true;

@@ -22,14 +22,7 @@
 
 package moxietests;
 
-import moxie.Group;
-import moxie.GroupOptions;
-import moxie.Mock;
-import moxie.Moxie;
-import moxie.MoxieError;
-import moxie.MoxieOptions;
-import moxie.MoxieRunner;
-import moxie.Spy;
+import moxie.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -62,25 +55,25 @@ public class CheckTest {
         Moxie.check(mock).never().got().add("something");
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieFailedCheckError.class)
     public void never_sadPath1() {
         mock.add("something");
         Moxie.check(mock).never().got().add("something");
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieFailedCheckError.class)
     public void never_sadPath2() {
         mock.add("nothing");
         Moxie.check(mock).didNot().never().get().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void anyTimes_sadPath1() {
         mock.add("nothing");
         Moxie.check(mock).didNot().anyTimes().get().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void anyTimes_sadPath2() {
         mock.add("something");
         Moxie.check(mock).didNot().anyTimes().get().add("something");
@@ -105,7 +98,7 @@ public class CheckTest {
         Moxie.check(mock).anyTimes().got().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void atLeastOnce_sadPath1() {
         mock.add("nothing");
         Moxie.check(mock).atLeastOnce().got().add("something");
@@ -131,19 +124,19 @@ public class CheckTest {
         Moxie.check(mock).didNot().atLeastOnce().get().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void atLeastOnce_sadPath2() {
         mock.add("something");
         Moxie.check(mock).didNot().atLeastOnce().get().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void atLeast_sadPath1() {
         mock.add("nothing");
         Moxie.check(mock).atLeast(2).got().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void atLeast_sadPath2() {
         mock.add("something");
         Moxie.check(mock).atLeast(2).got().add("something");
@@ -170,7 +163,7 @@ public class CheckTest {
         Moxie.check(mock).didNot().atLeast(2).get().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void atLeast_sadPath3() {
         mock.add("something");
         mock.add("something");
@@ -189,20 +182,20 @@ public class CheckTest {
         Moxie.check(mock).atMostOnce().got().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void atMostOnce_sadPath1() {
         mock.add("something");
         mock.add("something");
         Moxie.check(mock).atMostOnce().got().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void atMostOnce_sadPath2() {
         mock.add("nothing");
         Moxie.check(mock).didNot().atMostOnce().get().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void atMostOnce_sadPath3() {
         mock.add("something");
         Moxie.check(mock).didNot().atMostOnce().get().add("something");
@@ -234,7 +227,7 @@ public class CheckTest {
         Moxie.check(mock).atMost(2).got().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void atMost_sadPath1() {
         mock.add("something");
         mock.add("something");
@@ -242,19 +235,19 @@ public class CheckTest {
         Moxie.check(mock).atMost(2).got().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void atMost_sadPath2() {
         mock.add("nothing");
         Moxie.check(mock).didNot().atMost(2).get().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void atMost_sadPath3() {
         mock.add("something");
         Moxie.check(mock).didNot().atMost(2).get().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void atMost_sadPath4() {
         mock.add("something");
         mock.add("something");
@@ -269,7 +262,7 @@ public class CheckTest {
         Moxie.check(mock).didNot().atMost(2).get().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void once_sadPath1() {
         mock.add("nothing");
         Moxie.check(mock).once().got().add("something");
@@ -281,7 +274,7 @@ public class CheckTest {
         Moxie.check(mock).once().got().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void once_sadPath2() {
         mock.add("something");
         mock.add("something");
@@ -294,7 +287,7 @@ public class CheckTest {
         Moxie.check(mock).didNot().once().get().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void once_sadPath3() {
         mock.add("something");
         Moxie.check(mock).didNot().once().get().add("something");
@@ -307,13 +300,13 @@ public class CheckTest {
         Moxie.check(mock).didNot().once().get().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void times_sadPath1() {
         mock.add("nothing");
         Moxie.check(mock).times(2).got().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void times_sadPath2() {
         mock.add("something");
         Moxie.check(mock).times(2).got().add("something");
@@ -326,7 +319,7 @@ public class CheckTest {
         Moxie.check(mock).times(2).got().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void times_sadPath3() {
         mock.add("something");
         mock.add("something");
@@ -346,7 +339,7 @@ public class CheckTest {
         Moxie.check(mock).didNot().times(2).get().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void times_sadPath4() {
         mock.add("something");
         mock.add("something");
@@ -361,7 +354,7 @@ public class CheckTest {
         Moxie.check(mock).didNot().times(2).get().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void times2_sadPath1() {
         mock.add("nothing");
         Moxie.check(mock).times(1,2).got().add("something");
@@ -380,7 +373,7 @@ public class CheckTest {
         Moxie.check(mock).times(1,2).got().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void times2_sadPath2() {
         mock.add("something");
         mock.add("something");
@@ -394,13 +387,13 @@ public class CheckTest {
         Moxie.check(mock).didNot().times(1,2).get().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void times2_sadPath3() {
         mock.add("something");
         Moxie.check(mock).didNot().times(1,2).get().add("something");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void times2_sadPath4() {
         mock.add("something");
         mock.add("something");
@@ -427,13 +420,13 @@ public class CheckTest {
         Moxie.check(spy).returned(Moxie.gt("earlier in the alphabet")).when().get(2);
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void returned_sadPath1() {
         Assert.assertEquals("two", spy.get(2));
         Moxie.check(spy).returned("three").when().get(2);
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void returned_sadPath2() {
         Assert.assertEquals("two", spy.get(2));
         Moxie.check(spy).didNot().returnValue("two").when().get(2);
@@ -456,13 +449,13 @@ public class CheckTest {
         Moxie.check(spy).threw(Moxie.isA(IndexOutOfBoundsException.class)).on().get(-1);
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void threw_sadPath1() {
         Assert.assertEquals("zero", spy.get(0));
         Moxie.check(spy).threw(Moxie.isA(IndexOutOfBoundsException.class)).on().get(0);
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void threw_sadPath2() {
         try {
             spy.get(-1);
@@ -494,14 +487,14 @@ public class CheckTest {
         Moxie.check(spy).unexpectedly().got().get(2);
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void unexpectedly_sadPath1() {
         Moxie.expect(spy).willReturnVerified("one").on().get(1);
         Assert.assertEquals("one", spy.get(1));
         Moxie.check(spy).unexpectedly().got().get(1);
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedCheckError.class)
     public void unexpectedly_sadPath2() {
         Moxie.expect(spy).willReturnVerified("one").on().get(1);
         Assert.assertEquals("one", spy.get(1));
@@ -543,7 +536,7 @@ public class CheckTest {
         Moxie.check(mock).inGroup(group).once().got().add("three");
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected= MoxieFailedCheckError.class)
     public void orderedChecks_sadPath1() {
         mock.add("one");
         mock.add("two");
@@ -556,8 +549,6 @@ public class CheckTest {
         Moxie.check(mock).inGroup(group).once().got().add("four");
     }
 
-
-
     @Test(expected = IllegalStateException.class)
     public void threw_abuse() {
         try {
@@ -569,4 +560,43 @@ public class CheckTest {
         Moxie.check(spy).threw(Moxie.isA(Error.class)).threw(Moxie.isA(IndexOutOfBoundsException.class)).on().get(-1);
     }
 
+    @Test(expected=MoxieUncheckedInvocationError.class)
+    public void checkNothingElseHappened_sadPath() {
+        mock.add("foo");
+        mock.add("bar");
+        mock.add("baz");
+        Moxie.check(mock).got().add("foo");
+        Moxie.check(mock).got().add("bar");
+        Moxie.checkNothingElseHappened();
+    }
+
+    @Test
+    public void checkNothingElseHappened_happyPath() {
+        mock.add("foo");
+        mock.add("bar");
+        mock.add("baz");
+        Moxie.check(mock).got().add("foo");
+        Moxie.check(mock).got().add("bar");
+        Moxie.check(mock).got().add("baz");
+        Moxie.checkNothingElseHappened();
+    }
+
+    @Test
+    public void checkNothingElseUnexpectedHappened_happyPath() {
+        Moxie.expect(mock).andReturn(1).on().size();
+        mock.add("foo");
+        mock.size();
+        Moxie.check(mock).got().add("foo");
+        Moxie.checkNothingElseUnexpectedHappened();
+    }
+
+    @Test(expected = MoxieUncheckedInvocationError.class)
+    public void checkNothingElseUnexpectedHappened_sadPath() {
+        Moxie.expect(mock).andReturn(1).on().size();
+        mock.add("foo");
+        mock.add("bar");
+        mock.size();
+        Moxie.check(mock).got().add("foo");
+        Moxie.checkNothingElseUnexpectedHappened();
+    }
 }

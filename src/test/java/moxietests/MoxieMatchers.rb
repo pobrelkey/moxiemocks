@@ -75,7 +75,7 @@ def generate_test(result, matcher_name, param_type, call_name, happy, expect_val
 	actual_values = actual_value.join(', ')
 	actual_values = "new #{upcased_type}[]{#{actual_values}}" if wrap && call_name =~ /^array/
 
-	result << (happy ? "\t@Test\n" : "\t@Test(expected=MoxieError.class)\n")
+	result << (happy ? "\t@Test\n" : "\t@Test(expected=MoxieUnexpectedInvocationError.class)\n")
 	result << "\tpublic void #{test_name}() {\n"
 	result << "\t\tMoxie.expect(mock).will().#{call_name}(Moxie.#{matcher_name}(#{expect_values}));\n"
 	result << "\t\tmock.#{call_name}(#{actual_values});\n"
