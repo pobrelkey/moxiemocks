@@ -24,8 +24,8 @@ package moxietests;
 
 import junit.framework.Assert;
 import moxie.Moxie;
-import moxie.MoxieError;
 import moxie.MoxieOptions;
+import moxie.MoxieUnexpectedInvocationError;
 import org.junit.Test;
 
 public class HelloWorld {
@@ -40,7 +40,7 @@ public class HelloWorld {
         Assert.assertEquals("you're welcome", result);
     }
 
-    @Test(expected= MoxieError.class)
+    @Test(expected= MoxieUnexpectedInvocationError.class)
     public void testUnexpectedPrescriptive() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         mock.aMethod("hi there");
@@ -74,7 +74,7 @@ public class HelloWorld {
         try {
             mock.aMethod("WAKE UP");
             Assert.fail("didn't raise error on fourth call");
-        } catch (MoxieError e) {
+        } catch (MoxieUnexpectedInvocationError e) {
             // expected
         }
 

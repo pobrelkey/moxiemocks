@@ -26,19 +26,21 @@ import org.hamcrest.Description;
 import org.hamcrest.SelfDescribing;
 
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
-import java.util.Collections;
 
-public class PrintWriterAdaptingDescription implements Description {
+class SimpleDescription implements Description {
 
-    private final PrintWriter pw;
+    private final PrintWriter printWriter;
+    private final StringWriter stringWriter;
 
-    public PrintWriterAdaptingDescription(PrintWriter pw) {
-        this.pw = pw;
+    public SimpleDescription() {
+        stringWriter = new StringWriter();
+        printWriter = new PrintWriter(stringWriter);
     }
 
     public Description appendText(String s) {
-        pw.print(s);
+        printWriter.print(s);
         return this;
     }
 
@@ -48,7 +50,7 @@ public class PrintWriterAdaptingDescription implements Description {
     }
 
     public Description appendValue(Object o) {
-        pw.print(o);
+        printWriter.print(o);
         return this;
     }
 
@@ -57,30 +59,35 @@ public class PrintWriterAdaptingDescription implements Description {
     }
 
     public <T> Description appendValueList(String start, String separator, String end, Iterable<T> values) {
-        pw.print(start);
+        printWriter.print(start);
         boolean first = true;
         for (T value : values) {
             if (!first) {
-                pw.print(separator);
+                printWriter.print(separator);
             }
             first = false;
-            pw.print(value);
+            printWriter.print(value);
         }
-        pw.print(end);
+        printWriter.print(end);
         return this;
     }
 
     public Description appendList(String start, String separator, String end, Iterable<? extends SelfDescribing> values) {
-        pw.print(start);
+        printWriter.print(start);
         boolean first = true;
         for (SelfDescribing value : values) {
             if (!first) {
-                pw.print(separator);
+                printWriter.print(separator);
             }
             first = false;
             value.describeTo(this);
         }
-        pw.print(end);
+        printWriter.print(end);
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return stringWriter.toString();
     }
 }

@@ -46,7 +46,7 @@ class SpyImpl<T> extends Interception<T> {
                     try {
                         result = method.invoke(realObject, args);
                     } catch (IllegalAccessException e) {
-                        thrown = new MoxieError("error calling target of spy object", e);
+                        thrown = new MoxieUnexpectedError("error calling target of spy object", e);
                     } catch (InvocationTargetException e) {
                         thrown = e.getTargetException();
                     } catch (Throwable t) {

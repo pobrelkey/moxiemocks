@@ -22,7 +22,6 @@
 
 package moxie;
 
-import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
 import java.io.PrintWriter;
@@ -30,7 +29,6 @@ import java.io.StringWriter;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 class CheckImpl<T> implements Check<T> {
@@ -135,9 +133,9 @@ class CheckImpl<T> implements Check<T> {
                 }
 
                 if (cardinality.isSatisfied() && negated) {
-                    die("check matched one or more method invocations", method, argMatchers);
+                    throwFailedCheckError("check matched one or more method invocations", method, argMatchers);
                 } else if (!cardinality.isSatisfied() && !negated) {
-                    die("check failed to match the correct number of method invocations", method, argMatchers);
+                    throwFailedCheckError("check failed to match the correct number of method invocations", method, argMatchers);
                 }
 
                 if (lastMatch != null && groups != null && !negated) {
@@ -223,34 +221,7 @@ class CheckImpl<T> implements Check<T> {
         return newCardinality().atMost(times);
     }
 
-    private void die(String message, Method checkedMethod, List<Matcher> argMatchers) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        pw.println(message);
-
-        pw.println("Checked:");
-        pw.print("    expected ");
-        PrintWriterAdaptingDescription desc = new PrintWriterAdaptingDescription(pw);
-        cardinality.describeTo(desc);
-        pw.print(": ");
-        pw.print(checkedMethod.getName());
-        desc.appendValueList("(", ", ", ")", argMatchers);
-        if (throwableMatcher != null) {
-            pw.print(", throws ");
-            throwableMatcher.describeTo(desc);
-        } else if (resultMatcher != null) {
-            pw.print(", returns ");
-            resultMatcher.describeTo(desc);
-        }
-        pw.println();
-
-        pw.println("Invoked:");
-        for (Invocation invocation : new ArrayList<Invocation>(invocations)) {
-            pw.print("    ");
-            invocation.describeTo(desc);
-            pw.println();
-        }
-
-        throw new MoxieError(sw.toString());
+    private void throwFailedCheckError(String message, Method checkedMethod, List<Matcher> argMatchers) {
+        throw new MoxieFailedCheckError(message, checkedMethod, argMatchers, cardinality, throwableMatcher, resultMatcher, invocations);
     }
 }

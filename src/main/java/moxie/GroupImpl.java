@@ -22,8 +22,6 @@
 
 package moxie;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -91,7 +89,7 @@ class GroupImpl implements Group, Verifiable {
     void verify(List<Invocation> invocations) {
         for (ExpectationImpl expectation : unorderedExpectations) {
             if (!expectation.isSatisfied()) {
-                die("not all expected methods invoked or cardinality not satisfied", invocations);
+                throwFailedVerificationError("not all expected methods invoked or cardinality not satisfied", invocations);
             }
         }
         if (!orderedExpectations.isEmpty()) {
@@ -102,7 +100,7 @@ class GroupImpl implements Group, Verifiable {
             if (cursor == 0 && cardinality.isSatisfied()) {
                 return;
             }
-            die("not all expected methods invoked or cardinality not satisfied", invocations);
+            throwFailedVerificationError("not all expected methods invoked or cardinality not satisfied", invocations);
         }
     }
 
@@ -153,7 +151,7 @@ class GroupImpl implements Group, Verifiable {
                     return;
                 }
             }
-            die("out of sequence expectation or too many times through sequence", method, args);
+            throwUnexpectedInvocationError("out of sequence expectation or too many times through sequence", method, args);
         }
     }
 
@@ -169,55 +167,12 @@ class GroupImpl implements Group, Verifiable {
         return flags.isStrictlyOrdered();
     }
 
-    void die(String message, Method invokedMethod, Object[] invocationArgs) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        pw.println("On \"" + name + "\": " + message);
-        PrintWriterAdaptingDescription desc = new PrintWriterAdaptingDescription(pw);
-        if (invokedMethod != null) {
-            pw.println("Invoked:");
-            pw.print("    ");
-            pw.print(invokedMethod.getName());
-            desc.appendValueList("(", ", ", ")", invocationArgs);
-            pw.println();
-        }
-        describeExpectations(pw, desc);
-        throw new MoxieError(sw.toString());
+    void throwUnexpectedInvocationError(String message, Method invokedMethod, Object[] invocationArgs) {
+        throw new MoxieUnexpectedInvocationError(message, name, invokedMethod, invocationArgs, unorderedExpectations, orderedExpectations);
     }
 
-    private void die(String message, List<Invocation> invocations) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        pw.println("On \"" + name + "\": " + message);
-        PrintWriterAdaptingDescription desc = new PrintWriterAdaptingDescription(pw);
-        if (invocations != null) {
-            pw.println("Invoked:");
-            for (Invocation invocation : new ArrayList<Invocation>(invocations)) {
-                pw.print("    ");
-                invocation.describeTo(desc);
-                pw.println();
-            }
-        }
-        describeExpectations(pw, desc);
-        throw new MoxieError(sw.toString());
+    private void throwFailedVerificationError(String message, List<Invocation> invocations) {
+        throw new MoxieFailedVerificationError(message, name, invocations, unorderedExpectations, orderedExpectations);
     }
 
-    private void describeExpectations(PrintWriter pw, PrintWriterAdaptingDescription desc) {
-        if (unorderedExpectations != null) {
-            pw.println("Expected (in any order):");
-            for (ExpectationImpl expectation : unorderedExpectations) {
-                pw.print("    ");
-                expectation.describeTo(desc);
-                pw.println();
-            }
-        }
-        if (orderedExpectations != null) {
-            pw.println("Expected (in order):");
-            for (ExpectationImpl expectation : orderedExpectations) {
-                pw.print("    ");
-                expectation.describeTo(desc);
-                pw.println();
-            }
-        }
-    }
 }

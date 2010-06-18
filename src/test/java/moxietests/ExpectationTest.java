@@ -53,7 +53,7 @@ public class ExpectationTest {
         mock.size();
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieUnexpectedInvocationError.class)
     public void never_sadPath() {
         Moxie.expect(mock).never().will().add(Moxie.anything());
         mock.add("something");
@@ -92,7 +92,7 @@ public class ExpectationTest {
         mock.size();
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieUnexpectedInvocationError.class)
     public void atMostOnce_sadPath() {
         Moxie.expect(mock).atMostOnce().on().size();
         mock.size();
@@ -100,7 +100,7 @@ public class ExpectationTest {
         Assert.fail("should have failed fast");
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieFailedVerificationError.class)
     public void atLeastOnce_sadPath() {
         Moxie.expect(mock).atLeastOnce().on().size();
         // and then don't call size()
@@ -120,7 +120,7 @@ public class ExpectationTest {
         mock.size();
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieFailedVerificationError.class)
     public void once_sadPath1() {
         Moxie.expect(mock).once().on().size();
         // and then don't call size()
@@ -132,7 +132,7 @@ public class ExpectationTest {
         mock.size();
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieUnexpectedInvocationError.class)
     public void once_sadPath2() {
         Moxie.expect(mock).once().on().size();
         mock.size();
@@ -140,13 +140,13 @@ public class ExpectationTest {
         Assert.fail("should have failed fast");
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieFailedVerificationError.class)
     public void atLeast_sadPath1() {
         Moxie.expect(mock).atLeast(3).on().size();
         // and then don't call size()
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieFailedVerificationError.class)
     public void atLeast_sadPath2() {
         Moxie.expect(mock).atLeast(3).on().size();
         mock.size();
@@ -195,7 +195,7 @@ public class ExpectationTest {
         mock.size();
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieUnexpectedInvocationError.class)
     public void atMost_sadPath1() {
         Moxie.expect(mock).atMost(2).on().size();
         mock.size();
@@ -209,13 +209,13 @@ public class ExpectationTest {
         Moxie.expect(mock).atMost(-1).on().size();
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieFailedVerificationError.class)
     public void times_sadPath1() {
         Moxie.expect(mock).times(2).on().size();
         // and then don't call size()
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieFailedVerificationError.class)
     public void times_sadPath2() {
         Moxie.expect(mock).times(2).on().size();
         mock.size();
@@ -228,7 +228,7 @@ public class ExpectationTest {
         mock.size();
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieUnexpectedInvocationError.class)
     public void times_sadPath3() {
         Moxie.expect(mock).times(2).on().size();
         mock.size();
@@ -237,13 +237,13 @@ public class ExpectationTest {
         Assert.fail("should have failed fast");
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieFailedVerificationError.class)
     public void times2_sadPath1() {
         Moxie.expect(mock).times(2,3).on().size();
         // and then don't call size()
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieFailedVerificationError.class)
     public void times2_sadPath2() {
         Moxie.expect(mock).times(2,3).on().size();
         mock.size();
@@ -264,7 +264,7 @@ public class ExpectationTest {
         mock.size();
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieUnexpectedInvocationError.class)
     public void times2_sadPath3() {
         Moxie.expect(mock).times(2,3).on().size();
         mock.size();
@@ -299,7 +299,7 @@ public class ExpectationTest {
         Assert.assertEquals("two", spy.get(2));
     }
 
-    @Test(expected = MoxieError.class)
+    @Test(expected = MoxieUnexpectedInvocationError.class)
     public void andVerifyReturn_sadPath() {
         Moxie.expect(spy).andVerifyReturn("dwei").when().get(2);
         spy.get(2);
@@ -317,13 +317,13 @@ public class ExpectationTest {
         }
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieUnexpectedInvocationError.class)
     public void andVerifyThrow_sadPath1() {
         Moxie.expect(spy).andVerifyThrow(Moxie.isA(IndexOutOfBoundsException.class)).when().get(2);
         Assert.assertEquals("two", spy.get(2));
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieUnexpectedInvocationError.class)
     public void andVerifyThrow_sadPath2() {
         Moxie.expect(spy).andVerifyThrow(Moxie.isA(MostUnusualError.class)).when().get(-1);
         spy.get(1);
@@ -368,7 +368,7 @@ public class ExpectationTest {
         mock.add(spy.get(2));
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieUnexpectedInvocationError.class)
     public void groupedExpectations_sadPath1() {
         Moxie.expect(spy).inGroup(group).on().get(0);
         Moxie.expect(mock).inGroup(group).andReturn(true).when().add("zero");
@@ -403,7 +403,7 @@ public class ExpectationTest {
         mock.add(spy.get(2));
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieUnexpectedInvocationError.class)
     public void groupedExpectations_sadPath2() {
         group.willBeCalled().times(3);
         Moxie.expect(spy).inGroup(group).on().get(0);
@@ -424,7 +424,7 @@ public class ExpectationTest {
         mock.add(spy.get(0));
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieUnexpectedInvocationError.class)
     public void groupedExpectations_sadPath3() {
         group.willBeCalled().times(3);
         Moxie.expect(spy).inGroup(group).on().get(0);
@@ -448,7 +448,7 @@ public class ExpectationTest {
         mock.add(spy.get(2));
     }
 
-    @Test(expected=MoxieError.class)
+    @Test(expected=MoxieFailedVerificationError.class)
     public void groupedExpectations_sadPath4() {
         group.willBeCalled().times(3);
         Moxie.expect(spy).inGroup(group).on().get(0);

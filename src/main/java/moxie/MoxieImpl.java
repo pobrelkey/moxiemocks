@@ -89,18 +89,26 @@ class MoxieImpl implements MoxieMethods {
     }
 
     public void checkNothingElseHappened(Object... mockObjects) {
+        ArrayList<Invocation> uncheckedInvocations = new ArrayList<Invocation>();
         for (Invocation invocation : invocations) {
             if (invocation.getCheckSatisfied() == null) {
-                throw new MoxieError("unchecked invocation detected");
+                uncheckedInvocations.add(invocation);
             }
+        }
+        if (!uncheckedInvocations.isEmpty()) {
+            throw new MoxieUncheckedInvocationError("unchecked invocation(s) detected", uncheckedInvocations);
         }
     }
 
     public void checkNothingElseUnexpectedHappened(Object... mockObjects) {
+        ArrayList<Invocation> uncheckedInvocations = new ArrayList<Invocation>();
         for (Invocation invocation : invocations) {
             if (invocation.getCheckSatisfied() == null && invocation.getExpectationSatisfied() == null) {
-                throw new MoxieError("unchecked and unexpected invocation detected");
+                uncheckedInvocations.add(invocation);
             }
+        }
+        if (!uncheckedInvocations.isEmpty()) {
+            throw new MoxieUncheckedInvocationError("unchecked and unexpected invocation(s) detected", uncheckedInvocations);
         }
     }
 
@@ -223,7 +231,7 @@ class MoxieImpl implements MoxieMethods {
                             oldValues.put(f.getName(), f.get(testInstance));
                             f.set(testInstance, testObject);
                         } catch (Exception ex) {
-                            throw new MoxieError("Reflection error when auto-mocking field " + f.getName() + " on object " + testInstance, ex);
+                            throw new MoxieUnexpectedError("Reflection error when auto-mocking field " + f.getName() + " on object " + testInstance, ex);
                         }
                     }
                 }
@@ -259,7 +267,7 @@ class MoxieImpl implements MoxieMethods {
                             }
                             f.set(testInstance, oldValues.get(f.getName()));
                         } catch (Exception ex) {
-                            throw new MoxieError("Reflection error when auto-unmocking field " + f.getName() + " on object " + testInstance, ex);
+                            throw new MoxieUnexpectedError("Reflection error when auto-unmocking field " + f.getName() + " on object " + testInstance, ex);
                         }
                     }
                 }

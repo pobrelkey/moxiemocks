@@ -37,7 +37,7 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
             OBJECT_EQUALS    = Object.class.getDeclaredMethod("equals", Object.class);
             OBJECT_HASH_CODE = Object.class.getDeclaredMethod("hashCode");
         } catch (NoSuchMethodException e) {
-            throw new MoxieError("WTF!", e);
+            throw new MoxieUnexpectedError("WTF!", e);
         }
     }
 
@@ -99,7 +99,7 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
                 && !OBJECT_EQUALS.equals(method)
                 && !OBJECT_HASH_CODE.equals(method)
                 && !OBJECT_TO_STRING.equals(method)) {
-            methods.die("unexpected method invocation", method, args);
+            methods.throwUnexpectedInvocationError("unexpected method invocation", method, args);
         }
 
         try {

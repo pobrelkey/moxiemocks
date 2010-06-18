@@ -107,4 +107,11 @@ class Invocation implements SelfDescribing {
             description.appendText(", returned null");
         }
     }
+
+    @Override
+    public String toString() {
+        SimpleDescription desc = new SimpleDescription();
+        describeTo(desc);
+        return desc.toString();
+    }
 }
