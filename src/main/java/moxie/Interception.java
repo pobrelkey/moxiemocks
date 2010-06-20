@@ -24,6 +24,7 @@ package moxie;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 abstract class Interception<T> implements InvocationHandler, Verifiable {
@@ -31,11 +32,13 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
     protected static Method OBJECT_TO_STRING;
     protected static Method OBJECT_EQUALS;
     protected static Method OBJECT_HASH_CODE;
+    protected static Method OBJECT_FINALIZE;
     static {
         try {
             OBJECT_TO_STRING = Object.class.getDeclaredMethod("toString");
             OBJECT_EQUALS    = Object.class.getDeclaredMethod("equals", Object.class);
             OBJECT_HASH_CODE = Object.class.getDeclaredMethod("hashCode");
+            OBJECT_FINALIZE  = Object.class.getDeclaredMethod("finalize");
         } catch (NoSuchMethodException e) {
             throw new MoxieUnexpectedError("WTF!", e);
         }
@@ -44,18 +47,17 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
     private final Class<T> clazz;
     protected final String name;
     private final Throwable whereInstantiated;
-    private final List<Invocation> allInvocations;
+    private final List<Invocation> invocations = new ArrayList<Invocation>();
     private MoxieFlags flags;
     private GroupImpl methods;
     protected T proxy;
 
-    protected Interception(Class<T> clazz, String name, MoxieFlags flags, List<Invocation> invocations, InstantiationStackTrace instantiationStackTrace) {
+    protected Interception(Class<T> clazz, String name, MoxieFlags flags, InstantiationStackTrace instantiationStackTrace) {
         this.clazz = clazz;
         this.name = name;
         this.flags = MoxieOptions.MOCK_DEFAULTS;
         this.whereInstantiated = instantiationStackTrace;
         this.methods = new GroupImpl(name, flags);
-        this.allInvocations = invocations;
         reset(flags);
     }
 
@@ -75,7 +77,7 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
 
     public Object invoke(Object unusedProxy, Method method, Object[] args) throws Throwable {
         final Invocation invocation = new Invocation(this, method, args);
-        allInvocations.add(invocation);
+        invocations.add(invocation);
 
         MethodBehavior methodBehavior = defaultBehavior(method, args);
         final ExpectationImpl expectation = methods.match(method, args, methodBehavior);
@@ -98,7 +100,8 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
         } else if (!flags.isAutoStubbing()
                 && !OBJECT_EQUALS.equals(method)
                 && !OBJECT_HASH_CODE.equals(method)
-                && !OBJECT_TO_STRING.equals(method)) {
+                && !OBJECT_TO_STRING.equals(method)
+                && !OBJECT_FINALIZE.equals(method)) {
             methods.throwUnexpectedInvocationError("unexpected method invocation", method, args);
         }
 
@@ -125,15 +128,22 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
     }
 
     public void verify() {
-        methods.verify(allInvocations);
+        methods.verify(invocations);
     }
 
     public Throwable getWhereInstantiated() {
         return whereInstantiated;
     }
 
-    public Check<T> check() {
-        return new CheckImpl(this, allInvocations);
+    Check<T> check() {
+        return new CheckImpl(this, invocations);
     }
 
+    String getName() {
+        return name;
+    }
+
+    List<Invocation> getInvocations() {
+        return invocations;
+    }
 }

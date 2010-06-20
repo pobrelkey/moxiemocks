@@ -63,8 +63,8 @@ public enum MoxieOptions implements MoxieFlags {
      * Calls to this mock that do not fulfill any previously specified expectation will raise an error.
      * </p>
      * <p>
-     * Note that {@link Object#hashCode() hashCode()}, {@link Object#equals(Object) equals()}
-     * and {@link Object#toString() toString()} will not raise errors on <code>PRESCRIPTIVE</code> mocks/spies
+     * Note that {@link Object#hashCode() hashCode()}, {@link Object#equals(Object) equals()}, {@link Object#toString() toString()}
+     * and {@link Object#finalize() finalize()} will not raise errors on <code>PRESCRIPTIVE</code> mocks/spies
      * unless a {@link Expectation#never() never()} expectation is explicitly set for those methods.  
      * </p>
      */

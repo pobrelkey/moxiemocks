@@ -90,9 +90,12 @@ class MoxieImpl implements MoxieMethods {
 
     public void checkNothingElseHappened(Object... mockObjects) {
         ArrayList<Invocation> uncheckedInvocations = new ArrayList<Invocation>();
-        for (Invocation invocation : invocations) {
-            if (invocation.getCheckSatisfied() == null) {
-                uncheckedInvocations.add(invocation);
+        for (Object mockProxy : mocksFor(mockObjects)) {
+            Interception interception = getInterceptionFromProxy(mockProxy);
+            for (Invocation invocation : (List<Invocation>) interception.getInvocations()) {
+                if (invocation.getCheckSatisfied() == null) {
+                    uncheckedInvocations.add(invocation);
+                }
             }
         }
         if (!uncheckedInvocations.isEmpty()) {
@@ -102,9 +105,12 @@ class MoxieImpl implements MoxieMethods {
 
     public void checkNothingElseUnexpectedHappened(Object... mockObjects) {
         ArrayList<Invocation> uncheckedInvocations = new ArrayList<Invocation>();
-        for (Invocation invocation : invocations) {
-            if (invocation.getCheckSatisfied() == null && invocation.getExpectationSatisfied() == null) {
-                uncheckedInvocations.add(invocation);
+        for (Object mockProxy : mocksFor(mockObjects)) {
+            Interception interception = getInterceptionFromProxy(mockProxy);
+            for (Invocation invocation : (List<Invocation>) interception.getInvocations()) {
+                if (invocation.getCheckSatisfied() == null && invocation.getExpectationSatisfied() == null) {
+                    uncheckedInvocations.add(invocation);
+                }
             }
         }
         if (!uncheckedInvocations.isEmpty()) {
@@ -129,20 +135,20 @@ class MoxieImpl implements MoxieMethods {
     }
 
     public void verify(Object... mockObjects) {
-        for (Object mockProxy : mocksFor(mockObjects)) {
+        for (Object mockProxy : mocksAndGroupsFor(mockObjects)) {
             getVerifiableFromProxy(mockProxy).verify();
             mocksAndGroups.remove(mockProxy);
         }
     }
 
     public void verifySoFar(Object... mockObjects) {
-        for (Object mockProxy : mocksFor(mockObjects)) {
+        for (Object mockProxy : mocksAndGroupsFor(mockObjects)) {
             getVerifiableFromProxy(mockProxy).verify();
         }
     }
 
     public void verifyAndReset(Object... mockObjects) {
-        for (Object mockProxy : mocksFor(mockObjects)) {
+        for (Object mockProxy : mocksAndGroupsFor(mockObjects)) {
             Verifiable verifiable = getVerifiableFromProxy(mockProxy);
             verifiable.verify();
             verifiable.reset(null);
@@ -150,17 +156,25 @@ class MoxieImpl implements MoxieMethods {
     }
 
     public void reset(Object... mockObjects) {
-        for (Object mockProxy : mocksFor(mockObjects)) {
+        for (Object mockProxy : mocksAndGroupsFor(mockObjects)) {
             Verifiable verifiable = getVerifiableFromProxy(mockProxy);
             verifiable.reset(null);
         }
     }
 
     public void deactivate(Object... mockObjects) {
-        for (Object mockProxy : mocksFor(mockObjects)) {
+        for (Object mockProxy : mocksAndGroupsFor(mockObjects)) {
             Verifiable verifiable = getVerifiableFromProxy(mockProxy);
             verifiable.reset(MoxieOptions.PRESCRIPTIVE);
             mocksAndGroups.remove(mockProxy);
+        }
+    }
+
+    private Collection mocksAndGroupsFor(Object... mockObjects) {
+        if (mockObjects != null && mockObjects.length > 0) {
+            return Arrays.asList(mockObjects);
+        } else {
+            return new ArrayList(mocksAndGroups.keySet());
         }
     }
 
@@ -168,7 +182,13 @@ class MoxieImpl implements MoxieMethods {
         if (mockObjects != null && mockObjects.length > 0) {
             return Arrays.asList(mockObjects);
         } else {
-            return new ArrayList(mocksAndGroups.keySet());
+            ArrayList result = new ArrayList();
+            for (Map.Entry<Object, Verifiable> entry : mocksAndGroups.entrySet()) {
+                if (entry.getValue() instanceof Interception) {
+                    result.add(entry.getKey());
+                }
+            }
+            return result;
         }
     }
 
