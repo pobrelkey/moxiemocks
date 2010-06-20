@@ -93,6 +93,8 @@ class Invocation implements SelfDescribing {
     }
 
     public void describeTo(Description description) {
+        description.appendText(interception.getName());
+        description.appendText(".");
         description.appendText(method.getName());
         if (arguments != null) {
             description.appendValueList("(", ", ", ")", arguments);
@@ -103,7 +105,7 @@ class Invocation implements SelfDescribing {
             description.appendText(", threw " + exceptionThrown);
         } else if (valueReturned != null) {
             description.appendText(", returned " + valueReturned);
-        } else {
+        } else if (!method.getReturnType().equals(Void.TYPE)) {
             description.appendText(", returned null");
         }
     }
