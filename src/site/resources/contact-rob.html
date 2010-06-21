@@ -1,0 +1,51 @@
+<html><head>
+<title>Rob's contact info</title>
+<meta name="robots" content="noindex,nofollow" />
+<script language="javascript" type="text/javascript">
+
+// fighting off the spambots with ASCII art and ultra-secure base64-plus-XOR encryption.
+var ciphertext="6aWnsPWmoay5sOj3s7q7ofimvK+w7/WmuLS5ubCn9+v19fX19fX19fX19fX19fWKivX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fWK9fX19fX1ioqKioqK9fX19fX19fX19fX19YqKior19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX16ben9frr9fX1ioqKioqKioqK9fX69fqK9fX19fX19fWKioqK9YqKivX1ioqKivX1ivX1ior9ivyKivX1+vWKioqK9YmKioqK9fWKior19fr1+vX6ioqKior19YqK9fWKivWKioqK9fWKioqKioqKior1ium3p/X66/X1+vWKior69YqK9Yn69YqK9YmKioqKior69YqK9bWKivWJ+vWKivWJqfWp+or69fr1ivWJ+vX69YqK9bX69YqK9Yn69Yr1ifr1+vX6+or69Yr1ifr1+vX69fr69YqK9Yn69YqKivr1ior1tfrpt6f1+uv1+vX69fX69fqK+vX69fqK+vX6ioqKior69fr1+vX69fr1+vX6ivr1+vOyoe719fO5oe769fr19YqK+vX69fqK+vX69fqK+vX69fWKivr1+vX587mh7vX69fWKivr1+or69fr69fqK+vX69fr19fr1+or69fr16ben9frr+or69fX1iYqKior6ivuKior69fX19fX6ivr1+or69fqK+omKioqK+or6qYr6ivqJioqK+on1iYqK+Yr69fuKior6iYqKivqK+or6qYqpiYqKivqJior59f2K/IqKior6ivr19fWJior59fr19em3p/X66/X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX1iYqKior6ivr19fX19fX19fX19fX19fX19fX19fX6ioqKivr19fX19fX19fX19fX6ioqKivr19fXpt6f1+uvp+qWnsOv1";
+
+var base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+var base64_inverse = null;
+var encrypt_key = 213;
+
+function decrypt(encoded_string) {
+    if (base64_inverse == null) {
+        base64_inverse = [];
+        for (var x = 0; x < base64_chars.length; x++) {
+            base64_inverse[base64_chars.charCodeAt(x)] = x & 63;
+        }
+    }
+
+    var result = new Array(Math.floor(encoded_string.length / 4) * 3);
+    var dp = 0;
+    for (var i = 0; i < encoded_string.length; i += 4) {
+        var bits = 0;
+        for (var j = 0; j < 4; j++) {
+            bits <<= 6;
+            if (i + j < encoded_string.length) {
+                bits |= base64_inverse[encoded_string.charCodeAt(i+j)]
+            }
+        }
+        result[dp++] = String.fromCharCode((bits >> 16) ^ encrypt_key);
+        if (i + 1 < encoded_string.length && encoded_string.charAt(i+1) != '=') {
+            result[dp++] = String.fromCharCode(((bits >> 8) & 255) ^ encrypt_key);
+        }
+        if (i + 2 < encoded_string.length && encoded_string.charAt(i+2) != '=') {
+            result[dp++] = String.fromCharCode((bits & 255) ^ encrypt_key);
+        }
+    }
+    return result.join("");
+}
+
+</script>
+
+</head>
+<body onLoad="document.getElementById('address').innerHTML = decrypt(ciphertext)">
+
+<p>For anything related to Moxie, please contact me on the following address, and I'll get back to you as time allows.  Please don't ask questions answered by the documentation; I'll just ignore you.</p>
+
+<p id="address">(you'll need to turn on javascript to see my address)</p>
+
+</body></html>
