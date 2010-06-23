@@ -15,7 +15,7 @@
     <groupId>org.moxiemocks</groupId>
     <artifactId>moxie</artifactId>
     <packaging>jar</packaging>
-    <version>0.1</version>
+    <version>0.2-SNAPSHOT</version>
     <name>Moxie</name>
     <description>Moxie: a wicked good Java mocking library</description>
     <url>http://moxiemocks.org/</url>
