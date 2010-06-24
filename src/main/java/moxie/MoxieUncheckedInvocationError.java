@@ -35,7 +35,7 @@ public class MoxieUncheckedInvocationError extends Error {
     private static String createExceptionMessage(String message, ArrayList<Invocation> uncheckedInvocations) {
         SimpleDescription desc = new SimpleDescription();
         desc.appendText(message + "\n");
-        MoxieFailedVerificationError.describeIfNonEmpty(desc, "Invoked:\n", uncheckedInvocations);
+        MoxieUtils.describeIfNonEmpty(desc, "Invoked:\n", uncheckedInvocations);
         return desc.toString();
     }
 }
