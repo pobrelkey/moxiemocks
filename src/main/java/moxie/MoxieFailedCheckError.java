@@ -44,7 +44,7 @@ public class MoxieFailedCheckError extends Error {
         cardinality.describeTo(desc);
         desc.appendText(": ");
         desc.appendText(checkedMethod.getName());
-        desc.appendValueList("(", ", ", ")", argMatchers);
+        desc.appendList("(", ", ", ")", argMatchers);
         if (throwableMatcher != null) {
             desc.appendText(", throws ");
             throwableMatcher.describeTo(desc);
