@@ -44,7 +44,7 @@ public class MoxieUnexpectedInvocationError extends Error {
             desc.appendValueList("(", ", ", ")", invocationArgs);
             desc.appendText("\n");
         }
-        MoxieFailedVerificationError.describeExpectations(desc, unorderedExpectations, orderedExpectations);
+        MoxieUtils.describeExpectations(desc, unorderedExpectations, orderedExpectations);
         return desc.toString();
     }
 }

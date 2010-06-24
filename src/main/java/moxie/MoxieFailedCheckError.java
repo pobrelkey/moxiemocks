@@ -25,7 +25,6 @@ package moxie;
 import org.hamcrest.Matcher;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,7 +55,7 @@ public class MoxieFailedCheckError extends Error {
         desc.appendText("\n");
 
         desc.appendText("Invoked:\n");
-        MoxieFailedVerificationError.describeIfNonEmpty(desc, "Invoked:\n", invocations);
+        MoxieUtils.describeIfNonEmpty(desc, "Invoked:\n", invocations);
         return desc.toString();
     }
 }

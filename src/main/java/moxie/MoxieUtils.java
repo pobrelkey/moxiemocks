@@ -23,6 +23,7 @@
 package moxie;
 
 import net.sf.cglib.proxy.Enhancer;
+import org.hamcrest.SelfDescribing;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
@@ -30,7 +31,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 abstract class MoxieUtils {
 
@@ -212,6 +215,18 @@ abstract class MoxieUtils {
             dest.add((T) Array.get(srcArray, i));
         }
         return dest;
+    }
+
+    static void describeExpectations(SimpleDescription desc, Set<ExpectationImpl> unorderedExpectations, List<ExpectationImpl> orderedExpectations) {
+        describeIfNonEmpty(desc, "Expected (in any order):\n", unorderedExpectations);
+        describeIfNonEmpty(desc, "Expected (in order):\n", orderedExpectations);
+    }
+
+    static <T extends SelfDescribing> void describeIfNonEmpty(SimpleDescription desc, String message, Collection<T> selfDescribing) {
+        if (selfDescribing != null && !selfDescribing.isEmpty()) {
+            desc.appendText(message);
+            desc.appendList("    ", "\n    ", "\n", new ArrayList<T>(selfDescribing));
+        }
     }
 
     static interface Factory<F> {
