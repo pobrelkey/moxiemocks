@@ -216,12 +216,13 @@ class MoxieImpl implements MoxieMethods {
         }
     }
 
-    public void autoMock(Object... testComponents) {
+    public Object[] autoMock(Object... testComponents) {
         for (Object testInstance : testComponents) {
             if (valuesOverwrittenByAutoMock.containsKey(testInstance)) {
                 throw new IllegalArgumentException("object has already been autoMock()'ed: " + testInstance);
             }
         }
+        ArrayList result = new ArrayList();
         for (Object testInstance : testComponents) {
             Map<String, Object> oldValues = new HashMap<String, Object>();
             valuesOverwrittenByAutoMock.put(testInstance, oldValues);
@@ -250,6 +251,7 @@ class MoxieImpl implements MoxieMethods {
                             }
                             oldValues.put(f.getName(), f.get(testInstance));
                             f.set(testInstance, testObject);
+                            result.add(testObject);
                         } catch (Exception ex) {
                             throw new MoxieUnexpectedError("Reflection error when auto-mocking field " + f.getName() + " on object " + testInstance, ex);
                         }
@@ -257,6 +259,7 @@ class MoxieImpl implements MoxieMethods {
                 }
             }
         }
+        return result.toArray(new Object[result.size()]);
     }
 
     public void autoUnMock(Object... testComponents) {

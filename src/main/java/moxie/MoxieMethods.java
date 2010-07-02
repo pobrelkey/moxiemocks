@@ -59,7 +59,7 @@ interface MoxieMethods {
 
     void reportMatcher(Matcher matcher, Class expectedType);
 
-    void autoMock(Object... testComponents);
+    Object[] autoMock(Object... testComponents);
 
     void autoUnMock(Object... testComponents);
 

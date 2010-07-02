@@ -34,27 +34,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@RunWith(MoxieRunner.class)
 public class ExpectationTest {
 
-    @Mock
-    private List mock;
-
-    @Spy
-    private List<String> spy = new ArrayList<String>(Arrays.asList("zero", "one", "two", "three", "four"));
-
-    private Group group;
+    private static final List<String> STRINGS = Arrays.asList("zero", "one", "two", "three", "four");
 
     @Test
     public void never_happyPath() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).never().will().add(Moxie.anything());
         Moxie.stub(mock).on().size();
 
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test(expected = MoxieUnexpectedInvocationError.class)
     public void never_sadPath() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).never().will().add(Moxie.anything());
         mock.add("something");
         Assert.fail("should have failed fast");
@@ -62,38 +58,49 @@ public class ExpectationTest {
 
     @Test
     public void anyTimes_happyPath1() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).anyTimes().on().size();
         // and then don't call size()
+        Moxie.verify(mock);
     }
 
     @Test
     public void anyTimes_happyPath2() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).anyTimes().on().size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test
     public void anyTimes_happyPath3() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).anyTimes().on().size();
         mock.size();
         mock.size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test
     public void atMostOnce_happyPath1() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atMostOnce().on().size();
         // and then don't call size()
+        Moxie.verify(mock);
     }
 
     @Test
     public void atMostOnce_happyPath2() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atMostOnce().on().size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test(expected = MoxieUnexpectedInvocationError.class)
     public void atMostOnce_sadPath() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atMostOnce().on().size();
         mock.size();
         mock.size();
@@ -102,38 +109,49 @@ public class ExpectationTest {
 
     @Test(expected = MoxieFailedVerificationError.class)
     public void atLeastOnce_sadPath() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atLeastOnce().on().size();
         // and then don't call size()
+        Moxie.verify(mock);
     }
 
     @Test
     public void atLeastOnce_happyPath1() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atLeastOnce().on().size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test
     public void atLeastOnce_happyPath2() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atLeastOnce().on().size();
         mock.size();
         mock.size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test(expected = MoxieFailedVerificationError.class)
     public void once_sadPath1() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).once().on().size();
         // and then don't call size()
+        Moxie.verify(mock);
     }
 
     @Test
     public void once_happyPath() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atLeastOnce().on().size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test(expected = MoxieUnexpectedInvocationError.class)
     public void once_sadPath2() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).once().on().size();
         mock.size();
         mock.size();
@@ -142,61 +160,77 @@ public class ExpectationTest {
 
     @Test(expected = MoxieFailedVerificationError.class)
     public void atLeast_sadPath1() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atLeast(3).on().size();
         // and then don't call size()
+        Moxie.verify(mock);
     }
 
     @Test(expected = MoxieFailedVerificationError.class)
     public void atLeast_sadPath2() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atLeast(3).on().size();
         mock.size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test
     public void atLeast_happyPath1() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atLeast(3).on().size();
         mock.size();
         mock.size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test
     public void atLeast_happyPath2() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atLeast(3).on().size();
         mock.size();
         mock.size();
         mock.size();
         mock.size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void atLeast_sadPath3() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atLeast(-1).on().size();
     }
 
     @Test
     public void atMost_happyPath1() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atMost(2).on().size();
         // and then don't call size()
+        Moxie.verify(mock);
     }
 
     @Test
     public void atMost_happyPath2() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atMost(2).on().size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test
     public void atMost_happyPath3() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atMost(2).on().size();
         mock.size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test(expected = MoxieUnexpectedInvocationError.class)
     public void atMost_sadPath1() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atMost(2).on().size();
         mock.size();
         mock.size();
@@ -206,30 +240,38 @@ public class ExpectationTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void atMost_sadPath2() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).atMost(-1).on().size();
     }
 
     @Test(expected = MoxieFailedVerificationError.class)
     public void times_sadPath1() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).times(2).on().size();
         // and then don't call size()
+        Moxie.verify(mock);
     }
 
     @Test(expected = MoxieFailedVerificationError.class)
     public void times_sadPath2() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).times(2).on().size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test
     public void times_happyPath() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).times(2).on().size();
         mock.size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test(expected = MoxieUnexpectedInvocationError.class)
     public void times_sadPath3() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).times(2).on().size();
         mock.size();
         mock.size();
@@ -239,33 +281,42 @@ public class ExpectationTest {
 
     @Test(expected = MoxieFailedVerificationError.class)
     public void times2_sadPath1() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).times(2,3).on().size();
         // and then don't call size()
+        Moxie.verify(mock);
     }
 
     @Test(expected = MoxieFailedVerificationError.class)
     public void times2_sadPath2() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).times(2,3).on().size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test
     public void times2_happyPath1() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).times(2,3).on().size();
         mock.size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test
     public void times2_happyPath2() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).times(2,3).on().size();
         mock.size();
         mock.size();
         mock.size();
+        Moxie.verify(mock);
     }
 
     @Test(expected = MoxieUnexpectedInvocationError.class)
     public void times2_sadPath3() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).times(2,3).on().size();
         mock.size();
         mock.size();
@@ -276,55 +327,62 @@ public class ExpectationTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void times2_sadPath4() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).times(3,2).on().size();
     }
 
     @Test
     public void andReturn() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).andReturn("san").when().get(3);
         Assert.assertEquals("san", mock.get(3));
+        Moxie.verify(mock);
     }
 
     private static class MostUnusualError extends Error {}
 
     @Test(expected=MostUnusualError.class)
     public void andThrow() {
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).andThrow(new MostUnusualError()).when().get(5);
         mock.get(5);
+        Assert.fail("should have thrown error");
     }
 
     @Test
     public void andVerifyReturn_happyPath() {
+        List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
         Moxie.expect(spy).andVerifyReturn("two").when().get(2);
         Assert.assertEquals("two", spy.get(2));
+        Moxie.verify(spy);
     }
 
     @Test(expected = MoxieUnexpectedInvocationError.class)
     public void andVerifyReturn_sadPath() {
+        List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
         Moxie.expect(spy).andVerifyReturn("dwei").when().get(2);
         spy.get(2);
         Assert.fail("should have failed fast");
     }
 
-    @Test
+    @Test(expected = IndexOutOfBoundsException.class)
     public void andVerifyThrow_happyPath() {
+        List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
         Moxie.expect(spy).andVerifyThrow(Moxie.isA(IndexOutOfBoundsException.class)).when().get(-1);
-        try {
-            spy.get(-1);
-            Assert.fail("where's the IndexOutOfBoundsException?");
-        } catch (IndexOutOfBoundsException e) {
-            // expected
-        }
+        spy.get(-1);
+        Assert.fail("where's the IndexOutOfBoundsException?");
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
     public void andVerifyThrow_sadPath1() {
+        List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
         Moxie.expect(spy).andVerifyThrow(Moxie.isA(IndexOutOfBoundsException.class)).when().get(2);
         Assert.assertEquals("two", spy.get(2));
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
     public void andVerifyThrow_sadPath2() {
+        List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
         Moxie.expect(spy).andVerifyThrow(Moxie.isA(MostUnusualError.class)).when().get(-1);
         spy.get(1);
         Assert.fail("should have failed fast");
@@ -332,15 +390,19 @@ public class ExpectationTest {
 
     @Test
     public void andDelegateTo_happyPath1() {
+        List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
         Moxie.expect(spy).andDelegateTo(new ArrayList<String>(Arrays.asList("nul", "un", "deux"))).when().get(1);
         Assert.assertEquals("un", spy.get(1));
+        Moxie.verify(spy);
     }
 
     @Test
     @Ignore(value = "TODO: be smart about interfaces")
     public void andDelegateTo_happyPath2() {
+        List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
         Moxie.expect(spy).andDelegateTo(Arrays.asList("nul", "un", "deux")).when().get(1);
         Assert.assertEquals("un", spy.get(1));
+        Moxie.verify(spy);
     }
 
     @Test
@@ -350,12 +412,17 @@ public class ExpectationTest {
                 return "due";
             }
         };
+        List mock = Moxie.mock(List.class);
         Moxie.expect(mock).andHandleWith(italianHandler).when().get(2);
         Assert.assertEquals("due", mock.get(2));
+        Moxie.verify(mock);
     }
 
     @Test
     public void groupedExpectations_happyPath1() {
+        List mock = Moxie.mock(List.class);
+        List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
+        Group group = Moxie.group();
         Moxie.expect(spy).inGroup(group).on().get(0);
         Moxie.expect(mock).inGroup(group).andReturn(true).when().add("zero");
         Moxie.expect(spy).inGroup(group).on().get(1);
@@ -366,10 +433,15 @@ public class ExpectationTest {
         mock.add(spy.get(0));
         mock.add(spy.get(1));
         mock.add(spy.get(2));
+
+        Moxie.verify(mock, spy, group);
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
     public void groupedExpectations_sadPath1() {
+        List mock = Moxie.mock(List.class);
+        List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
+        Group group = Moxie.group();
         Moxie.expect(spy).inGroup(group).on().get(0);
         Moxie.expect(mock).inGroup(group).andReturn(true).when().add("zero");
         Moxie.expect(spy).inGroup(group).on().get(1);
@@ -384,6 +456,9 @@ public class ExpectationTest {
 
     @Test
     public void groupedExpectations_happyPath2() {
+        List mock = Moxie.mock(List.class);
+        List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
+        Group group = Moxie.group();
         group.willBeCalled().times(3);
         Moxie.expect(spy).inGroup(group).on().get(0);
         Moxie.expect(mock).inGroup(group).andReturn(true).when().add("zero");
@@ -401,10 +476,15 @@ public class ExpectationTest {
         mock.add(spy.get(0));
         mock.add(spy.get(1));
         mock.add(spy.get(2));
+
+        Moxie.verify(mock, spy, group);
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
     public void groupedExpectations_sadPath2() {
+        List mock = Moxie.mock(List.class);
+        List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
+        Group group = Moxie.group();
         group.willBeCalled().times(3);
         Moxie.expect(spy).inGroup(group).on().get(0);
         Moxie.expect(mock).inGroup(group).andReturn(true).when().add("zero");
@@ -426,6 +506,9 @@ public class ExpectationTest {
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
     public void groupedExpectations_sadPath3() {
+        List mock = Moxie.mock(List.class);
+        List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
+        Group group = Moxie.group();
         group.willBeCalled().times(3);
         Moxie.expect(spy).inGroup(group).on().get(0);
         Moxie.expect(mock).inGroup(group).andReturn(true).when().add("zero");
@@ -450,6 +533,9 @@ public class ExpectationTest {
 
     @Test(expected=MoxieFailedVerificationError.class)
     public void groupedExpectations_sadPath4() {
+        List mock = Moxie.mock(List.class);
+        List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
+        Group group = Moxie.group();
         group.willBeCalled().times(3);
         Moxie.expect(spy).inGroup(group).on().get(0);
         Moxie.expect(mock).inGroup(group).andReturn(true).when().add("zero");
@@ -464,6 +550,8 @@ public class ExpectationTest {
         mock.add(spy.get(0));
         mock.add(spy.get(1));
         mock.add(spy.get(2));
+
+        Moxie.verify(mock, spy, group);
     }
 
 }

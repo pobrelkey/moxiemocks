@@ -160,6 +160,8 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
                 }
                 ExpectationImpl.this.method = method;
                 argMatchers = MatcherSyntax.methodCall(method, params);
+                interception.addExpectation(ExpectationImpl.this);
+
                 return MoxieUtils.defaultValue(method.getReturnType());
             }
         });

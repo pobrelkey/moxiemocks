@@ -52,7 +52,7 @@ import java.util.LinkedList;
  * That's all.
  * </p>
  * <p>
- * (And if you <code>@RunWith(MoxieRunner.class)</code> under <a href="http://junit.sourceforge.net/">JUnit 4</a>, you can even leave out the first and last bits!)
+ * (And if you use {@link MoxieRule} under <a href="http://junit.sourceforge.net/">JUnit 4</a>, you can even leave out the first and last bits!)
  * </p>
  * <p>
  * Moxie's syntax is refactoring-safe, and 100% inner class free.
@@ -719,9 +719,10 @@ public abstract class Moxie extends MoxieMatchers {
      * </ul> 
      *
      * @param testComponents one or more objects to be auto-mocked - usually just one test instance
+     * @return an array containing all mock/spy objects created by this operation
      */
-    static public void autoMock(Object... testComponents) {
-        instance.autoMock(testComponents);
+    static public Object[] autoMock(Object... testComponents) {
+       return instance.autoMock(testComponents);
     }
 
     /**
