@@ -77,8 +77,10 @@ def generate_test(result, matcher_name, param_type, call_name, happy, expect_val
 
 	result << (happy ? "\t@Test\n" : "\t@Test(expected=MoxieUnexpectedInvocationError.class)\n")
 	result << "\tpublic void #{test_name}() {\n"
+	result << "\t\tTestInterface mock = Moxie.mock(TestInterface.class);\n"
 	result << "\t\tMoxie.expect(mock).will().#{call_name}(Moxie.#{matcher_name}(#{expect_values}));\n"
 	result << "\t\tmock.#{call_name}(#{actual_values});\n"
+	result << "\t\tMoxie.verify(mock);\n" if happy
 	result << "\t}\n\n";
 end
 

@@ -35,12 +35,12 @@ import java.util.List;
 
 @RunWith(MoxieRunner.class)
 public class MoxieRunnerTest {
+
     @Mock
     private TestInterface mock;
 
     @Spy
     private List<String> strings = new ArrayList<String>();
-
 
     @Test
     public void testMagicStuff() {

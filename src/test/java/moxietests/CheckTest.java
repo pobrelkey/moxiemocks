@@ -22,18 +22,28 @@
 
 package moxietests;
 
-import moxie.*;
+import moxie.Group;
+import moxie.GroupOptions;
+import moxie.Mock;
+import moxie.Moxie;
+import moxie.MoxieFailedCheckError;
+import moxie.MoxieOptions;
+import moxie.MoxieRule;
+import moxie.MoxieUncheckedInvocationError;
+import moxie.Spy;
+import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
 
-@RunWith(MoxieRunner.class)
 public class CheckTest {
 
+    @Rule
+    public MoxieRule moxie = new MoxieRule();
+    
     @Mock(options={MoxieOptions.PERMISSIVE})
     private List<String> mock;
 

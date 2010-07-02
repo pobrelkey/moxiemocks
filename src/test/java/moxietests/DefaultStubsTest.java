@@ -23,13 +23,15 @@
 package moxietests;
 
 import moxie.Mock;
-import moxie.MoxieRunner;
+import moxie.MoxieRule;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(MoxieRunner.class)
 public class DefaultStubsTest {
+
+    @Rule
+    public MoxieRule moxie = new MoxieRule();
 
     @Mock
     private Object fuzzyBunny;

@@ -122,9 +122,7 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
     }
 
     Expectation<T> expect() {
-        final ExpectationImpl result = new ExpectationImpl(this);
-        methods.add(result);
-        return result;
+        return new ExpectationImpl(this);
     }
 
     public void verify() {
@@ -145,5 +143,9 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
 
     List<Invocation> getInvocations() {
         return invocations;
+    }
+
+    void addExpectation(ExpectationImpl<T> expectation) {
+        methods.add(expectation);
     }
 }

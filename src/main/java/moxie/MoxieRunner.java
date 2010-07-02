@@ -22,9 +22,11 @@
 
 package moxie;
 
+import org.junit.rules.MethodRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.Statement;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -32,10 +34,10 @@ import org.junit.runners.model.Statement;
  * </p>
  * <p>
  * Use <code>MoxieRunner</code> by adding the <code>@RunWith(MoxieRunner.class)</code> annotation to your test classes.
- * <code>MoxieRunner</code> will use {@link Moxie#autoMock(Object...) Moxie.autoMock()} before each test method
- * to populate annotated fields on your test instance with mock/spy objects.  After the method completes, it will
- * {@link Moxie#verify(Object...) verify} your mocks if the test was otherwise successful, then
- * {@link Moxie#autoUnMock(Object...) Moxie.autoUnmock()} your test instance.
+ * </p>
+ * <p>
+ * Under the covers, just tacks a {@link MoxieRule} onto your test instance; provided mainly for backwards compatibility,
+ * and to mollify people who think JUnit 4.7 {@ling org.junit.Rule Rule}s are ugly.
  * </p>
  */
 public class MoxieRunner extends BlockJUnit4ClassRunner {
@@ -44,22 +46,10 @@ public class MoxieRunner extends BlockJUnit4ClassRunner {
         super(testClass);
     }
 
-    protected Statement methodInvoker(final FrameworkMethod frameworkMethod, final Object test) {
-        final Statement invoker = MoxieRunner.super.methodInvoker(frameworkMethod, test);
-        return new Statement() {
-            public void evaluate() throws Throwable {
-                Moxie.deactivate();
-                Moxie.getMatcherReports().clear();
-                Moxie.autoMock(test);
-                try {
-                    invoker.evaluate();
-                    Moxie.verify();
-                } finally {
-                    Moxie.autoUnMock(test);
-                    Moxie.deactivate();
-                    Moxie.getMatcherReports().clear();
-                }
-            }
-        };
+    @Override
+    protected List<MethodRule> rules(Object test) {
+        ArrayList<MethodRule> result = new ArrayList<MethodRule>(super.rules(test));
+        result.add(new MoxieRule());
+        return result;
     }
 }
