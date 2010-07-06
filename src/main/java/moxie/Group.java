@@ -30,7 +30,7 @@ package moxie;
  * <p/>
  * <h2>Creation</h2>
  * <p>
- * You can create a <code>Group</code> by calling {@link Moxie#group()}.
+ * You can create a <code>Group</code> by calling {@link MoxieControl#group(MoxieOptions...) MoxieControl.group()}.
  * </p>
  * <p>
  * By passing {@link MoxieOptions options} to this method, you can create <code>Group</code>s of two different types:

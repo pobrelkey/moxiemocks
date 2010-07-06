@@ -1,19 +1,22 @@
-<html><body>
+<html>
+<body>
 
 <p>
-Moxie is a new Java library for creating <a href="http://www.mockobjects.com/">mock objects</a> in unit tests.
-It aims to be the "nicest" and easiest-to-use mocking library around, with a consistent syntax that rankles less
-than other mocking libraries currently available.
+    Moxie is a new Java library for creating <a href="http://www.mockobjects.com/">mock objects</a> in unit tests.
+    It aims to be the "nicest" and easiest-to-use mocking library around, with a consistent syntax that rankles less
+    than other mocking libraries currently available.
 </p>
+
 <p>
-This page gives an overview of Moxie; for more information, you may also be interested in Moxie's
-<a href="http://code.google.com/p/moxiemocks">Google Code page</a> and
-<a href="http://moxiemocks.org/mvn/">Maven-generated project documentation</a>.)
+    This page gives an overview of Moxie; for more information, you may also be interested in Moxie's
+    <a href="http://code.google.com/p/moxiemocks">Google Code page</a> and
+    <a href="http://moxiemocks.org/mvn/">Maven-generated project documentation</a>.)
 </p>
 
 <h2>Installation</h2>
+
 <p>
-Grab Moxie from our Google Code <a href="">download page</a>, or use Maven:
+    Grab Moxie from our Google Code <a href="">download page</a>, or use Maven:
 </p>
 <blockquote><pre>
 &lt;dependency&gt;
@@ -22,33 +25,40 @@ Grab Moxie from our Google Code <a href="">download page</a>, or use Maven:
     &lt;version&gt;0.3&lt;/version&gt;
     &lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;
-</pre></blockquote>
+</pre>
+</blockquote>
 <p>
-Note that if you're manually installing Moxie, you may also want the following jars:
+    Note that if you're manually installing Moxie, you may also want the following jars:
 <ul>
-<li><a href="http://code.google.com/p/hamcrest/">Hamcrest</a> 1.1 or later (note that the
-<a href="http://junit.sourceforge.net/">JUnit</a> 4 jar contains the core Hamcrest classes, which will enable all
-functionality except some of the text matchers on {@link moxie.MoxieMatchers MoxieMatchers})</li>
-<li><a href="http://cglib.sourceforge.net/">cglib</a> 2.1_3 or later (only if you want to mock concrete classes
-or use spies - not needed for interface mocks)</li>
+    <li><a href="http://code.google.com/p/hamcrest/">Hamcrest</a> 1.1 or later (note that the
+        <a href="http://junit.sourceforge.net/">JUnit</a> 4 jar contains the core Hamcrest classes, which will enable
+        all
+        functionality except some of the text matchers on {@link moxie.MoxieMatchers MoxieMatchers})
+    </li>
+    <li><a href="http://cglib.sourceforge.net/">cglib</a> 2.1_3 or later (only if you want to mock concrete classes
+        or use spies - not needed for interface mocks)
+    </li>
 </ul>
 </p>
 
 <h2>Examples</h2>
+
 <p>
-Moxie has extensive javadoc which covers every public method - the following examples are meant to be a quick
-introductory sketch.
+    Moxie has extensive javadoc which covers every public method - the following examples are meant to be a quick
+    introductory sketch.
 </p>
+
 <p>
-Simple example: assume we're testing a <code>Rot13List</code> - a hypothetical class which wraps a
-<code>List&lt;String&gt;</code>. It encodes item values with the
-<a href="http://en.wikipedia.org/wiki/ROT13">ROT13 cipher</a> when writing them to the underlying list,
-and decodes them on reads.
+    Simple example: assume we're testing a <code>Rot13List</code> - a hypothetical class which wraps a
+    <code>List&lt;String&gt;</code>. It encodes item values with the
+    <a href="http://en.wikipedia.org/wiki/ROT13">ROT13 cipher</a> when writing them to the underlying list,
+    and decodes them on reads.
 </p>
+
 <p>
-To test <code>Rot13List</code>, we'll want to create and inject a mock <code>List</code> to stand in for the
-underlying list. (Note that so long as CGLib and ASM are on your classpath, you can mock classes as well as
-interfaces - though you can't mock <code>final</code> classes or methods.)
+    To test <code>Rot13List</code>, we'll want to create and inject a mock <code>List</code> to stand in for the
+    underlying list. (Note that so long as CGLib and ASM are on your classpath, you can mock classes as well as
+    interfaces - though you can't mock <code>final</code> classes or methods.)
 </p>
 <blockquote><pre>
 List mock = <b>Moxie.mock(List.class);</b>
@@ -56,9 +66,10 @@ List mock = <b>Moxie.mock(List.class);</b>
 Rot13List rot13 = new Rot13List(mock);
 rot13.add("hello world");
 <b>Moxie.verify(mock);</b>
-</pre></blockquote>
+</pre>
+</blockquote>
 <p>
-You can have mocked methods return values or throw exceptions.
+    You can have mocked methods return values or throw exceptions.
 </p>
 <blockquote><pre>
 List mock = Moxie.mock(List.class);
@@ -73,9 +84,10 @@ try {
     // expected
 }
 Moxie.verify(mock);
-</pre></blockquote>
+</pre>
+</blockquote>
 <p>
-Here we check that a method will be called a certain number of times.
+    Here we check that a method will be called a certain number of times.
 </p>
 <blockquote><pre>
 List mock = Moxie.mock(List.class);
@@ -85,13 +97,16 @@ for (int i = 0; i < 5; i++) {
     rot13.add("hello world");
 }
 Moxie.verify(mock);
-</pre></blockquote>
+</pre>
+</blockquote>
 <p>
-Note that you can also specify {@link moxie.Cardinality#atLeast(int) atLeast(x)}, {@link moxie.Cardinality#atMost(int) atMost(x)},
-{@link moxie.Cardinality#times(int,int) times(a,b)} (between a and b times), etc.
+    Note that you can also specify {@link moxie.Cardinality#atLeast(int) atLeast(x)}, {@link
+    moxie.Cardinality#atMost(int) atMost(x)},
+    {@link moxie.Cardinality#times(int,int) times(a,b)} (between a and b times), etc.
 </p>
+
 <p>
-As in other mocking libraries, Moxie can perform flexible matching on parameters to mocked calls.
+    As in other mocking libraries, Moxie can perform flexible matching on parameters to mocked calls.
 </p>
 <blockquote><pre>
 List mock = Moxie.mock(List.class);
@@ -101,14 +116,17 @@ rot13.add("hello world");
 rot13.add("hello Cleveland");
 rot13.add("hellojed");
 Moxie.verify(mock);
-</pre></blockquote>
+</pre>
+</blockquote>
 <p>
-Moxie has a range of built-in matcher methods you can use (see {@link moxie.MoxieMatchers MoxieMatchers}), including one that will call
- any Hamcrest matcher (see {@link moxie.MoxieMatchers#argThat() argThat()}).
+    Moxie has a range of built-in matcher methods you can use (see {@link moxie.MoxieMatchers MoxieMatchers}), including
+    one that will call
+    any Hamcrest matcher (see {@link moxie.MoxieMatchers#argThat(org.hamcrest.Matcher) argThat()}).
 </p>
+
 <p>
-By default, Moxie doesn't verify the ordering of methods on individual mocks.  It will do this if you specify
- {@link moxie.MoxieOptions#ORDERED MoxieOptions.ORDERED} when creating the mock:
+    By default, Moxie doesn't verify the ordering of methods on individual mocks. It will do this if you specify
+    {@link moxie.MoxieOptions#ORDERED MoxieOptions.ORDERED} when creating the mock:
 </p>
 <blockquote><pre>
 List mock = Moxie.mock(List.class, <b>MoxieOptions.ORDERED</b>);
@@ -120,9 +138,10 @@ rot13.add("foo");
 rot13.add("bar");
 rot13.add("baz");
 Moxie.verify(mock);
-</pre></blockquote>
+</pre>
+</blockquote>
 <p>
-You can also check call ordering across mocks by using {@link moxie.Group Group}s:
+    You can also check call ordering across mocks by using {@link moxie.Group Group}s:
 </p>
 <blockquote><pre>
 List mockA = Moxie.mock(List.class);
@@ -137,10 +156,11 @@ rot13A.add("foo");
 rot13B.add("bar");
 rot13A.add("baz");
 Moxie.verify(mockA, mockB, <b>group</b>);
-</pre></blockquote>
+</pre>
+</blockquote>
 <p>
-In addition to creating mocks, Moxie also allows you to create spy objects, an expectation-checking wrapper around
-a real object:
+    In addition to creating mocks, Moxie also allows you to create spy objects, an expectation-checking wrapper around
+    a real object:
 </p>
 <blockquote><pre>
 <b>List&lt;String&gt; spy = Moxie.spy(Arrays.asList("mreb", "bar", "gjb"));</b>
@@ -149,9 +169,10 @@ Rot13List rot13 = new Rot13List(spy);
 String result = rot13.get(1);
 assert "one".equals(result);
 Moxie.verify(spy);
-</pre></blockquote>
+</pre>
+</blockquote>
 <p>
-To verify that an object being wrapped by a spy returns/throws a given value, we introduce two new methods:
+    To verify that an object being wrapped by a spy returns/throws a given value, we introduce two new methods:
 </p>
 <blockquote><pre>
 List&lt;String&gt; spy = Moxie.spy(Arrays.asList("mreb", "bar", "gjb"));
@@ -166,13 +187,14 @@ try {
     // expected - thrown by underlying
 }
 Moxie.verify(spy);
-</pre></blockquote>
+</pre>
+</blockquote>
 <p>
-In addition to traditional expectation-driven mocking, Moxie also supports the "state-based testing" approach
-to mocking popularized by <a href="http://www.mockito.org/">Mockito</a>, in which checks are performed against mocks
-after the fact to determine whether the desired methods were called.  Note that when using this approach we need to
-create our mocks using {@link moxie.MoxieOptions#PERMISSIVE MoxieOptions.PERMISSIVE}, so that the mocks won't throw
-an exception when an unexpected method is called.
+    In addition to traditional expectation-driven mocking, Moxie also supports the "state-based testing" approach
+    to mocking popularized by <a href="http://www.mockito.org/">Mockito</a>, in which checks are performed against mocks
+    after the fact to determine whether the desired methods were called. Note that when using this approach we need to
+    create our mocks using {@link moxie.MoxieOptions#PERMISSIVE MoxieOptions.PERMISSIVE}, so that the mocks won't throw
+    an exception when an unexpected method is called.
 </p>
 <blockquote><pre>
 List mock = Moxie.mock(List.class);
@@ -184,12 +206,14 @@ rot13.add("hello world");
 <b>Moxie.check(mock).got().get(1);</b>
 <b>Moxie.check(mock).got().add("uryyb jbeyq");</b>
 <b>Moxie.verifyNothingElseHappened(mock);</b>
-</pre></blockquote>
+</pre>
+</blockquote>
 <p>
-For clarity, the examples here have been presented with explicit setup/verification of mocks.  Under JUnit, you can
-use {@link moxie.MoxieRule MoxieRule} or {@link moxie.MoxieRunner MoxieRunner} to have your mocks automatically populated into fields on your test
-instances, and to automatically verify your mocks at the end of the test; see the documentation for those classes
-for more information.
+    For clarity, the examples here have been presented with explicit setup/verification of mocks. Under JUnit, you can
+    use {@link moxie.MoxieRule MoxieRule} or {@link moxie.MoxieRunner MoxieRunner} to have your mocks automatically
+    populated into fields on your test
+    instances, and to automatically verify your mocks at the end of the test; see the documentation for those classes
+    for more information.
 </p>
 <blockquote><pre>
 &#64;org.junit.Rule
@@ -206,91 +230,125 @@ public void simpleExample() {
     rot13.add("hello world");
     // no need to verify() - MoxieRule handles this after any @After methods
 }
-</pre></blockquote>
+</pre>
+</blockquote>
 
 <h2>Some Notes on Design and Syntax</h2>
+
 <p>
-Moxie was born primarily out of frustration with the syntax of existing mocking libraries, on a long-running
-(four years, 100-plus iterations) project that used no fewer than four different mocking libraries
-(<a href="http://www.jmock.org/jmock1.html">JMock 1</a>, <a href="http://www.jmock.org/">JMock 2</a>,
-<a href="http://easymock.org/">EasyMock</a>, <a href="www.mockito.org">Mockito</a>) in different parts of the code.
-Goals for the syntax and the library were as follows:
+    Moxie was born primarily out of frustration with the syntax of existing mocking libraries, on a long-running
+    (four years, 100-plus iterations) project that used no fewer than four different mocking libraries
+    (<a href="http://www.jmock.org/jmock1.html">JMock 1</a>, <a href="http://www.jmock.org/">JMock 2</a>,
+    <a href="http://easymock.org/">EasyMock</a>, <a href="www.mockito.org">Mockito</a>) in different parts of the code.
+    Goals for the syntax and the library were as follows:
 </p>
 <dl>
-<dt><b>Be refactorable</b></dt>
-<dd><p>Using a modern IDE to rename methods and add/remove/reorder parameters should induce minimal test breakage
-<i>ipso facto</i>.</p></dd>
-<dt><b>Ideally express each expectation as a single Java statement</b></dt>
-<dd><p>JMock 1 did this, but its dated, unrefactorable syntax makes it unsuitable for new projects.  EasyMock
-comes close, but breaks down with an inconsistent, two-statement syntax for non-trivial expectations on
-void methods.</p></dd>
-<dt><b>No anonymous inner classes</b></dt>
-<dd><p>JMock 2's syntax, while powerful and festooned with bells and whistles, is quite verbose; most people's needs
- can be satisfied with a simpler syntax.  Anonymous inner classes also tend to conflict with the previous point.</p></dd>
-<dt><b>Be consistent for <code>void</code> and non-<code>void</code> methods</b></dt>
-<dd><p>Some things must be accomplished differently in EasyMock and Mockito depending on whether the method
-in question returns a value; Moxie aims to accomplish things the same way every time.</p></dd>
-<dt><b>No modal mocks</b></dt>
-<dd><p>
-In other words, mocks should not need to be transitioned from a "setup" state to an "active" state in order
-to be used, as one does in EasyMock using the <code>replay()</code> method.
-</p><p>
-Some people have reported that Moxie's syntax sounds stilted, as the method involved in an expectation appears
-at the very end of the line - after return values, etc. are specified - rather than at the start. Compare
-the following two identical statements:
-</p>
-<blockquote><pre>
+    <dt><b>Be refactorable</b></dt>
+    <dd><p>Using a modern IDE to rename methods and add/remove/reorder parameters should induce minimal test breakage
+        <i>ipso facto</i>.</p></dd>
+    <dt><b>Ideally express each expectation as a single Java statement</b></dt>
+    <dd><p>JMock 1 did this, but its dated, unrefactorable syntax makes it unsuitable for new projects. EasyMock
+        comes close, but breaks down with an inconsistent, two-statement syntax for non-trivial expectations on
+        void methods.</p></dd>
+    <dt><b>No anonymous inner classes</b></dt>
+    <dd><p>JMock 2's syntax, while powerful and festooned with bells and whistles, is quite verbose; most people's needs
+        can be satisfied with a simpler syntax. Anonymous inner classes also tend to conflict with the previous
+        point.</p></dd>
+    <dt><b>Be consistent for <code>void</code> and non-<code>void</code> methods</b></dt>
+    <dd><p>Some things must be accomplished differently in EasyMock and Mockito depending on whether the method
+        in question returns a value; Moxie aims to accomplish things the same way every time.</p></dd>
+    <dt><b>No modal mocks</b></dt>
+    <dd><p>
+        In other words, mocks should not need to be transitioned from a "setup" state to an "active" state in order
+        to be used, as one does in EasyMock using the <code>replay()</code> method.
+    </p>
+
+        <p>
+            Some people have reported that Moxie's syntax sounds stilted, as the method involved in an expectation
+            appears
+            at the very end of the line - after return values, etc. are specified - rather than at the start. Compare
+            the following two identical statements:
+        </p>
+        <blockquote><pre>
 Moxie.expect(mock).andReturn("result").times(3).on().<b>someMethod()</b>;
 EasyMock.expect(<b>mock.someMethod()</b>).times(3).andReturn("result");
-</pre></blockquote>
-<p>
-Moxie's syntax is a direct consequence of avoiding modal mocks (and keeping the API consistent for <code>void</code>
-methods).  The <code>on()</code> method creates a proxy separate from the mock itself, on which one calls the method
-to be expected.  By doing this we avoid having to call methods on the mock during setup, which would require mocks
-to be modal.
-</p></dd>
-<dt><b>Support both expectation-driven and post-hoc check-driven mocking</b></dt>
-<dd><p>
-Mockito presents an interesting new paradigm for mocking, in which behavior isn't verified by setting expectations
-on mocks ahead of time, but rather through spot checks on mocks after the mock is used. Proponents say this approach
-is less brittle and keeps tests focused on checking what matters to the test, rather than requiring that many
-boilerplate expectations be set in every test.
-</p><p>
-Personally I still prefer the traditional, more restrictive style of expectation-driven mocking - but don't think
-the Mockito approach is complete rubbish either.  So I decided to support both approaches in Moxie for
-various reasons - partly to accommodate both approaches on large code bases/teams, but mostly because I thought
-people might find it interesting to experiment with the end result.  My advice would be to stick with one approach
-or the other in your tests; while it's possible to intermix the two, you'll most likely end up with complex,
-incomprehensible tests of dubious value.
-</p></dd>
-<dt><b>Humane interface</b></dt>
-<dd><p>Devising and keeping to natural-sounding DSL isn't easy. In order to provide a more flexible DSL whose calls
-sound "nicer" in a wider range of circumstances and are easier to remember, Moxie includes a number of synonyms
-for common methods. For example, in {@link moxie.Expectation Expectation}, {@link moxie.Expectation#willReturn(Object) willReturn()} and
-{@link moxie.Expectation#andReturn(Object) andReturn()} do the same thing, as do {@link moxie.Expectation#on() on()},
-{@link moxie.Expectation#when() when()} and {@link moxie.Expectation#will() will()}.</p>
-<p>This approach is borrowed from Ruby, whose class library contains many synonyms for common methods.  (Example:
-in Ruby you don't need to remember whether the method on an <code>Array</code> that tells you how many items
-it contains is called <code>length</code> or <code>size</code>; the two methods do the same thing.)
-</p></dd>
+</pre>
+        </blockquote>
+        <p>
+            Moxie's syntax is a direct consequence of avoiding modal mocks (and keeping the API consistent for <code>void</code>
+            methods). The <code>on()</code> method creates a proxy separate from the mock itself, on which one calls the
+            method
+            to be expected. By doing this we avoid having to call methods on the mock during setup, which would require
+            mocks
+            to be modal.
+        </p></dd>
+    <dt><b>Support both expectation-driven and post-hoc check-driven mocking</b></dt>
+    <dd><p>
+        Mockito presents an interesting new paradigm for mocking, in which behavior isn't verified by setting
+        expectations
+        on mocks ahead of time, but rather through spot checks on mocks after the mock is used. Proponents say this
+        approach
+        is less brittle and keeps tests focused on checking what matters to the test, rather than requiring that many
+        boilerplate expectations be set in every test.
+    </p>
+
+        <p>
+            Personally I still prefer the traditional, more restrictive style of expectation-driven mocking - but don't
+            think
+            the Mockito approach is complete rubbish either. So I decided to support both approaches in Moxie for
+            various reasons - partly to accommodate both approaches on large code bases/teams, but mostly because I
+            thought
+            people might find it interesting to experiment with the end result. My advice would be to stick with one
+            approach
+            or the other in your tests; while it's possible to intermix the two, you'll most likely end up with complex,
+            incomprehensible tests of dubious value.
+        </p></dd>
+    <dt><b>Humane interface</b></dt>
+    <dd><p>Devising and keeping to natural-sounding DSL isn't easy. In order to provide a more flexible DSL whose calls
+        sound "nicer" in a wider range of circumstances and are easier to remember, Moxie includes a number of synonyms
+        for common methods. For example, in {@link moxie.Expectation Expectation}, {@link
+        moxie.Expectation#willReturn(Object) willReturn()} and
+        {@link moxie.Expectation#andReturn(Object) andReturn()} do the same thing, as do {@link moxie.Expectation#on()
+        on()},
+        {@link moxie.Expectation#when() when()} and {@link moxie.Expectation#will() will()}.</p>
+
+        <p>This approach is borrowed from Ruby, whose class library contains many synonyms for common methods. (Example:
+            in Ruby you don't need to remember whether the method on an <code>Array</code> that tells you how many items
+            it contains is called <code>length</code> or <code>size</code>; the two methods do the same thing.)
+        </p></dd>
 </dl>
 
 <h2>Release Notes</h2>
 <h4>Release 0.3 - 6 July 2010</h4>
 <ul>
-<li>Fixing <a href="http://code.google.com/p/moxiemocks/issues/detail?id=1&can=1">bug 1</a>:
-{@link moxie.MoxieRunner MoxieRunner} not setting up mocks before <code>&#64;Before</code> methods are run.</li>
+    <li>Fixing <a href="http://code.google.com/p/moxiemocks/issues/detail?id=1&can=1">bug 1</a>:
+        {@link moxie.MoxieRunner MoxieRunner} not setting up mocks before <code>&#64;Before</code> methods are run.
+    </li>
+    <li>Introduced {@link moxie.MoxieRule MoxieRule} as a more modern alternative to
+        {@link moxie.MoxieRunner MoxieRunner} in JUnit 4.</li>
+    <li>Introduced non-static {@link moxie.MoxieControl MoxieControl} as an alternative to static methods
+        on {@link moxie.Moxie Moxie}.</li>
+    <li>Better validation, and failure modes when not valid, for expectations.</li>
+    <li>Cleaned up/rewrote dcumentation.</li>
+    <li>Minor API cleanups.</li>
 </ul>
 <h4>Release 0.2.1 - 1 July 2010</h4>
 <ul>
-<li>Initial release to Maven central repository.</li>
+    <li>Initial release to Maven central repository.</li>
 </ul>
 <h4>Release 0.2 - 25 June 2010</h4>
 <ul>
-<li>Fixed bug in Errors thrown when expectations/checks fail - expected/invoked methods were not being properly displayed.</li>
+    <li>Fixed bug in Errors thrown when expectations/checks fail - expected/invoked methods were not being properly
+        displayed.
+    </li>
 </ul>
 <h4>Release 0.1 - 23 June 2010</h4>
 <ul>
-<li>Initial public release.</li>
+    <li>Initial public release.</li>
 </ul>
-</body></html>
+
+<p>
+    @author <a href="http://moxiemocks.org/contact-rob.html">Rob Pelkey</a>
+</p>
+</body>
+</html>

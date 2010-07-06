@@ -27,7 +27,6 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.AllOf;
 import org.hamcrest.core.AnyOf;
-import org.hamcrest.core.IsAnything;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsInstanceOf;
 import org.hamcrest.core.IsNot;
@@ -39,7 +38,9 @@ import org.hamcrest.text.StringEndsWith;
 import org.hamcrest.text.StringStartsWith;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -105,6 +106,8 @@ public abstract class MoxieMatchers {
         }
     };
 
+    private static ThreadLocal<LinkedList<MatcherReport>> matchers = new ThreadLocal<LinkedList<MatcherReport>>();
+
     MoxieMatchers() {
     }
 
@@ -115,7 +118,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T[] anyArray() {
-        return (T[]) Moxie.reportMatcher(new AnyOf(Arrays.asList(new IsNull(), ANY_ARRAY_MATCHER)), Object[].class);
+        return (T[]) reportMatcher(new AnyOf(Arrays.asList(new IsNull(), ANY_ARRAY_MATCHER)), Object[].class);
     }
 
     /**
@@ -223,7 +226,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code> if the given class is an object, or the primitive's default value if the given class is a primitive
      */
     static public <T> T any(Class<T> clazz) {
-        return Moxie.reportMatcher(new AnyOf(Arrays.asList(new IsNull(), new IsInstanceOf(MoxieUtils.toNonPrimitive(clazz)))), clazz);
+        return reportMatcher(new AnyOf(Arrays.asList(new IsNull(), new IsInstanceOf(MoxieUtils.toNonPrimitive(clazz)))), clazz);
     }
 
     /**
@@ -233,7 +236,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T argThat(Matcher<T> matcher) {
-        return (T) Moxie.reportMatcher(matcher, null);
+        return (T) reportMatcher(matcher, null);
     }
 
     /**
@@ -243,7 +246,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T arrayThat(Matcher<T> matcher) {
-        return (T) Moxie.reportMatcher(matcher, Object[].class);
+        return (T) reportMatcher(matcher, Object[].class);
     }
 
     /**
@@ -253,7 +256,7 @@ public abstract class MoxieMatchers {
      * @return <code>false</code>
      */
     static public boolean booleanThat(Matcher<Boolean> matcher) {
-        return Moxie.reportMatcher(matcher, Boolean.TYPE);
+        return reportMatcher(matcher, Boolean.TYPE);
     }
 
     /**
@@ -263,7 +266,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public byte byteThat(Matcher<Byte> matcher) {
-        return Moxie.reportMatcher(matcher, Byte.TYPE);
+        return reportMatcher(matcher, Byte.TYPE);
     }
 
     /**
@@ -273,7 +276,7 @@ public abstract class MoxieMatchers {
      * @return <code>'\0'</code>
      */
     static public char charThat(Matcher<Character> matcher) {
-        return Moxie.reportMatcher(matcher, Character.TYPE);
+        return reportMatcher(matcher, Character.TYPE);
     }
 
     /**
@@ -283,7 +286,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public double doubleThat(Matcher<Double> matcher) {
-        return Moxie.reportMatcher(matcher, Double.TYPE);
+        return reportMatcher(matcher, Double.TYPE);
     }
 
     /**
@@ -293,7 +296,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public float floatThat(Matcher<Float> matcher) {
-        return Moxie.reportMatcher(matcher, Float.TYPE);
+        return reportMatcher(matcher, Float.TYPE);
     }
 
     /**
@@ -303,7 +306,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public int intThat(Matcher<Integer> matcher) {
-        return Moxie.reportMatcher(matcher, Integer.TYPE);
+        return reportMatcher(matcher, Integer.TYPE);
     }
 
     /**
@@ -313,7 +316,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public long longThat(Matcher<Long> matcher) {
-        return Moxie.reportMatcher(matcher, Long.TYPE);
+        return reportMatcher(matcher, Long.TYPE);
     }
 
     /**
@@ -323,7 +326,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public short shortThat(Matcher<Short> matcher) {
-        return Moxie.reportMatcher(matcher, Short.TYPE);
+        return reportMatcher(matcher, Short.TYPE);
     }
 
     /**
@@ -332,7 +335,7 @@ public abstract class MoxieMatchers {
      * @return <code>false</code>
      */
     static public boolean eq(boolean value) {
-        return Moxie.reportMatcher(new IsEqual(value), Boolean.TYPE);
+        return reportMatcher(new IsEqual(value), Boolean.TYPE);
     }
 
     /**
@@ -341,7 +344,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public byte eq(byte value) {
-        return Moxie.reportMatcher(new IsEqual(value), Byte.TYPE);
+        return reportMatcher(new IsEqual(value), Byte.TYPE);
     }
 
     /**
@@ -350,7 +353,7 @@ public abstract class MoxieMatchers {
      * @return <code>'\0'</code>
      */
     static public char eq(char value) {
-        return Moxie.reportMatcher(new IsEqual(value), Character.TYPE);
+        return reportMatcher(new IsEqual(value), Character.TYPE);
     }
 
     /**
@@ -359,7 +362,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public double eq(double value) {
-        return Moxie.reportMatcher(new IsEqual(value), Double.TYPE);
+        return reportMatcher(new IsEqual(value), Double.TYPE);
     }
 
     /**
@@ -368,7 +371,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public float eq(float value) {
-        return Moxie.reportMatcher(new IsEqual(value), Float.TYPE);
+        return reportMatcher(new IsEqual(value), Float.TYPE);
     }
 
     /**
@@ -377,7 +380,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public int eq(int value) {
-        return Moxie.reportMatcher(new IsEqual(value), Integer.TYPE);
+        return reportMatcher(new IsEqual(value), Integer.TYPE);
     }
 
     /**
@@ -386,7 +389,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public long eq(long value) {
-        return Moxie.reportMatcher(new IsEqual(value), Long.TYPE);
+        return reportMatcher(new IsEqual(value), Long.TYPE);
     }
 
     /**
@@ -395,7 +398,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public short eq(short value) {
-        return Moxie.reportMatcher(new IsEqual(value), Short.TYPE);
+        return reportMatcher(new IsEqual(value), Short.TYPE);
     }
 
     /**
@@ -404,7 +407,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T eq(T value) {
-        return (T) Moxie.reportMatcher(new IsEqual(value), null);
+        return (T) reportMatcher(new IsEqual(value), null);
     }
 
     /**
@@ -413,7 +416,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T isA(Class<T> clazz) {
-        return (T) Moxie.reportMatcher(new IsInstanceOf(clazz), null);
+        return (T) reportMatcher(new IsInstanceOf(clazz), null);
     }
 
     /**
@@ -422,7 +425,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public Object isNotNull() {
-        return Moxie.reportMatcher(new IsNot(new IsNull()), null);
+        return reportMatcher(new IsNot(new IsNull()), null);
     }
 
     /**
@@ -431,7 +434,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public Object isNull() {
-        return Moxie.reportMatcher(new IsNull(), null);
+        return reportMatcher(new IsNull(), null);
     }
 
     /**
@@ -449,7 +452,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T same(T value) {
-        return (T) Moxie.reportMatcher(new IsSame(value), null);
+        return (T) reportMatcher(new IsSame(value), null);
     }
 
     /**
@@ -458,7 +461,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public String hasSubstring(String substring) {
-        return Moxie.reportMatcher(new StringContains(substring), String.class);
+        return reportMatcher(new StringContains(substring), String.class);
     }
 
     /**
@@ -467,7 +470,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public String endsWith(String suffix) {
-        return Moxie.reportMatcher(new StringEndsWith(suffix), String.class);
+        return reportMatcher(new StringEndsWith(suffix), String.class);
     }
 
     /**
@@ -476,7 +479,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public String startsWith(String prefix) {
-        return Moxie.reportMatcher(new StringStartsWith(prefix), String.class);
+        return reportMatcher(new StringStartsWith(prefix), String.class);
     }
 
     /**
@@ -751,17 +754,17 @@ public abstract class MoxieMatchers {
 
     private static <T> T reportAnd(Object matchValuesArray, Class<T> clazz) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(clazz, matchValuesArray);
-        return Moxie.reportMatcher(new AllOf(matchers), clazz);
+        return reportMatcher(new AllOf(matchers), clazz);
     }
 
     private static <T> T reportOr(Object matchValuesArray, Class<T> clazz) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(clazz, matchValuesArray);
-        return Moxie.reportMatcher(new AnyOf(matchers), clazz);
+        return reportMatcher(new AnyOf(matchers), clazz);
     }
 
     private static <T> T reportNot(T matchValue, Class<T> clazz) {
         Matcher matcher = MatcherSyntax.singleMatcherFragment(clazz, matchValue);
-        return Moxie.reportMatcher(new IsNot(matcher), clazz);
+        return reportMatcher(new IsNot(matcher), clazz);
     }
 
     /**
@@ -770,7 +773,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public String eqIgnoreCase(String value) {
-        return Moxie.reportMatcher(new IsEqualIgnoringCase(value), String.class);
+        return reportMatcher(new IsEqualIgnoringCase(value), String.class);
     }
 
     /**
@@ -788,7 +791,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T matchesRegexp(final Pattern pattern) {
-        return Moxie.<T>reportMatcher(new BaseMatcher() {
+        return reportMatcher(new BaseMatcher() {
             public boolean matches(Object o) {
                 return (o != null) && pattern.matcher(o.toString()).matches();
             }
@@ -796,7 +799,7 @@ public abstract class MoxieMatchers {
             public void describeTo(Description description) {
                 description.appendText("matches /" + pattern.pattern() + '/');
             }
-        }, null);
+        }, (Class<T>) null);
     }
 
     /**
@@ -805,7 +808,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public double eq(double value, double delta) {
-        return Moxie.reportMatcher(isCloseMatcher(value, delta), Double.TYPE);
+        return reportMatcher(isCloseMatcher(value, delta), Double.TYPE);
     }
 
     /**
@@ -814,7 +817,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public float eq(float value, float delta) {
-        return Moxie.reportMatcher(isCloseMatcher(value, delta), Float.TYPE);
+        return reportMatcher(isCloseMatcher(value, delta), Float.TYPE);
     }
 
     /**
@@ -823,7 +826,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public byte geq(byte value) {
-        return Moxie.reportMatcher(greaterThanOrEqualTo(value), Byte.TYPE);
+        return reportMatcher(greaterThanOrEqualTo(value), Byte.TYPE);
     }
 
     /**
@@ -832,7 +835,7 @@ public abstract class MoxieMatchers {
      * @return <code>'\0'</code>
      */
     static public char geq(char value) {
-        return Moxie.reportMatcher(greaterThanOrEqualTo(value), Character.TYPE);
+        return reportMatcher(greaterThanOrEqualTo(value), Character.TYPE);
     }
 
     /**
@@ -841,7 +844,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T extends Comparable<T>> T geq(T value) {
-        return (T) Moxie.reportMatcher(greaterThanOrEqualTo(value), Comparable.class);
+        return (T) reportMatcher(greaterThanOrEqualTo(value), Comparable.class);
     }
 
     /**
@@ -850,7 +853,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public double geq(double value) {
-        return Moxie.reportMatcher(greaterThanOrEqualTo(value), Double.TYPE);
+        return reportMatcher(greaterThanOrEqualTo(value), Double.TYPE);
     }
 
     /**
@@ -859,7 +862,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public float geq(float value) {
-        return Moxie.reportMatcher(greaterThanOrEqualTo(value), Float.TYPE);
+        return reportMatcher(greaterThanOrEqualTo(value), Float.TYPE);
     }
 
     /**
@@ -868,7 +871,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public int geq(int value) {
-        return Moxie.reportMatcher(greaterThanOrEqualTo(value), Integer.TYPE);
+        return reportMatcher(greaterThanOrEqualTo(value), Integer.TYPE);
     }
 
     /**
@@ -877,7 +880,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public long geq(long value) {
-        return Moxie.reportMatcher(greaterThanOrEqualTo(value), Long.TYPE);
+        return reportMatcher(greaterThanOrEqualTo(value), Long.TYPE);
     }
 
     /**
@@ -886,7 +889,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public short geq(short value) {
-        return Moxie.reportMatcher(greaterThanOrEqualTo(value), Short.TYPE);
+        return reportMatcher(greaterThanOrEqualTo(value), Short.TYPE);
     }
 
     /**
@@ -895,7 +898,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public byte gt(byte value) {
-        return Moxie.reportMatcher(greaterThan(value), Byte.TYPE);
+        return reportMatcher(greaterThan(value), Byte.TYPE);
     }
 
     /**
@@ -904,7 +907,7 @@ public abstract class MoxieMatchers {
      * @return <code>'\0'</code>
      */
     static public char gt(char value) {
-        return Moxie.reportMatcher(greaterThan(value), Character.TYPE);
+        return reportMatcher(greaterThan(value), Character.TYPE);
     }
 
     /**
@@ -913,7 +916,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T extends Comparable<T>> T gt(T value) {
-        return (T) Moxie.reportMatcher(greaterThan(value), Comparable.class);
+        return (T) reportMatcher(greaterThan(value), Comparable.class);
     }
 
     /**
@@ -922,7 +925,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public double gt(double value) {
-        return Moxie.reportMatcher(greaterThan(value), Double.TYPE);
+        return reportMatcher(greaterThan(value), Double.TYPE);
     }
 
     /**
@@ -931,7 +934,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public float gt(float value) {
-        return Moxie.reportMatcher(greaterThan(value), Float.TYPE);
+        return reportMatcher(greaterThan(value), Float.TYPE);
     }
 
     /**
@@ -940,7 +943,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public int gt(int value) {
-        return Moxie.reportMatcher(greaterThan(value), Integer.TYPE);
+        return reportMatcher(greaterThan(value), Integer.TYPE);
     }
 
     /**
@@ -949,7 +952,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public long gt(long value) {
-        return Moxie.reportMatcher(greaterThan(value), Long.TYPE);
+        return reportMatcher(greaterThan(value), Long.TYPE);
     }
 
     /**
@@ -958,7 +961,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public short gt(short value) {
-        return Moxie.reportMatcher(greaterThan(value), Short.TYPE);
+        return reportMatcher(greaterThan(value), Short.TYPE);
     }
 
     /**
@@ -967,7 +970,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public byte leq(byte value) {
-        return Moxie.reportMatcher(lessThanOrEqualTo(value), Byte.TYPE);
+        return reportMatcher(lessThanOrEqualTo(value), Byte.TYPE);
     }
 
     /**
@@ -976,7 +979,7 @@ public abstract class MoxieMatchers {
      * @return <code>'\0'</code>
      */
     static public char leq(char value) {
-        return Moxie.reportMatcher(lessThanOrEqualTo(value), Character.TYPE);
+        return reportMatcher(lessThanOrEqualTo(value), Character.TYPE);
     }
 
     /**
@@ -985,7 +988,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T extends Comparable<T>> T leq(T value) {
-        return (T) Moxie.reportMatcher(lessThanOrEqualTo(value), Comparable.class);
+        return (T) reportMatcher(lessThanOrEqualTo(value), Comparable.class);
     }
 
     /**
@@ -994,7 +997,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public double leq(double value) {
-        return Moxie.reportMatcher(lessThanOrEqualTo(value), Double.TYPE);
+        return reportMatcher(lessThanOrEqualTo(value), Double.TYPE);
     }
 
     /**
@@ -1003,7 +1006,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public float leq(float value) {
-        return Moxie.reportMatcher(lessThanOrEqualTo(value), Float.TYPE);
+        return reportMatcher(lessThanOrEqualTo(value), Float.TYPE);
     }
 
     /**
@@ -1012,7 +1015,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public int leq(int value) {
-        return Moxie.reportMatcher(lessThanOrEqualTo(value), Integer.TYPE);
+        return reportMatcher(lessThanOrEqualTo(value), Integer.TYPE);
     }
 
     /**
@@ -1021,7 +1024,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public long leq(long value) {
-        return Moxie.reportMatcher(lessThanOrEqualTo(value), Long.TYPE);
+        return reportMatcher(lessThanOrEqualTo(value), Long.TYPE);
     }
 
     /**
@@ -1030,7 +1033,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public short leq(short value) {
-        return Moxie.reportMatcher(lessThanOrEqualTo(value), Short.TYPE);
+        return reportMatcher(lessThanOrEqualTo(value), Short.TYPE);
     }
 
     /**
@@ -1039,7 +1042,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public byte lt(byte value) {
-        return Moxie.reportMatcher(lessThan(value), Byte.TYPE);
+        return reportMatcher(lessThan(value), Byte.TYPE);
     }
 
     /**
@@ -1048,7 +1051,7 @@ public abstract class MoxieMatchers {
      * @return <code>'\0'</code>
      */
     static public char lt(char value) {
-        return Moxie.reportMatcher(lessThan(value), Character.TYPE);
+        return reportMatcher(lessThan(value), Character.TYPE);
     }
 
     /**
@@ -1057,7 +1060,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T extends Comparable<T>> T lt(T value) {
-        return (T) Moxie.reportMatcher(lessThan(value), Comparable.class);
+        return (T) reportMatcher(lessThan(value), Comparable.class);
     }
 
     /**
@@ -1066,7 +1069,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public double lt(double value) {
-        return Moxie.reportMatcher(lessThan(value), Double.TYPE);
+        return reportMatcher(lessThan(value), Double.TYPE);
     }
 
     /**
@@ -1075,7 +1078,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public float lt(float value) {
-        return Moxie.reportMatcher(lessThan(value), Float.TYPE);
+        return reportMatcher(lessThan(value), Float.TYPE);
     }
 
     /**
@@ -1084,7 +1087,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public int lt(int value) {
-        return Moxie.reportMatcher(lessThan(value), Integer.TYPE);
+        return reportMatcher(lessThan(value), Integer.TYPE);
     }
 
     /**
@@ -1093,7 +1096,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public long lt(long value) {
-        return Moxie.reportMatcher(lessThan(value), Long.TYPE);
+        return reportMatcher(lessThan(value), Long.TYPE);
     }
 
     /**
@@ -1102,7 +1105,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public short lt(short value) {
-        return Moxie.reportMatcher(lessThan(value), Short.TYPE);
+        return reportMatcher(lessThan(value), Short.TYPE);
     }
 
 
@@ -1118,7 +1121,7 @@ public abstract class MoxieMatchers {
      */
     static public boolean[] array(boolean... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Boolean.TYPE, value);
-        return Moxie.reportMatcher(isArrayMatcher(matchers), boolean[].class);
+        return reportMatcher(isArrayMatcher(matchers), boolean[].class);
     }
 
     /**
@@ -1133,7 +1136,7 @@ public abstract class MoxieMatchers {
      */
     static public byte[] array(byte... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Byte.TYPE, value);
-        return Moxie.reportMatcher(isArrayMatcher(matchers), byte[].class);
+        return reportMatcher(isArrayMatcher(matchers), byte[].class);
     }
 
     /**
@@ -1148,7 +1151,7 @@ public abstract class MoxieMatchers {
      */
     static public char[] array(char... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Character.TYPE, value);
-        return Moxie.reportMatcher(isArrayMatcher(matchers), char[].class);
+        return reportMatcher(isArrayMatcher(matchers), char[].class);
     }
 
     /**
@@ -1163,7 +1166,7 @@ public abstract class MoxieMatchers {
      */
     static public double[] array(double... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Double.TYPE, value);
-        return Moxie.reportMatcher(isArrayMatcher(matchers), double[].class);
+        return reportMatcher(isArrayMatcher(matchers), double[].class);
     }
 
     /**
@@ -1178,7 +1181,7 @@ public abstract class MoxieMatchers {
      */
     static public float[] array(float... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Float.TYPE, value);
-        return Moxie.reportMatcher(isArrayMatcher(matchers), float[].class);
+        return reportMatcher(isArrayMatcher(matchers), float[].class);
     }
 
     /**
@@ -1193,7 +1196,7 @@ public abstract class MoxieMatchers {
      */
     static public int[] array(int... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Integer.TYPE, value);
-        return Moxie.reportMatcher(isArrayMatcher(matchers), int[].class);
+        return reportMatcher(isArrayMatcher(matchers), int[].class);
     }
 
     /**
@@ -1208,7 +1211,7 @@ public abstract class MoxieMatchers {
      */
     static public long[] array(long... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Long.TYPE, value);
-        return Moxie.reportMatcher(isArrayMatcher(matchers), long[].class);
+        return reportMatcher(isArrayMatcher(matchers), long[].class);
     }
 
     /**
@@ -1223,7 +1226,7 @@ public abstract class MoxieMatchers {
      */
     static public short[] array(short... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Short.TYPE, value);
-        return Moxie.reportMatcher(isArrayMatcher(matchers), short[].class);
+        return reportMatcher(isArrayMatcher(matchers), short[].class);
     }
 
     /**
@@ -1238,7 +1241,7 @@ public abstract class MoxieMatchers {
      */
     static public <T> T[] array(T... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(null, value);
-        return (T[]) Moxie.reportMatcher(isArrayMatcher(matchers), Object[].class);
+        return (T[]) reportMatcher(isArrayMatcher(matchers), Object[].class);
     }
 
     /**
@@ -1252,7 +1255,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public boolean[] aryEq(boolean... value) {
-        return Moxie.reportMatcher(arrayEqualsMatcher(value), boolean[].class);
+        return reportMatcher(arrayEqualsMatcher(value), boolean[].class);
     }
 
     /**
@@ -1266,7 +1269,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public byte[] aryEq(byte... value) {
-        return Moxie.reportMatcher(arrayEqualsMatcher(value), byte[].class);
+        return reportMatcher(arrayEqualsMatcher(value), byte[].class);
     }
 
     /**
@@ -1280,7 +1283,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public char[] aryEq(char... value) {
-        return Moxie.reportMatcher(arrayEqualsMatcher(value), char[].class);
+        return reportMatcher(arrayEqualsMatcher(value), char[].class);
     }
 
     /**
@@ -1294,7 +1297,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public double[] aryEq(double... value) {
-        return Moxie.reportMatcher(arrayEqualsMatcher(value), double[].class);
+        return reportMatcher(arrayEqualsMatcher(value), double[].class);
     }
 
     /**
@@ -1308,7 +1311,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public float[] aryEq(float... value) {
-        return Moxie.reportMatcher(arrayEqualsMatcher(value), float[].class);
+        return reportMatcher(arrayEqualsMatcher(value), float[].class);
     }
 
     /**
@@ -1322,7 +1325,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public int[] aryEq(int... value) {
-        return Moxie.reportMatcher(arrayEqualsMatcher(value), int[].class);
+        return reportMatcher(arrayEqualsMatcher(value), int[].class);
     }
 
     /**
@@ -1336,7 +1339,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public long[] aryEq(long... value) {
-        return Moxie.reportMatcher(arrayEqualsMatcher(value), long[].class);
+        return reportMatcher(arrayEqualsMatcher(value), long[].class);
     }
 
     /**
@@ -1350,7 +1353,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public short[] aryEq(short... value) {
-        return Moxie.reportMatcher(arrayEqualsMatcher(value), short[].class);
+        return reportMatcher(arrayEqualsMatcher(value), short[].class);
     }
 
     /**
@@ -1364,7 +1367,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T[] aryEq(T... value) {
-        return (T[]) Moxie.reportMatcher(arrayEqualsMatcher(value), Object[].class);
+        return (T[]) reportMatcher(arrayEqualsMatcher(value), Object[].class);
     }
 
     // Hamcrest's IsArray matcher doesn't look as if it works on primitive arrays.
@@ -1479,5 +1482,33 @@ public abstract class MoxieMatchers {
     static Matcher lessThan(Comparable value) {
         return comparisonMatcher(value, true, false, false);
     }
+
+    /**
+     * <p>
+     * Registers a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} with Moxie's magical parameter-matching mechanism.
+     * </p>
+     * <p>
+     * See the discussion in the summary javadoc for the {@link MoxieMatchers} class for more details.
+     * </p>
+     *
+     * @param matcher      a Hamcrest {@link Matcher} to be registered
+     * @param expectedType optional - type of the expected parameter (particularly important if matching a primitive parameter)
+     * @param <T>          type of the expected parameter
+     * @return <code>null</code> if <code>expectedType</code> is an object, or the primitive's default value if <code>expectedType</code> is a primitive
+     */
+    static public <T> T reportMatcher(Matcher matcher, Class<T> expectedType) {
+        getMatcherReports().add(new MatcherReport(matcher, expectedType));
+        return MoxieUtils.defaultValue(expectedType);
+    }
+
+    static LinkedList<MatcherReport> getMatcherReports() {
+        LinkedList<MatcherReport> matcherList = matchers.get();
+        if (matcherList == null) {
+            matcherList = new LinkedList<MatcherReport>();
+            matchers.set(matcherList);
+        }
+        return matcherList;
+    }
+
 
 }

@@ -151,7 +151,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
     /**
      * Specifies that this expectation should comprise part of the given group(s).
      *
-     * @param groups one or more {@link Group}s created by {@link Moxie#group()}
+     * @param groups one or more {@link Group}s created by {@link MoxieControl#group(MoxieOptions...) MoxieControl.group()}
      * @return this object, for call chaining
      */
     Expectation<T> inGroup(Group... groups);

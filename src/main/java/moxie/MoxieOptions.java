@@ -23,7 +23,7 @@
 package moxie;
 
 /**
- * Options that can be specified in the creation of {@link Moxie#mock(Class) mocks}, {@link Moxie#spy(Object) spies} or {@link Moxie#group() groups}.
+ * Options that can be specified in the creation of {@link Moxie#mock(Class) mocks}, {@link MoxieControl#spy(Object,MoxieOptions...) spies} or {@link MoxieControl#group(MoxieOptions...) groups}.
  */
 public enum MoxieOptions implements MoxieFlags {
 
