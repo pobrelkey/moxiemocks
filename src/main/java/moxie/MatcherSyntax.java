@@ -27,7 +27,6 @@ import org.hamcrest.core.IsEqual;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +40,7 @@ import java.util.List;
 class MatcherSyntax {
 
     static private <T> T shouldFullyConsumeMatcherReports(T someCall) {
-        LinkedList<MatcherReport> matcherReports = Moxie.getMatcherReports();
+        LinkedList<MatcherReport> matcherReports = MoxieMatchers.getMatcherReports();
         if (!matcherReports.isEmpty()) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -78,7 +77,7 @@ class MatcherSyntax {
     }
 
     static List<Matcher> matcherListFragment(List<Class<?>> expectedParameterTypes, List matchValues) {
-        LinkedList<MatcherReport> matcherReports = Moxie.getMatcherReports();
+        LinkedList<MatcherReport> matcherReports = MoxieMatchers.getMatcherReports();
         List<Matcher> matchers = new ArrayList<Matcher>();
 
         if (matcherReports.isEmpty()) {
@@ -118,7 +117,7 @@ class MatcherSyntax {
     }
 
     static List<Matcher> methodCall(Method method, Object[] params) throws IllegalArgumentException {
-        LinkedList<MatcherReport> matcherReports = Moxie.getMatcherReports();
+        LinkedList<MatcherReport> matcherReports = MoxieMatchers.getMatcherReports();
         List<Class<?>> paramTypes = new ArrayList<Class<?>>(Arrays.asList(method.getParameterTypes()));
         List paramsList = params == null ? Collections.EMPTY_LIST : new ArrayList(Arrays.asList(params));
         Matcher varargMatcher = null;

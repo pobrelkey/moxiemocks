@@ -23,78 +23,17 @@
 package moxie;
 
 /**
- * <p>
- * Static class of convenience methods for Moxie, a wicked good Java mocking library.
- * </p>
- *
- * <p>
- * Methods on this class fall into one of the following categories:
- * </p>
- * <ul>
- * <li><p><b>{@link MoxieControl} creation</b> - Use {@link Moxie#newControl() newControl()} to create a new
- * {@link MoxieControl}, or {@link Moxie#threadLocalControl() threadLocalControl()} to access the same thread-local
- * instance of {@link MoxieControl} used by {@link MoxieRunner}.</p></li>
- * <li><p><b>Thread-local {@link MoxieControl} methods</b> - Most of the static methods on this class delegate to the
- * instance of {@link MoxieControl} returned by {@link Moxie#threadLocalControl() threadLocalControl()}.
- * Using the thread-local instance should suffice
- * for most people, and using the methods on this class will save the extra line of code involved in explicitly
- * creating a {@link MoxieControl}.</p></li>
- * <li><p><b>{@link MoxieMatchers} methods</b> - For convenience this class inherits from {@link MoxieMatchers}, enabling
- * you to use those methods with less typing/fewer <code>import</code> statements</p>.</li>
- * </ul>
- *
- * @see moxie.MoxieControl
- * @see moxie.MoxieMatchers
+ * Primary point of interaction between Moxie and test classes.
  */
-public abstract class Moxie extends MoxieMatchers {
-    static MoxieControl instance = MoxieUtils.createThreadLocalProxy(MoxieControl.class, new MoxieUtils.Factory<MoxieControl>() {
-        public MoxieControl create() {
-            return new MoxieControlImpl();
-        }
-    });
-
-    private Moxie() {
-    }
-
-    /**
-     * <p>
-     * Returns a proxy to a thread-local instance of {@link MoxieControl}.
-     * </p>
-     * <p>
-     * This is the same {@link MoxieControl} instance used by {@link MoxieRunner}, but not {@link MoxieRule} -
-     * see {@link MoxieRule#getControl() MoxieRule.getControl()}.
-     * </p>
-     *
-     * @return a proxy to a thread-local instance of {@link MoxieControl}
-     */
-    static public MoxieControl threadLocalControl() {
-        return instance;
-    }
-
-    /**
-     * <p>
-     * Creates and returns a fresh instance of {@link MoxieControl}.
-     * </p>
-     * @return a newly created {@link MoxieControl}
-     */
-    static public MoxieControl newControl() {
-        return new MoxieControlImpl();
-    }
-
-
-    ////////////////////////////////////////////////////////////////////
-
+public interface MoxieControl {
     /**
      * Creates a mock object of the given type.
      *
      * @param clazz the class or interface that the mock should extend/implement
      * @param <T>   the class or interface that the mock should extend/implement
      * @return a new mock object
-     * @see MoxieControl#mock(Class)
      */
-    static public <T> T mock(Class<T> clazz) {
-        return instance.mock(clazz);
-    }
+    <T> T mock(Class<T> clazz);
 
     /**
      * Creates a mock object of the given type.
@@ -103,11 +42,8 @@ public abstract class Moxie extends MoxieMatchers {
      * @param name  the name of the mock object - will be used in error messages
      * @param <T>   the class or interface that the mock should extend/implement
      * @return a new mock object
-     * @see MoxieControl#mock(Class, String)
      */
-    static public <T> T mock(Class<T> clazz, String name) {
-        return instance.mock(clazz, name);
-    }
+    <T> T mock(Class<T> clazz, String name);
 
     /**
      * Creates a mock object of the given type.
@@ -116,11 +52,8 @@ public abstract class Moxie extends MoxieMatchers {
      * @param options one or more {@link MoxieOptions} that should apply to the mock
      * @param <T>     the class or interface that the mock should extend/implement
      * @return a new mock object
-     * @see MoxieControl#mock(Class, MoxieOptions...)
      */
-    static public <T> T mock(Class<T> clazz, MoxieOptions... options) {
-        return instance.mock(clazz, options);
-    }
+    <T> T mock(Class<T> clazz, MoxieOptions... options);
 
     /**
      * Creates a mock object of the given type.
@@ -130,11 +63,8 @@ public abstract class Moxie extends MoxieMatchers {
      * @param options one or more {@link MoxieOptions} that should apply to the mock
      * @param <T>     the class or interface that the mock should extend/implement
      * @return a new mock object
-     * @see MoxieControl#mock(Class, String, MoxieOptions...)
      */
-    static public <T> T mock(Class<T> clazz, String name, MoxieOptions... options) {
-        return instance.mock(clazz, name, options);
-    }
+    <T> T mock(Class<T> clazz, String name, MoxieOptions... options);
 
     /**
      * Creates a spy object, i.e. a proxy which wraps an actual object on which expectations can be set
@@ -144,11 +74,8 @@ public abstract class Moxie extends MoxieMatchers {
      * @param options    one or more {@link MoxieOptions} that should apply to the spy
      * @param <T>        type of the object to be spied upon
      * @return a new spy object
-     * @see MoxieControl#spy(Object, MoxieOptions...)
      */
-    static public <T> T spy(T realObject, MoxieOptions... options) {
-        return instance.spy(realObject, options);
-    }
+    <T> T spy(T realObject, MoxieOptions... options);
 
     /**
      * Creates a spy object, i.e. a proxy which wraps an actual object on which expectations can be set
@@ -159,11 +86,8 @@ public abstract class Moxie extends MoxieMatchers {
      * @param options    one or more {@link MoxieOptions} that should apply to the spy
      * @param <T>        type of the object to be spied upon
      * @return a new spy object
-     * @see MoxieControl#spy(Object, String, MoxieOptions...)
      */
-    static public <T> T spy(T realObject, String name, MoxieOptions... options) {
-        return instance.spy(realObject, name, options);
-    }
+    <T> T spy(T realObject, String name, MoxieOptions... options);
 
     /**
      * <p>
@@ -181,11 +105,8 @@ public abstract class Moxie extends MoxieMatchers {
      *
      * @param options {@link MoxieOptions} which should apply to the group (currently either {@link MoxieOptions#ORDERED} or {@link MoxieOptions#UNORDERED})
      * @return a new {@link Group}
-     * @see MoxieControl#group(MoxieOptions...)
      */
-    static public Group group(MoxieOptions... options) {
-        return instance.group(options);
-    }
+    Group group(MoxieOptions... options);
 
     /**
      * <p>
@@ -204,11 +125,8 @@ public abstract class Moxie extends MoxieMatchers {
      * @param name    the name of the group - will be used in error messages
      * @param options {@link MoxieOptions} which should apply to the group (currently either {@link MoxieOptions#ORDERED} or {@link MoxieOptions#UNORDERED})
      * @return a new {@link Group}
-     * @see MoxieControl#group(String, MoxieOptions...)
      */
-    static public Group group(String name, MoxieOptions... options) {
-        return instance.group(name, options);
-    }
+    Group group(String name, MoxieOptions... options);
 
     /**
      * <p>
@@ -221,11 +139,8 @@ public abstract class Moxie extends MoxieMatchers {
      * @param mockObject the mock or spy object on which the expectation is to be set
      * @param <T>        type of the mock or spy object
      * @return an {@link Expectation} whose methods can be used to give details of what behavior to expect
-     * @see MoxieControl#expect(Object)
      */
-    static public <T> Expectation<T> expect(T mockObject) {
-        return instance.expect(mockObject);
-    }
+    <T> Expectation<T> expect(T mockObject);
 
     /**
      * <p>
@@ -238,11 +153,8 @@ public abstract class Moxie extends MoxieMatchers {
      * @param mockObject the mock or spy object on which the expectation is to be set
      * @param <T>        type of the mock or spy object
      * @return an {@link Expectation} whose methods can be used to give details of what behavior to expect
-     * @see MoxieControl#stub(Object)
      */
-    static public <T> Expectation<T> stub(T mockObject) {
-        return instance.stub(mockObject);
-    }
+    <T> Expectation<T> stub(T mockObject);
 
     /**
      * <p>
@@ -255,11 +167,8 @@ public abstract class Moxie extends MoxieMatchers {
      * @param mockObject the mock or spy object on which the check is to be performed
      * @param <T>        type of the mock or spy object
      * @return a {@link Check} whose methods can be used to give details of what should have occurred
-     * @see MoxieControl#check(Object)
      */
-    static public <T> Check<T> check(T mockObject) {
-        return instance.check(mockObject);
-    }
+    <T> Check<T> check(T mockObject);
 
     /**
      * <p>
@@ -270,11 +179,8 @@ public abstract class Moxie extends MoxieMatchers {
      * </p>
      *
      * @param mockObjects one or more mock/spy objects to be checked
-     * @see MoxieControl#checkNothingElseHappened(Object...)
      */
-    static public void checkNothingElseHappened(Object... mockObjects) {
-        instance.checkNothingElseHappened(mockObjects);
-    }
+    void checkNothingElseHappened(Object... mockObjects);
 
     /**
      * <p>
@@ -286,11 +192,8 @@ public abstract class Moxie extends MoxieMatchers {
      * </p>
      *
      * @param mockObjects one or more mock/spy objects to be checked
-     * @see MoxieControl#checkNothingElseUnexpectedHappened(Object...)
      */
-    static public void checkNothingElseUnexpectedHappened(Object... mockObjects) {
-        instance.checkNothingElseUnexpectedHappened(mockObjects);
-    }
+    void checkNothingElseUnexpectedHappened(Object... mockObjects);
 
     /**
      * <p>
@@ -305,11 +208,8 @@ public abstract class Moxie extends MoxieMatchers {
      * </p>
      *
      * @param mockObjects one or more mock/spy objects to be checked
-     * @see MoxieControl#verify(Object...)
      */
-    static public void verify(Object... mockObjects) {
-        instance.verify(mockObjects);
-    }
+    void verify(Object... mockObjects);
 
     /**
      * <p>
@@ -323,11 +223,8 @@ public abstract class Moxie extends MoxieMatchers {
      * </p>
      *
      * @param mockObjects one or more mock/spy objects to be checked
-     * @see MoxieControl#verifySoFar(Object...)
      */
-    static public void verifySoFar(Object... mockObjects) {
-        instance.verifySoFar(mockObjects);
-    }
+    void verifySoFar(Object... mockObjects);
 
     /**
      * <p>
@@ -339,11 +236,8 @@ public abstract class Moxie extends MoxieMatchers {
      * </p>
      *
      * @param mockObjects one or more mock/spy objects to be verified and reset
-     * @see MoxieControl#verifyAndReset(Object...)
      */
-    static public void verifyAndReset(Object... mockObjects) {
-        instance.verifyAndReset(mockObjects);
-    }
+    void verifyAndReset(Object... mockObjects);
 
     /**
      * <p>
@@ -355,11 +249,8 @@ public abstract class Moxie extends MoxieMatchers {
      * @param mockObject   a mock/spy object to be verified and reset
      * @param firstOption  an option that should henceforth apply to the given mock
      * @param otherOptions zero or more subsequent options that should also apply
-     * @see MoxieControl#verifyAndReset(Object, MoxieOptions, MoxieOptions...)
      */
-    static public void verifyAndReset(Object mockObject, MoxieOptions firstOption, MoxieOptions... otherOptions) {
-        instance.verifyAndReset(mockObject, firstOption, otherOptions);
-    }
+    void verifyAndReset(Object mockObject, MoxieOptions firstOption, MoxieOptions... otherOptions);
 
     /**
      * <p>
@@ -374,11 +265,8 @@ public abstract class Moxie extends MoxieMatchers {
      * </p>
      *
      * @param mockObjects one or more mock/spy objects to be reset
-     * @see MoxieControl#reset(Object...)
      */
-    static public void reset(Object... mockObjects) {
-        instance.reset(mockObjects);
-    }
+    void reset(Object... mockObjects);
 
     /**
      * <p>
@@ -393,11 +281,8 @@ public abstract class Moxie extends MoxieMatchers {
      * @param mockObject   a mock/spy object to be reset
      * @param firstOption  an option that should henceforth apply to the given mock
      * @param otherOptions zero or more subsequent options that should also apply
-     * @see MoxieControl#reset(Object, MoxieOptions, MoxieOptions...)
      */
-    static public void reset(Object mockObject, MoxieOptions firstOption, MoxieOptions... otherOptions) {
-        instance.reset(mockObject, firstOption, otherOptions);
-    }
+    void reset(Object mockObject, MoxieOptions firstOption, MoxieOptions... otherOptions);
 
     /**
      * <p>
@@ -408,11 +293,8 @@ public abstract class Moxie extends MoxieMatchers {
      * </p>
      *
      * @param mockObjects one or more mock/spy objects to be deactivated
-     * @see MoxieControl#deactivate(Object...)
      */
-    static public void deactivate(Object... mockObjects) {
-        instance.deactivate(mockObjects);
-    }
+    void deactivate(Object... mockObjects);
 
     /**
      * <p>
@@ -423,11 +305,8 @@ public abstract class Moxie extends MoxieMatchers {
      * due to Moxie holding on to active mocks long past their time.
      * </p>
      *
-     * @see moxie.MoxieControl#checkNoActiveMocks()
      */
-    static public void checkNoActiveMocks() {
-        instance.checkNoActiveMocks();
-    }
+    void checkNoActiveMocks();
 
     /**
      * On the given object(s), automatically populate fields according to the following rules:
@@ -438,24 +317,18 @@ public abstract class Moxie extends MoxieMatchers {
      * <li>For all fields of type {@link Group}, populate that field with a new {@link Group}, optionally using
      * the options in any {@link GroupOptions} annotation that may be found on that field.</li>
      * <li>For all fields having the {@link AutoMock} annotation, also apply these rules to fields on that object.</li>
-     * </ul> 
+     * </ul>
      *
      * @param testComponents one or more objects to be auto-mocked - usually just one test instance
      * @return an array containing all mock/spy objects created by this operation
-     * @see MoxieControl#autoMock(Object...)
      */
-    static public Object[] autoMock(Object... testComponents) {
-       return instance.autoMock(testComponents);
-    }
+    Object[] autoMock(Object... testComponents);
 
     /**
      * Restores fields on the given objects to their values before the objects were {@link #autoMock auto-mocked}.
      *
      * @param testComponents one or more objects to be auto-unmocked - usually just one test instance
-     * @see MoxieControl#autoUnMock(Object...)
      */
-    static public void autoUnMock(Object... testComponents) {
-        instance.autoUnMock(testComponents);
-    }
+    void autoUnMock(Object... testComponents);
 
 }

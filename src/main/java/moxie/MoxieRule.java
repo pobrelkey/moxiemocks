@@ -46,22 +46,51 @@ import org.junit.runners.model.Statement;
 
  */
 public class MoxieRule implements MethodRule {
+    private final MoxieControl control;
+
+    /**
+     * <p>Creates a new {@link MoxieRule} using the {@link Moxie#threadLocalControl() thread-local instance}
+     * of {@link MoxieControl}.</p>
+     */
+    public MoxieRule() {
+        this(Moxie.threadLocalControl());
+    }
+
+
+    /**
+     * <p>Creates a new {@link MoxieRule} using a user-specified instance of {@link MoxieControl}.</p>
+     *
+     * @param control the {@link MoxieControl} instance this thread should use
+     */
+    public MoxieRule(MoxieControl control) {
+        this.control = control;
+    }
+
     public Statement apply(final Statement statement, FrameworkMethod method, final Object testInstance) {
         return new Statement(){
             @Override
             public void evaluate() throws Throwable {
-                Moxie.deactivate();
-                Moxie.getMatcherReports().clear();
-                Moxie.autoMock(testInstance);
+                control.deactivate();
+                MoxieMatchers.getMatcherReports().clear();
+                control.autoMock(testInstance);
                 try {
                     statement.evaluate();
-                    Moxie.verify();
+                    control.verify();
                 } finally {
-                    Moxie.autoUnMock(testInstance);
-                    Moxie.deactivate();
-                    Moxie.getMatcherReports().clear();
+                    control.autoUnMock(testInstance);
+                    control.deactivate();
+                    MoxieMatchers.getMatcherReports().clear();
                 }
             }
         };
+    }
+
+    /**
+     * Returns the {@link MoxieControl} instance this rule uses to auto-populate and verify mocks.
+     *
+     * @return this rule's {@link MoxieControl} instance
+     */
+    public MoxieControl getControl() {
+        return control;
     }
 }

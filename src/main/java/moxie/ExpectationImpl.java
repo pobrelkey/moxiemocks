@@ -158,6 +158,33 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
                 if (ExpectationImpl.this.method != null) {
                     throw new IllegalStateException("method to match already specified");
                 }
+
+                if (handler instanceof ReturnHandler) {
+                    Class returnType = MoxieUtils.toNonPrimitive(method.getReturnType());
+                    Object result = ((ReturnHandler) handler).getResult();
+                    if (returnType == Void.TYPE && result != null) {
+                        throw new IllegalArgumentException("return value specified for void method");
+                    } else if (result != null && !returnType.isAssignableFrom(result.getClass())) {
+                        throw new IllegalArgumentException("incompatible result type (" + result.getClass().getName() + ") for method which returns "  + method.getReturnType().getName());
+                    }
+                }
+
+                if (handler instanceof ThrowHandler) {
+                    Throwable throwable = ((ThrowHandler) handler).getThrowable();
+                    if (throwable instanceof Exception && !(throwable instanceof RuntimeException)) {
+                        boolean foundCompatibleException = false;
+                        for (Class<?> exceptionType : method.getExceptionTypes()) {
+                            if (exceptionType.isAssignableFrom(throwable.getClass())) {
+                                foundCompatibleException = true;
+                                break;
+                            }
+                        }
+                        if (!foundCompatibleException) {
+                            throw new IllegalArgumentException("exception is of type not thrown by the method (" + throwable.getClass().getName() + ")");
+                        }
+                    }
+                }
+
                 ExpectationImpl.this.method = method;
                 argMatchers = MatcherSyntax.methodCall(method, params);
                 interception.addExpectation(ExpectationImpl.this);
@@ -298,6 +325,10 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
         public Object invoke(Object mockObject, Method method, Object[] parameters) throws Throwable {
             return result;
         }
+
+        public Object getResult() {
+            return result;
+        }
     }
 
     static private class ThrowHandler implements InvocationHandler {
@@ -309,6 +340,10 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
 
         public Object invoke(Object mockObject, Method method, Object[] parameters) throws Throwable {
             throw throwable;
+        }
+
+        public Throwable getThrowable() {
+            return throwable;
         }
     }
 

@@ -37,14 +37,25 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-class MoxieImpl implements MoxieMethods {
+class MoxieControlImpl implements MoxieControl {
 
     private final IdentityHashMap<Object, Verifiable> mocksAndGroups = new IdentityHashMap<Object, Verifiable>();
-    private final LinkedList<MatcherReport> matchers = new LinkedList<MatcherReport>();
     private final IdentityHashMap<Object, Map<String, Object>> valuesOverwrittenByAutoMock = new IdentityHashMap<Object, Map<String, Object>>();
     private final List<Invocation> invocations = Collections.synchronizedList(new ArrayList<Invocation>());
     private int groupNameCounter = 0;
 
+
+    public <T> T mock(Class<T> clazz) {
+        return mock(clazz, (String) null, MoxieOptions.MOCK_DEFAULTS);
+    }
+
+    public <T> T mock(Class<T> clazz, String name) {
+        return mock(clazz, name, MoxieOptions.MOCK_DEFAULTS);
+    }
+
+    public <T> T mock(Class<T> clazz, MoxieOptions... options) {
+        return mock(clazz, null, options);
+    }
 
     public <T> T mock(Class<T> clazz, String name, MoxieOptions... options) {
         if (name == null || name.length() == 0) {
@@ -56,6 +67,10 @@ class MoxieImpl implements MoxieMethods {
         return result;
     }
 
+    public <T> T spy(T realObject, MoxieOptions... options) {
+        return spy(realObject, null, options);
+    }
+
     public <T> T spy(T realObject, String name, MoxieOptions... options) {
         if (name == null || name.length() == 0) {
             name = realObject.getClass().getSimpleName();
@@ -64,6 +79,10 @@ class MoxieImpl implements MoxieMethods {
         T result = spy.proxy();
         mocksAndGroups.put(result, spy);
         return result;
+    }
+
+    public Group group(MoxieOptions... options) {
+        return group(null, options);
     }
 
     public Group group(String name, MoxieOptions... options) {
@@ -82,6 +101,10 @@ class MoxieImpl implements MoxieMethods {
 
     public <T> Expectation<T> expect(T mockObject) {
         return getInterceptionFromProxy(mockObject).expect();
+    }
+
+    public <T> Expectation<T> stub(T mockObject) {
+        return expect(mockObject).anyTimes().atAnyTime();
     }
 
     public <T> Check<T> check(T mockObject) {
@@ -298,11 +321,4 @@ class MoxieImpl implements MoxieMethods {
         }
     }
 
-    public void reportMatcher(Matcher matcher, Class expectedType) {
-        matchers.add(new MatcherReport(matcher, expectedType));
-    }
-
-    public LinkedList<MatcherReport> getMatcherReports() {
-        return matchers;
-    }
 }

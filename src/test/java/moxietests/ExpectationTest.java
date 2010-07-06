@@ -28,6 +28,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.Writer;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -553,5 +554,24 @@ public class ExpectationTest {
 
         Moxie.verify(mock, spy, group);
     }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void wrongReturnType_sadPath() {
+        List mock = Moxie.mock(List.class);
+        Moxie.expect(mock).andReturn("two").on().size();
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void wrongExceptionType_sadPath() throws Exception {
+        Writer mock = Moxie.mock(Writer.class);
+        Moxie.expect(mock).andThrow(new InterruptedException()).on().write("two");
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void returningValueOnVoidMethod_sadPath() {
+        List mock = Moxie.mock(List.class);
+        Moxie.expect(mock).andReturn("two").on().clear();
+    }
+
 
 }
