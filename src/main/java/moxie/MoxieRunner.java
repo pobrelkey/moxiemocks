@@ -36,8 +36,9 @@ import java.util.List;
  * Use <code>MoxieRunner</code> by adding the <code>@RunWith(MoxieRunner.class)</code> annotation to your test classes.
  * </p>
  * <p>
- * Under the covers, just tacks a {@link MoxieRule} onto your test instance; provided mainly for backwards compatibility,
- * and to mollify people who think JUnit 4.7 {@ling org.junit.Rule Rule}s are ugly.
+ * Under the covers, just tacks a {@link MoxieRule} onto your test instance - see documentation for that class for more
+ * details of usage.  This class is provided mainly for backwards compatibility, and to mollify people who think
+ * JUnit 4.7 {@link org.junit.Rule Rule}s are ugly.
  * </p>
  */
 public class MoxieRunner extends BlockJUnit4ClassRunner {
