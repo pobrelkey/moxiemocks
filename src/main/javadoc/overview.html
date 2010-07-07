@@ -2,15 +2,15 @@
 <body>
 
 <p>
-    Moxie is a new Java library for creating <a href="http://www.mockobjects.com/">mock objects</a> in unit tests.
+    Moxie is a new Java library for creating <a target="_top" href="http://www.mockobjects.com/">mock objects</a> in unit tests.
     It aims to be the "nicest" and easiest-to-use mocking library around, with a consistent syntax that rankles less
     than other mocking libraries currently available.
 </p>
 
 <p>
     This page gives an overview of Moxie; for more information, you may also be interested in Moxie's
-    <a href="http://code.google.com/p/moxiemocks">Google Code page</a> and
-    <a href="http://moxiemocks.org/mvn/">Maven-generated project documentation</a>.)
+    <a target="_top" href="http://code.google.com/p/moxiemocks">Google Code page</a> and
+    <a target="_top" href="http://moxiemocks.org/mvn/">Maven-generated project documentation</a>.)
 </p>
 
 <h2>Installation</h2>
@@ -30,12 +30,12 @@
 <p>
     Note that if you're manually installing Moxie, you may also want the following jars:
 <ul>
-    <li><a href="http://code.google.com/p/hamcrest/">Hamcrest</a> 1.1 or later (note that the
-        <a href="http://junit.sourceforge.net/">JUnit</a> 4 jar contains the core Hamcrest classes, which will enable
+    <li><a target="_top" href="http://code.google.com/p/hamcrest/">Hamcrest</a> 1.1 or later (note that the
+        <a target="_top" href="http://junit.sourceforge.net/">JUnit</a> 4 jar contains the core Hamcrest classes, which will enable
         all
         functionality except some of the text matchers on {@link moxie.MoxieMatchers MoxieMatchers})
     </li>
-    <li><a href="http://cglib.sourceforge.net/">cglib</a> 2.1_3 or later (only if you want to mock concrete classes
+    <li><a target="_top" href="http://cglib.sourceforge.net/">cglib</a> 2.1_3 or later (only if you want to mock concrete classes
         or use spies - not needed for interface mocks)
     </li>
 </ul>
@@ -51,7 +51,7 @@
 <p>
     Simple example: assume we're testing a <code>Rot13List</code> - a hypothetical class which wraps a
     <code>List&lt;String&gt;</code>. It encodes item values with the
-    <a href="http://en.wikipedia.org/wiki/ROT13">ROT13 cipher</a> when writing them to the underlying list,
+    <a target="_top" href="http://en.wikipedia.org/wiki/ROT13">ROT13 cipher</a> when writing them to the underlying list,
     and decodes them on reads.
 </p>
 
@@ -191,7 +191,7 @@ Moxie.verify(spy);
 </blockquote>
 <p>
     In addition to traditional expectation-driven mocking, Moxie also supports the "state-based testing" approach
-    to mocking popularized by <a href="http://www.mockito.org/">Mockito</a>, in which checks are performed against mocks
+    to mocking popularized by <a target="_top" href="http://www.mockito.org/">Mockito</a>, in which checks are performed against mocks
     after the fact to determine whether the desired methods were called. Note that when using this approach we need to
     create our mocks using {@link moxie.MoxieOptions#PERMISSIVE MoxieOptions.PERMISSIVE}, so that the mocks won't throw
     an exception when an unexpected method is called.
@@ -238,8 +238,8 @@ public void simpleExample() {
 <p>
     Moxie was born primarily out of frustration with the syntax of existing mocking libraries, on a long-running
     (four years, 100-plus iterations) project that used no fewer than four different mocking libraries
-    (<a href="http://www.jmock.org/jmock1.html">JMock 1</a>, <a href="http://www.jmock.org/">JMock 2</a>,
-    <a href="http://easymock.org/">EasyMock</a>, <a href="www.mockito.org">Mockito</a>) in different parts of the code.
+    (<a target="_top" href="http://www.jmock.org/jmock1.html">JMock 1</a>, <a target="_top" href="http://www.jmock.org/">JMock 2</a>,
+    <a target="_top" href="http://easymock.org/">EasyMock</a>, <a target="_top" href="www.mockito.org">Mockito</a>) in different parts of the code.
     Goals for the syntax and the library were as follows:
 </p>
 <dl>
@@ -321,7 +321,7 @@ EasyMock.expect(<b>mock.someMethod()</b>).times(3).andReturn("result");
 <h2>Release Notes</h2>
 <h4>Release 0.3 - 6 July 2010</h4>
 <ul>
-    <li>Fixing <a href="http://code.google.com/p/moxiemocks/issues/detail?id=1&can=1">bug 1</a>:
+    <li>Fixing <a target="_top" href="http://code.google.com/p/moxiemocks/issues/detail?id=1&can=1">bug 1</a>:
         {@link moxie.MoxieRunner MoxieRunner} not setting up mocks before <code>&#64;Before</code> methods are run.
     </li>
     <li>Introduced {@link moxie.MoxieRule MoxieRule} as a more modern alternative to
@@ -348,7 +348,7 @@ EasyMock.expect(<b>mock.someMethod()</b>).times(3).andReturn("result");
 </ul>
 
 <p>
-    @author <a href="http://moxiemocks.org/contact-rob.html">Rob Pelkey</a>
+    @author <a target="_top" href="http://moxiemocks.org/contact-rob.html">Rob Pelkey</a>
 </p>
 </body>
 </html>
