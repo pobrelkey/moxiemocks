@@ -10,7 +10,7 @@
 <p>
     This page gives an overview of Moxie; for more information, you may also be interested in Moxie's
     <a target="_top" href="http://code.google.com/p/moxiemocks">Google Code page</a> and
-    <a target="_top" href="http://moxiemocks.org/mvn/">Maven-generated project documentation</a>.)
+    <a target="_top" href="http://moxiemocks.org/mvn/">Maven-generated project documentation</a>.
 </p>
 
 <h2>Installation</h2>
@@ -197,7 +197,7 @@ Moxie.verify(spy);
     an exception when an unexpected method is called.
 </p>
 <blockquote><pre>
-List mock = Moxie.mock(List.class);
+List mock = Moxie.mock(List.class, <b>MoxieOptions.PERMISSIVE</b>);
 Moxie.stub(mock).willReturn("bar").on().get(1);
 Rot13List rot13 = new Rot13List(mock);
 String result = rot13.get(1);
