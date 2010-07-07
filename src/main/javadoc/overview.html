@@ -198,7 +198,7 @@ Moxie.verify(spy);
 </p>
 <blockquote><pre>
 List mock = Moxie.mock(List.class, <b>MoxieOptions.PERMISSIVE</b>);
-Moxie.stub(mock).willReturn("bar").on().get(1);
+<b>Moxie.stub(mock).willReturn("bar").on().get(1);</b>
 Rot13List rot13 = new Rot13List(mock);
 String result = rot13.get(1);
 assert "one".equals(result);
