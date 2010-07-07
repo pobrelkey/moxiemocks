@@ -30,6 +30,12 @@
         <developerConnection>scm:svn:https://moxiemocks.googlecode.com/svn/trunk/</developerConnection>
         <url>http://moxiemocks.googlecode.com/svn/trunk/</url>
     </scm>
+    <distributionManagement>
+        <site>
+            <id>www.moxiemocks.org</id>
+            <url>scpexe://www.moxiemocks.org/opt/www/www.moxiemocks.org/htdocs/mvn/</url>
+        </site>
+    </distributionManagement>
     <developers>
         <developer>
             <name>Robert Pelkey</name>
