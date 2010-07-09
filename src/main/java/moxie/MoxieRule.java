@@ -34,9 +34,10 @@ import org.junit.runners.model.Statement;
  * Use <code>MoxieRule</code> by adding an annotated field to your test, as follows - this will cause <code>MoxieRule</code>
  * to get picked up and used by the JUnit 4 test runner.
  * </p>
- * <pre>@org.junit.Rule
+ * <blockquote><pre>
+ * @org.junit.Rule
  * public MoxieRule moxie = new MoxieRule();
- * </pre>
+ * </pre></blockquote>
  * <p>
  * <code>MoxieRule</code> will use {@link Moxie#autoMock(Object...) Moxie.autoMock()} before each test method
  * to populate annotated fields on your test instance with mock/spy objects.  After the method completes, it will
