@@ -22,13 +22,10 @@
 
 package moxietests;
 
-import moxie.Mock;
 import moxie.Moxie;
-import moxie.MoxieRule;
 import moxie.MoxieUnexpectedInvocationError;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsSame;
-import org.junit.Rule;
 import org.junit.Test;
 
 import java.math.BigDecimal;

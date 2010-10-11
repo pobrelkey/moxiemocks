@@ -35,7 +35,7 @@ import org.junit.runners.model.Statement;
  * to get picked up and used by the JUnit 4 test runner.
  * </p>
  * <blockquote><pre>
- * @org.junit.Rule
+ * &#64;org.junit.Rule
  * public MoxieRule moxie = new MoxieRule();
  * </pre></blockquote>
  * <p>

@@ -33,7 +33,6 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 abstract class MoxieUtils {
 
@@ -217,8 +216,8 @@ abstract class MoxieUtils {
         return dest;
     }
 
-    static void describeExpectations(SimpleDescription desc, Set<ExpectationImpl> unorderedExpectations, List<ExpectationImpl> orderedExpectations) {
-        describeIfNonEmpty(desc, "Expected (in any order):\n", unorderedExpectations);
+    static void describeExpectations(SimpleDescription desc, Collection<ExpectationImpl> unorderedExpectations, Collection<ExpectationImpl> orderedExpectations) {
+        describeIfNonEmpty(desc, "Expected (not in order):\n", unorderedExpectations);
         describeIfNonEmpty(desc, "Expected (in order):\n", orderedExpectations);
     }
 

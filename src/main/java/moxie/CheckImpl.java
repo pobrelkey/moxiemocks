@@ -24,11 +24,8 @@ package moxie;
 
 import org.hamcrest.Matcher;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 class CheckImpl<T> implements Check<T> {

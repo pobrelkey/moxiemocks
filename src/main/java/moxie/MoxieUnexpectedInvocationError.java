@@ -23,18 +23,17 @@
 package moxie;
 
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
 
 /**
  *  {@link Error} thrown by Moxie when a method that has not been {@link Expectation expected} has been invoked on a {@link MoxieOptions#PRESCRIPTIVE PRESCRIPTIVE} mock.
  */
 public class MoxieUnexpectedInvocationError extends Error {
-    MoxieUnexpectedInvocationError(String message, String name, Method invokedMethod, Object[] invocationArgs, Set<ExpectationImpl> unorderedExpectations, List<ExpectationImpl> orderedExpectations) {
+    MoxieUnexpectedInvocationError(String message, String name, Method invokedMethod, Object[] invocationArgs, Collection<ExpectationImpl> unorderedExpectations, Collection<ExpectationImpl> orderedExpectations) {
         super(createExceptionMessage(message, name, invokedMethod, invocationArgs, unorderedExpectations, orderedExpectations));
     }
 
-    private static String createExceptionMessage(String message, String name, Method invokedMethod, Object[] invocationArgs, Set<ExpectationImpl> unorderedExpectations, List<ExpectationImpl> orderedExpectations) {
+    private static String createExceptionMessage(String message, String name, Method invokedMethod, Object[] invocationArgs, Collection<ExpectationImpl> unorderedExpectations, Collection<ExpectationImpl> orderedExpectations) {
         SimpleDescription desc = new SimpleDescription();
         desc.appendText("On \"" + name + "\": " + message + "\n");
         if (invokedMethod != null) {

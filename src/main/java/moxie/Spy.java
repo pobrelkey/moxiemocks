@@ -37,5 +37,5 @@ public @interface Spy {
     /**
      * Specifies {@link MoxieOptions} to be used when wrapping this field's contents in a spy object.
      */
-    MoxieOptions[] options() default {};
+    MoxieOptions[] value() default {};
 }

@@ -26,7 +26,6 @@ import moxie.*;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.Writer;
 import java.lang.reflect.InvocationHandler;
@@ -573,5 +572,20 @@ public class ExpectationTest {
         Moxie.expect(mock).andReturn("two").on().clear();
     }
 
+    @Test
+    public void behaviorOnConsecutiveCalls() {
+        List mock = Moxie.mock(List.class);
+        Moxie.expect(mock).once().andReturn("one").on().get(0);
+        Moxie.expect(mock).once().andReturn("two").on().get(0);
+        Moxie.expect(mock).once().andThrow(new RuntimeException("three")).on().get(0);
 
+        Assert.assertEquals("one", mock.get(0));
+        Assert.assertEquals("two", mock.get(0));
+        try {
+            mock.get(0);
+            Assert.fail("should have thrown exception");
+        } catch (RuntimeException e) {
+            Assert.assertEquals("three", e.getMessage());
+        }
+    }
 }
