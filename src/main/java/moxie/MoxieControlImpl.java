@@ -22,8 +22,6 @@
 
 package moxie;
 
-import org.hamcrest.Matcher;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
@@ -33,7 +31,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -266,11 +263,11 @@ class MoxieControlImpl implements MoxieControl {
                                 continue;
                             } else if (isGroup) {
                                 GroupOptions optionsAnnotation = f.getAnnotation(GroupOptions.class);
-                                testObject = Moxie.group(f.getName(), optionsAnnotation != null ? optionsAnnotation.options() : new MoxieOptions[0]);
+                                testObject = Moxie.group(f.getName(), optionsAnnotation != null ? optionsAnnotation.value() : new MoxieOptions[0]);
                             } else if (spyAnnotation != null) {
-                                testObject = Moxie.spy(f.get(testInstance), f.getName(), spyAnnotation.options());
+                                testObject = Moxie.spy(f.get(testInstance), f.getName(), spyAnnotation.value());
                             } else {
-                                testObject = Moxie.mock(f.getType(), f.getName(), mockAnnotation.options());
+                                testObject = Moxie.mock(f.getType(), f.getName(), mockAnnotation.value());
                             }
                             oldValues.put(f.getName(), f.get(testInstance));
                             f.set(testInstance, testObject);

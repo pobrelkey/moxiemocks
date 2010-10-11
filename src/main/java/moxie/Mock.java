@@ -36,5 +36,5 @@ public @interface Mock {
     /**
      * Specifies {@link MoxieOptions} to be used when creating a mock to be injected into this field.
      */
-    MoxieOptions[] options() default {};
+    MoxieOptions[] value() default {};
 }

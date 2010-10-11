@@ -44,13 +44,13 @@ public class CheckTest {
     @Rule
     public MoxieRule moxie = new MoxieRule();
     
-    @Mock(options={MoxieOptions.PERMISSIVE})
+    @Mock(MoxieOptions.PERMISSIVE)
     private List<String> mock;
 
-    @Spy(options={MoxieOptions.PERMISSIVE})
+    @Spy(MoxieOptions.PERMISSIVE)
     private List<String> spy = new ArrayList<String>(Arrays.asList("zero", "one", "two", "three", "four"));
 
-    @GroupOptions(options={MoxieOptions.ORDERED})
+    @GroupOptions(MoxieOptions.ORDERED)
     private Group group;
 
     @Test

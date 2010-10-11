@@ -274,7 +274,7 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
             }
         }
         if (!cardinality.isViable()) {
-            group.throwUnexpectedInvocationError("unexpected method invocation", method, args);
+            return false;
         }
         cardinality.incrementCount();
         return true;
@@ -302,20 +302,31 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
 
     public void describeTo(Description description) {
         description.appendText("expected ");
-        cardinality.describeTo(description);
+        cardinality.describeExpected(description);
+        description.appendText(", invoked ");
+        cardinality.describeCount(description);
         description.appendText(": ");
         description.appendText(method.getName());
         description.appendList("(", ", ", ")", argMatchers);
         if (exceptionMatcher != null) {
-            description.appendText(", throws ");
+            description.appendText(", expected to throw ");
             exceptionMatcher.describeTo(description);
         } else if (returnValueMatcher != null) {
-            description.appendText(", returns ");
+            description.appendText(", expected to return ");
             returnValueMatcher.describeTo(description);
+        }
+        if (handler instanceof SelfDescribing) {
+            description.appendText(" (will ");
+            ((SelfDescribing) handler).describeTo(description);
+            description.appendText(")");
+        } else if (handler != null) {
+            description.appendText(" (handled by ");
+            description.appendValue(handler);
+            description.appendText(")");
         }
     }
 
-    static private class ReturnHandler implements InvocationHandler {
+    static private class ReturnHandler implements InvocationHandler, SelfDescribing {
         private final Object result;
 
         public ReturnHandler(Object result) {
@@ -329,9 +340,14 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
         public Object getResult() {
             return result;
         }
+
+        public void describeTo(Description description) {
+            description.appendText("return ");
+            description.appendValue(result);
+        }
     }
 
-    static private class ThrowHandler implements InvocationHandler {
+    static private class ThrowHandler implements InvocationHandler, SelfDescribing {
         private final Throwable throwable;
 
         public ThrowHandler(Throwable throwable) {
@@ -345,9 +361,14 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
         public Throwable getThrowable() {
             return throwable;
         }
+
+        public void describeTo(Description description) {
+            description.appendText("throw ");
+            description.appendValue(throwable);
+        }
     }
 
-    static private class DelegateHandler implements InvocationHandler {
+    static private class DelegateHandler implements InvocationHandler, SelfDescribing {
         private final Object delegate;
 
         public DelegateHandler(Object delegate) {
@@ -356,6 +377,11 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
 
         public Object invoke(Object mockObject, Method method, Object[] parameters) throws Throwable {
             return method.invoke(delegate, parameters);
+        }
+
+        public void describeTo(Description description) {
+            description.appendText("delegate to ");
+            description.appendValue(delegate);
         }
     }
 }

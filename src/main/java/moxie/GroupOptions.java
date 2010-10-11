@@ -37,5 +37,5 @@ public @interface GroupOptions {
     /**
      * Specifies {@link MoxieOptions} to be used when creating a group to be injected into this field.
      */
-    MoxieOptions[] options();
+    MoxieOptions[] value();
 }

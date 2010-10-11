@@ -41,7 +41,7 @@ public class MoxieFailedCheckError extends Error {
 
         desc.appendText("Checked:\n");
         desc.appendText("    expected ");
-        cardinality.describeTo(desc);
+        cardinality.describeExpected(desc);
         desc.appendText(": ");
         desc.appendText(checkedMethod.getName());
         desc.appendList("(", ", ", ")", argMatchers);

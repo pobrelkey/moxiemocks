@@ -28,6 +28,7 @@ import org.hamcrest.SelfDescribing;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collections;
 
 class SimpleDescription implements Description {
 
@@ -55,7 +56,7 @@ class SimpleDescription implements Description {
     }
 
     public <T> Description appendValueList(String start, String separator, String end, T... values) {
-        return appendValueList(start, separator, end, Arrays.asList(values));
+        return appendValueList(start, separator, end, values != null ? Arrays.asList(values) : Collections.EMPTY_LIST);
     }
 
     public <T> Description appendValueList(String start, String separator, String end, Iterable<T> values) {

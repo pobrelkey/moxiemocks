@@ -22,18 +22,18 @@
 
 package moxie;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  *  {@link Error} thrown by Moxie when {@link Moxie#verify(Object...) verification} of a group or a mock/spy object uncovers unfulfilled expectations.
  */
 public class MoxieFailedVerificationError extends Error {
-    MoxieFailedVerificationError(String message, String mockOrGroupName, List<Invocation> invocations, Set<ExpectationImpl> unorderedExpectations, List<ExpectationImpl> orderedExpectations) {
+    MoxieFailedVerificationError(String message, String mockOrGroupName, List<Invocation> invocations, Collection<ExpectationImpl> unorderedExpectations, Collection<ExpectationImpl> orderedExpectations) {
         super(createExceptionMessage(message, mockOrGroupName, invocations, unorderedExpectations, orderedExpectations));
     }
 
-    private static String createExceptionMessage(String message, String mockOrGroupName, List<Invocation> invocations, Set<ExpectationImpl> unorderedExpectations, List<ExpectationImpl> orderedExpectations) {
+    private static String createExceptionMessage(String message, String mockOrGroupName, List<Invocation> invocations, Collection<ExpectationImpl> unorderedExpectations, Collection<ExpectationImpl> orderedExpectations) {
         SimpleDescription desc = new SimpleDescription();
         desc.appendText("On \"" + mockOrGroupName + "\": " + message + "\n");
         MoxieUtils.describeIfNonEmpty(desc, "Invoked:\n", invocations);

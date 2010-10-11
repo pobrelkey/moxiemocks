@@ -24,7 +24,6 @@ package moxie;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -32,7 +31,7 @@ class GroupImpl implements Group, Verifiable {
 
     private final String name;
     private final InstantiationStackTrace whereInstantiated;
-    private final Set<ExpectationImpl> unorderedExpectations = new HashSet<ExpectationImpl>();
+    private final List<ExpectationImpl> unorderedExpectations = new ArrayList<ExpectationImpl>();
     private final List<ExpectationImpl> orderedExpectations = new ArrayList<ExpectationImpl>();
     private boolean defaultCardinality;
     private CardinalityImpl cardinality;
