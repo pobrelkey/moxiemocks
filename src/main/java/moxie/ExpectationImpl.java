@@ -378,6 +378,7 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
         }
 
         public Object invoke(Object mockObject, Method method, Object[] parameters) throws Throwable {
+            throwable.fillInStackTrace();
             throw throwable;
         }
 
