@@ -78,7 +78,7 @@ Moxie.expect(mock).<b>willReturn("uryyb jbeyq")</b>.on().get(0);
 Moxie.expect(mock).<b>willThrow(new IndexOutOfBoundsException())</b>.on().get(1);
 Rot13List rot13 = new Rot13List(mock);
 String result = rot13.get(0);
-assert "hello world".equals(result);
+assertEquals("hello world", result);
 try {
     rot13.get(1);
 } catch (IndexOutOfBoundsException e) {
@@ -168,7 +168,7 @@ Moxie.verify(mockA, mockB, <b>group</b>);
 Moxie.expect(spy).will().get(1);
 Rot13List rot13 = new Rot13List(spy);
 String result = rot13.get(1);
-assert "one".equals(result);
+assertEquals("one", result);
 Moxie.verify(spy);
 </pre>
 </blockquote>
@@ -181,7 +181,7 @@ Moxie.expect(spy).<b>willReturnVerified("bar")</b>.on().get(1);
 Moxie.expect(spy).<b>willThrowVerified(Moxie.isA(IndexOutOfBoundsException.class))</b>.on().get(3);
 Rot13List rot13 = new Rot13List(spy);
 String result = rot13.get(1);
-assert "one".equals(result);
+assertEquals("one", result);
 try {
     rot13.get(3);
 } catch (IndexOutOfBoundsException e) {
@@ -202,7 +202,7 @@ List mock = Moxie.mock(List.class, <b>MoxieOptions.PERMISSIVE</b>);
 <b>Moxie.stub(mock).willReturn("bar").on().get(1);</b>
 Rot13List rot13 = new Rot13List(mock);
 String result = rot13.get(1);
-assert "one".equals(result);
+assertEquals("one", result);
 rot13.add("hello world");
 <b>Moxie.check(mock).got().get(1);</b>
 <b>Moxie.check(mock).got().add("uryyb jbeyq");</b>
