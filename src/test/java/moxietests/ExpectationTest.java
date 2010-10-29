@@ -573,11 +573,9 @@ public class ExpectationTest {
     }
 
     @Test
-    public void behaviorOnConsecutiveCalls() {
+    public void behaviorOnConsecutiveCalls_happyPath() {
         List mock = Moxie.mock(List.class);
-        Moxie.expect(mock).once().andReturn("one").on().get(0);
-        Moxie.expect(mock).once().andReturn("two").on().get(0);
-        Moxie.expect(mock).once().andThrow(new RuntimeException("three")).on().get(0);
+        Moxie.expect(mock).andConsecutivelyReturn("one", "two").andConsecutivelyThrow(new RuntimeException("three"),new RuntimeException("four")).times(4).on().get(0);
 
         Assert.assertEquals("one", mock.get(0));
         Assert.assertEquals("two", mock.get(0));
@@ -587,5 +585,24 @@ public class ExpectationTest {
         } catch (RuntimeException e) {
             Assert.assertEquals("three", e.getMessage());
         }
+        try {
+            mock.get(0);
+            Assert.fail("should have thrown exception");
+        } catch (RuntimeException e) {
+            Assert.assertEquals("four", e.getMessage());
+        }
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void behaviorOnConsecutiveCalls_tooFew() {
+        List mock = Moxie.mock(List.class);
+        Moxie.expect(mock).andConsecutivelyReturn("one", "two", "three").times(4).on().get(0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void behaviorOnConsecutiveCalls_tooMany() {
+        List mock = Moxie.mock(List.class);
+        Moxie.expect(mock).andConsecutivelyReturn("one", "two", "three").times(2).on().get(0);
+    }
+
 }

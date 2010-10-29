@@ -106,6 +106,27 @@ import java.lang.reflect.InvocationHandler;
  * on non-void methods; for spies, the default behavior is to delegate to the same method on the object
  * being spied upon.
  * </p></dd>
+ * <dt style="font-weight: bold">setting stub behavior on consecutive calls</dt>
+ * <dd><p>
+ * Sometimes we want the method to exhibit different behavior on consecutive calls - for instance, an iterator
+ * may return a series of different values as it traverses a collection.  The {@link #andConsecutivelyReturn(Object...) andConsecutivelyReturn()}
+ * method can be used for this purpose.  Similarly, {@link #andConsecutivelyThrow(Throwable...) andConsecutivelyThrow()}
+ * will specify a series of <code>Throwable</code>s to be thrown on successive method calls. (These methods have
+ * the aliases {@link #willConsecutivelyReturn(Object...) willConsecutivelyReturn()} and
+ * {@link #willConsecutivelyThrow(Throwable...) willConsecutivelyThrow()} respectively.)
+ * </p><p>
+ * If we want to mix and match returning values and throwing <code>Throwable</code>s on consecutive calls, we can
+ * accomplish this by calling multiple behavior-setting methods within an expectation statement. For example,
+ * to get a method to return the value <code>1</code>, then throw an <code>Exception</code>, then return the value
+ * <code>"three"</code> across three consecutive calls, use the following:
+ * </p>
+ * <blockquote style="text-indent: -4em; padding-left: 4em"><code>
+ * Moxie<nobr>.expect(mock)</nobr><wbr /><nobr>.andReturn(1)</nobr><wbr /><nobr>.andThrow(new Exception("Two!"))</nobr><wbr /><nobr>.andReturn("three")</nobr><wbr /><nobr>.times(3)</nobr><wbr /><nobr>.on().someMethod();</nobr>
+ * </code></blockquote>
+ * <p>
+ * This works equally effectively as the "consecutively" methods described above, which are essentially just shorthand
+ * for this longer notation.
+ * </p></dd>
  * <dt style="font-weight: bold">verifying returned/thrown values (spies only)</dt>
  * <dd><p>
  * On spy objects, you can use the {@link #andVerifyReturn(Object) andVerifyReturn()} and
@@ -133,16 +154,6 @@ import java.lang.reflect.InvocationHandler;
  * </p></dd>
  * </dl>
  * <p/>
- * <h2>Flexibility of Syntax</h2>
- * <p/>
- * <p>
- * This initial release of Moxie offers a number of aliases and alternatives for the methods comprising its
- * domain-specific language.  This is partly out of recognition that the same DSL methods may sound stilted
- * in different situations; partly out of recognition that different developers will have differing personal
- * tastes; and partly out of plain lack of consensus as to what patterns method names should follow.
- * Does this make Moxie more confusing and difficult to learn, or does it make Moxie's DSL easier and more
- * enjoyable to use?  Feedback on this aspect of Moxie is welcome.
- * </p>
  *
  * @param <T> Type of the mock object for which expectations are being set.
  */
@@ -196,6 +207,34 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @return this object, for call chaining
      */
     Expectation<T> andReturn(Object result);
+
+    /**
+     * <p>
+     * When a call fulfilling this expectation is received, return the first value on the first invocation,
+     * the second value on the second invocation, et cetera.
+     * <p>
+     * Note that {@link #willConsecutivelyReturn(Object...) willConsecutivelyReturn()} and {@link #andConsecutivelyReturn(Object...) andConsecutivelyReturn()} do exactly the same thing -
+     * use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param results the values to be returned
+     * @return this object, for call chaining
+     */
+    Expectation<T> willConsecutivelyReturn(Object... results);
+
+    /**
+     * <p>
+     * When a call fulfilling this expectation is received, return the first value on the first invocation,
+     * the second value on the second invocation, et cetera.
+     * <p>
+     * Note that {@link #willConsecutivelyReturn(Object...) willConsecutivelyReturn()} and {@link #andConsecutivelyReturn(Object...) andConsecutivelyReturn()} do exactly the same thing -
+     * use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param results the values to be returned
+     * @return this object, for call chaining
+     */
+    Expectation<T> andConsecutivelyReturn(Object... results);
 
     /**
      * <p>
@@ -266,6 +305,35 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @return this object, for call chaining
      */
     Expectation<T> andThrow(Throwable throwable);
+
+    /**
+     * <p>
+     * When a call fulfilling this expectation is received, throw the first {@link Throwable} on the first invocation,
+     * the second {@link Throwable} on the second invocation, et cetera.
+     * <p>
+     * Note that {@link #willConsecutivelyThrow(Throwable...) willConsecutivelyThrow()} and {@link #andConsecutivelyThrow(Throwable...) andConsecutivelyThrow()} do exactly the same thing -
+     * use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param throwables the {@link Throwable}s to be thrown
+     * @return this object, for call chaining
+     */
+    Expectation<T> willConsecutivelyThrow(Throwable... throwables);
+
+
+    /**
+     * <p>
+     * When a call fulfilling this expectation is received, throw the first {@link Throwable} on the first invocation,
+     * the second {@link Throwable} on the second invocation, et cetera.
+     * <p>
+     * Note that {@link #willConsecutivelyThrow(Throwable...) willConsecutivelyThrow()} and {@link #andConsecutivelyThrow(Throwable...) andConsecutivelyThrow()} do exactly the same thing -
+     * use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param throwables the {@link Throwable}s to be thrown
+     * @return this object, for call chaining
+     */
+    Expectation<T> andConsecutivelyThrow(Throwable... throwables);
 
     /**
      * <p>
