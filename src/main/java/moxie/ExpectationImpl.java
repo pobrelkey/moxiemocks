@@ -31,6 +31,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -118,40 +119,40 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
     }
 
     public Expectation<T> willReturn(Object result) {
-        if (handler != null) {
-            throw new IllegalStateException("handler already specified for this invocation");
-        }
-        handler = new ReturnHandler(result);
-        return this;
+        return willHandleWith(new ReturnHandler(result));
     }
 
     public Expectation<T> willThrow(Throwable throwable) {
-        if (handler != null) {
-            throw new IllegalStateException("handler already specified for this invocation");
-        }
-        handler = new ThrowHandler(throwable);
-        return this;
+        return willHandleWith(new ThrowHandler(throwable));
     }
 
     public Expectation<T> willDelegateTo(T delegate) {
-        if (handler != null) {
-            throw new IllegalStateException("handler already specified for this invocation");
-        }
-        handler = new DelegateHandler(delegate);
-        return this;
+        return willHandleWith(new DelegateHandler(delegate));
     }
 
     public Expectation<T> willHandleWith(InvocationHandler handler) {
-        if (this.handler != null) {
-            throw new IllegalStateException("handler already specified for this invocation");
+        if (this.handler instanceof ConsecutiveHandler) {
+            ((ConsecutiveHandler) this.handler).add(handler);
+        } else if (this.handler != null) {
+            this.handler = new ConsecutiveHandler(this.handler).add(handler);
+        } else {
+            this.handler = handler;
         }
-        this.handler = handler;
         return this;
     }
 
     public T on() {
         if (this.method != null) {
             throw new IllegalStateException("method to match already specified");
+        }
+        if (this.handler instanceof ConsecutiveHandler) {
+            ConsecutiveHandler consecutiveHandler = (ConsecutiveHandler) this.handler;
+            if (this.cardinality.getMinTimes() != null && this.cardinality.getMinTimes() > consecutiveHandler.size()) {
+                throw new IllegalStateException("not enough consecutive-call handlers ("+consecutiveHandler.size()+") defined to handle minimal number of calls (" + this.cardinality.getMinTimes() + ")");
+            }
+            if (this.cardinality.getMaxTimes() != null && this.cardinality.getMaxTimes() < consecutiveHandler.size()) {
+                throw new IllegalStateException("more consecutive-call handlers ("+consecutiveHandler.size()+") defined than can handle maximum number of calls (" + this.cardinality.getMaxTimes() + ")");
+            }
         }
         return MoxieUtils.newProxyInstance(interception.getInterceptedClass(), new InvocationHandler() {
             public Object invoke(Object unused, Method method, Object[] params) throws Throwable {
@@ -206,6 +207,17 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
         return willReturn(result);
     }
 
+    public Expectation<T> willConsecutivelyReturn(Object... results) {
+        for (Object result : results) {
+            willReturn(result);
+        }
+        return this;
+    }
+
+    public Expectation<T> andConsecutivelyReturn(Object... results) {
+        return willConsecutivelyReturn(results);
+    }
+
     public Expectation<T> willReturnVerified(Object result) {
         Matcher matcher = MatcherSyntax.singleMatcherExpression(null, result);
         if (!(interception instanceof SpyImpl)) {
@@ -221,6 +233,17 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
 
     public Expectation<T> andThrow(Throwable throwable) {
         return willThrow(throwable);
+    }
+
+    public Expectation<T> willConsecutivelyThrow(Throwable... throwables) {
+        for (Throwable throwable : throwables) {
+            willThrow(throwable);
+        }
+        return this;
+    }
+
+    public Expectation<T> andConsecutivelyThrow(Throwable... throwables) {
+        return willConsecutivelyThrow(throwables);
     }
 
     public Expectation<T> willThrowVerified(Throwable throwable) {
@@ -382,6 +405,50 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
         public void describeTo(Description description) {
             description.appendText("delegate to ");
             description.appendValue(delegate);
+        }
+    }
+
+    static private class ConsecutiveHandler implements InvocationHandler, SelfDescribing {
+        private final List<InvocationHandler> handlers = new ArrayList<InvocationHandler>();
+        private Iterator<InvocationHandler> iterator = null;
+
+        public ConsecutiveHandler(InvocationHandler handler) {
+            handlers.add(handler);
+        }
+
+        public ConsecutiveHandler add(InvocationHandler invocationHandler) {
+            handlers.add(invocationHandler);
+            return this;
+        }
+
+        public Object invoke(Object mockObject, Method method, Object[] parameters) throws Throwable {
+            if (iterator == null) {
+                iterator = handlers.iterator();
+            }
+            if (!iterator.hasNext()) {
+                throw new MoxieUnexpectedError("not enough consecutive-call handlers", null);
+            }
+            return iterator.next().invoke(mockObject, method, parameters);
+        }
+
+        public void describeTo(Description description) {
+            description.appendText("consecutively ");
+
+            for (Iterator<InvocationHandler> it = handlers.iterator(); it.hasNext(); ) {
+                InvocationHandler handler = it.next();
+                if (handler instanceof SelfDescribing) {
+                    ((SelfDescribing) handler).describeTo(description);
+                } else {
+                    description.appendValue(handler);
+                }
+                if (it.hasNext()) {
+                    description.appendText(", ");
+                }
+            }
+        }
+
+        public int size() {
+            return handlers.size();
         }
     }
 }

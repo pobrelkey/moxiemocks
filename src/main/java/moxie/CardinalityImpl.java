@@ -161,6 +161,14 @@ class CardinalityImpl<T> implements Cardinality<T> {
         }
     }
 
+    public Integer getMinTimes() {
+        return minTimes;
+    }
+
+    public Integer getMaxTimes() {
+        return maxTimes;
+    }
+
     public void describeExpected(Description description) {
         if (minTimes == null) {
             if (maxTimes == null) {
