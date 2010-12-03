@@ -29,6 +29,7 @@ import org.hamcrest.SelfDescribing;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -208,13 +209,21 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
     }
 
     public Expectation<T> willConsecutivelyReturn(Object... results) {
+        return willConsecutivelyReturn(Arrays.asList(results));
+    }
+
+    public Expectation<T> andConsecutivelyReturn(Object... results) {
+        return willConsecutivelyReturn(results);
+    }
+
+    public Expectation<T> willConsecutivelyReturn(Iterable results) {
         for (Object result : results) {
             willReturn(result);
         }
         return this;
     }
 
-    public Expectation<T> andConsecutivelyReturn(Object... results) {
+    public Expectation<T> andConsecutivelyReturn(Iterable results) {
         return willConsecutivelyReturn(results);
     }
 

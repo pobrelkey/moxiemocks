@@ -25,6 +25,7 @@ package moxie;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.hamcrest.core.AllOf;
 import org.hamcrest.core.AnyOf;
 import org.hamcrest.core.IsEqual;
@@ -38,9 +39,12 @@ import org.hamcrest.text.StringEndsWith;
 import org.hamcrest.text.StringStartsWith;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -423,8 +427,8 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
-    static public Object isNotNull() {
-        return reportMatcher(new IsNot(new IsNull()), null);
+    static public <T> T isNotNull() {
+        return MoxieMatchers.<T>reportMatcher(new IsNot(new IsNull()), null);
     }
 
     /**
@@ -432,8 +436,8 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
-    static public Object isNull() {
-        return reportMatcher(new IsNull(), null);
+    static public <T> T isNull() {
+        return MoxieMatchers.<T>reportMatcher(new IsNull(), null);
     }
 
     /**
@@ -441,8 +445,8 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
-    static public Object notNull() {
-        return isNotNull();
+    static public <T> T notNull() {
+        return MoxieMatchers.<T>isNotNull();
     }
 
     /**
@@ -1369,8 +1373,274 @@ public abstract class MoxieMatchers {
         return (T[]) reportMatcher(arrayEqualsMatcher(value), Object[].class);
     }
 
-    // Hamcrest's IsArray matcher doesn't look as if it works on primitive arrays.
+    static public <T> T[] arrayWith(T item) {
+        Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(Object.class, item);
+        return (T[]) reportMatcher(isArrayContainingMatcher(itemMatcher), Object[].class);
+    }
 
+    static public <T> T[] arrayWithAll(T... items) {
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> arrayMatchers = new ArrayList<Matcher>();
+        for (Matcher itemMatcher : itemMatchers) {
+            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+        }
+        return (T[]) reportMatcher(new AllOf(arrayMatchers), Object[].class);
+    }
+
+    static public boolean[] booleanArrayWith(boolean item) {
+        Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(boolean.class, item);
+        return reportMatcher(isArrayContainingMatcher(itemMatcher), boolean[].class);
+    }
+
+    static public boolean[] booleanArrayWithAll(boolean... items) {
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> arrayMatchers = new ArrayList<Matcher>();
+        for (Matcher itemMatcher : itemMatchers) {
+            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+        }
+        return reportMatcher(new AllOf(arrayMatchers), boolean[].class);
+    }
+
+    static public char[] charArrayWith(char item) {
+        Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(char.class, item);
+        return reportMatcher(isArrayContainingMatcher(itemMatcher), char[].class);
+    }
+
+    static public char[] charArrayWithAll(char... items) {
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> arrayMatchers = new ArrayList<Matcher>();
+        for (Matcher itemMatcher : itemMatchers) {
+            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+        }
+        return reportMatcher(new AllOf(arrayMatchers), char[].class);
+    }
+
+    static public short[] shortArrayWith(short item) {
+        Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(short.class, item);
+        return reportMatcher(isArrayContainingMatcher(itemMatcher), short[].class);
+    }
+
+    static public short[] shortArrayWithAll(short... items) {
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> arrayMatchers = new ArrayList<Matcher>();
+        for (Matcher itemMatcher : itemMatchers) {
+            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+        }
+        return reportMatcher(new AllOf(arrayMatchers), short[].class);
+    }
+
+    static public int[] intArrayWith(int item) {
+        Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(int.class, item);
+        return reportMatcher(isArrayContainingMatcher(itemMatcher), int[].class);
+    }
+
+    static public int[] intArrayWithAll(int... items) {
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> arrayMatchers = new ArrayList<Matcher>();
+        for (Matcher itemMatcher : itemMatchers) {
+            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+        }
+        return reportMatcher(new AllOf(arrayMatchers), int[].class);
+    }
+
+    static public long[] longArrayWith(long item) {
+        Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(long.class, item);
+        return reportMatcher(isArrayContainingMatcher(itemMatcher), long[].class);
+    }
+
+    static public long[] longArrayWithAll(long... items) {
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> arrayMatchers = new ArrayList<Matcher>();
+        for (Matcher itemMatcher : itemMatchers) {
+            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+        }
+        return reportMatcher(new AllOf(arrayMatchers), long[].class);
+    }
+
+    static public float[] floatArrayWith(float item) {
+        Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(float.class, item);
+        return reportMatcher(isArrayContainingMatcher(itemMatcher), float[].class);
+    }
+
+    static public float[] floatArrayWithAll(float... items) {
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> arrayMatchers = new ArrayList<Matcher>();
+        for (Matcher itemMatcher : itemMatchers) {
+            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+        }
+        return reportMatcher(new AllOf(arrayMatchers), float[].class);
+    }
+
+    static public double[] doubleArrayWith(double item) {
+        Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(double.class, item);
+        return reportMatcher(isArrayContainingMatcher(itemMatcher), double[].class);
+    }
+
+    static public double[] doubleArrayWithAll(double... items) {
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> arrayMatchers = new ArrayList<Matcher>();
+        for (Matcher itemMatcher : itemMatchers) {
+            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+        }
+        return reportMatcher(new AllOf(arrayMatchers), double[].class);
+    }
+
+
+    static public <T, I extends Iterable<T>> I collectionWith(T item) {
+        Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(Object.class, item);
+        return (I) reportMatcher(Matchers.hasItem(itemMatcher), Iterable.class);
+    }
+
+    static public <T, I extends Iterable<T>> I collectionWithAll(T... items) {
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> arrayMatchers = new ArrayList<Matcher>();
+        for (Matcher itemMatcher : itemMatchers) {
+            arrayMatchers.add(Matchers.hasItem(itemMatcher));
+        }
+        return (I) reportMatcher(new AllOf(arrayMatchers), Iterable.class);
+    }
+
+    static public <K, V, M extends Map<? super K, ? super V>> M mapWithEntry(K key, V value) {
+        List<Matcher> matchers = MatcherSyntax.matcherListFragment(Object.class, Arrays.asList(key, value));
+        Matcher keyMatcher = matchers.remove(0);
+        Matcher valueMatcher = matchers.remove(0);
+        return (M) reportMatcher(Matchers.hasEntry(keyMatcher, valueMatcher), Map.class);
+    }
+
+    static public <K, V, M extends Map<? super K, V>> M mapWithKey(K key) {
+        Matcher keyMatcher = MatcherSyntax.singleMatcherFragment(Object.class, key);
+        return (M) reportMatcher(Matchers.hasKey(keyMatcher), Map.class);
+    }
+
+    static public <K, V, M extends Map<K, ? super V>> M mapWithValue(V value) {
+        Matcher valueMatcher = MatcherSyntax.singleMatcherFragment(Object.class, value);
+        return (M) reportMatcher(Matchers.hasValue(valueMatcher), Map.class);
+    }
+
+    static public <T> T hasProperty(String propertyName, Object value) {
+        Matcher valueMatcher = MatcherSyntax.singleMatcherFragment(Object.class, value);
+        return (T) reportMatcher(Matchers.hasProperty(propertyName, valueMatcher), Object.class);
+    }
+
+    static public String eqIgnoreWhiteSpace(String value) {
+        return reportMatcher(Matchers.equalToIgnoringWhiteSpace(value), String.class);
+    }
+
+    static public <T> T[] anyVarargs() {
+        return (T[]) any(Object[].class);
+    }
+
+    static public boolean[] anyBooleanVarargs() {
+        return any(boolean[].class);
+    }
+
+    static public char[] anyCharVarargs() {
+        return any(char[].class);
+    }
+
+    static public short[] anyShortVarargs() {
+        return any(short[].class);
+    }
+
+    static public int[] anyIntVarargs() {
+        return any(int[].class);
+    }
+
+    static public long[] anyLongVarargs() {
+        return any(long[].class);
+    }
+
+    static public float[] anyFloatVarargs() {
+        return any(float[].class);
+    }
+
+    static public double[] anyDoubleVarargs() {
+        return any(double[].class);
+    }
+
+    static public <C extends Collection> C collectionSize(int size) {
+        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return (C) reportMatcher(new BaseMatcher() {
+            public boolean matches(Object o) {
+                return o != null && sizeMatcher.matches(((Collection) o).size());
+            }
+
+            public void describeTo(Description description) {
+                description.appendText("a collection with size ");
+                sizeMatcher.describeTo(description);
+            }
+        }, Collection.class);
+    }
+
+    static public <M extends Map> M mapSize(int size) {
+        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return (M) reportMatcher(new BaseMatcher() {
+            public boolean matches(Object o) {
+                return o != null && sizeMatcher.matches(((Map) o).size());
+            }
+
+            public void describeTo(Description description) {
+                description.appendText("a map with size ");
+                sizeMatcher.describeTo(description);
+            }
+        }, Collection.class);
+    }
+
+    static public <T> T[] arrayLength(int size) {
+        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return (T[]) reportMatcher(arraySizeMatcher(sizeMatcher), Object[].class);
+    }
+
+    static public boolean[] booleanArrayLength(int size) {
+        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return reportMatcher(arraySizeMatcher(sizeMatcher), boolean[].class);
+    }
+
+    static public char[] charArrayLength(int size) {
+        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return reportMatcher(arraySizeMatcher(sizeMatcher), char[].class);
+    }
+
+    static public short[] shortArrayLength(int size) {
+        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return reportMatcher(arraySizeMatcher(sizeMatcher), short[].class);
+    }
+
+    static public int[] intArrayLength(int size) {
+        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return reportMatcher(arraySizeMatcher(sizeMatcher), int[].class);
+    }
+
+    static public long[] longArrayLength(int size) {
+        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return reportMatcher(arraySizeMatcher(sizeMatcher), long[].class);
+    }
+
+    static public float[] floatArrayLength(int size) {
+        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return reportMatcher(arraySizeMatcher(sizeMatcher), float[].class);
+    }
+
+    static public double[] doubleArrayLength(int size) {
+        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return reportMatcher(arraySizeMatcher(sizeMatcher), double[].class);
+    }
+
+    private static BaseMatcher arraySizeMatcher(final Matcher sizeMatcher) {
+        return new BaseMatcher() {
+            public boolean matches(Object o) {
+                return o != null && sizeMatcher.matches(Array.getLength(o));
+            }
+
+            public void describeTo(Description description) {
+                description.appendText("an array with length ");
+                sizeMatcher.describeTo(description);
+            }
+        };
+    }
+
+
+    // Hamcrest's IsArray matcher doesn't look as if it works on primitive arrays.
     static Matcher isArrayMatcher(final List<Matcher> elementMatchers) {
         return new BaseMatcher() {
             public boolean matches(Object o) {
@@ -1391,6 +1661,29 @@ public abstract class MoxieMatchers {
 
             public void describeTo(Description description) {
                 description.appendList("[", ", ", "]", elementMatchers);
+            }
+        };
+    }
+
+    // Hamcrest's IsArrayContaining matcher doesn't look as if it works on primitive arrays.
+    static Matcher isArrayContainingMatcher(final Matcher elementMatcher) {
+        return new BaseMatcher() {
+            public boolean matches(Object o) {
+                if (o == null || !o.getClass().isArray()) {
+                    return false;
+                }
+                int arraySize = Array.getLength(o);
+                for (int i = 0; i < arraySize; i++) {
+                    if (elementMatcher.matches(Array.get(o, i))) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            public void describeTo(Description description) {
+                description.appendText("an array containing ");
+                elementMatcher.describeTo(description);
             }
         };
     }

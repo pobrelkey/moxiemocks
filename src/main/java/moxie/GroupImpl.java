@@ -60,7 +60,9 @@ class GroupImpl implements Group, Verifiable {
     }
 
     public void reset(MoxieFlags flags) {
-        this.flags = flags;
+        if (flags != null) {
+            this.flags = this.flags != null ? MoxieOptions.mergeWithDefaults(this.flags, flags) : flags;
+        }
         unorderedExpectations.clear();
         orderedExpectations.clear();
         defaultCardinality = true;

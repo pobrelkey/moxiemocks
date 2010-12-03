@@ -22,6 +22,11 @@
 
 package moxie;
 
+import net.sf.cglib.core.ClassGenerator;
+import net.sf.cglib.core.CollectionUtils;
+import net.sf.cglib.core.DefaultGeneratorStrategy;
+import net.sf.cglib.core.VisibilityPredicate;
+import net.sf.cglib.proxy.CallbackFilter;
 import net.sf.cglib.proxy.Enhancer;
 import org.hamcrest.SelfDescribing;
 
@@ -149,14 +154,26 @@ abstract class MoxieUtils {
     }
 
     static public <T> T newProxyInstance(Class<T> clazz, final InvocationHandler invocationHandler) {
+        return newProxyInstance(clazz, invocationHandler, new Class[0], new Object[0]);
+    }
+
+    static public <T> T newProxyInstance(Class<T> clazz, final InvocationHandler invocationHandler, Class[] constructorArgTypes, Object[] constructorArgs) {
         if (clazz.isInterface()) {
             return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, invocationHandler);
         } else {
-            return (T) Enhancer.create(clazz, new net.sf.cglib.proxy.InvocationHandler() {
+            Enhancer e = new Enhancer();
+            e.setSuperclass(clazz);
+            e.setCallback(new net.sf.cglib.proxy.InvocationHandler() {
                 public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                     return invocationHandler.invoke(proxy, method, args);
                 }
             });
+            if (constructorArgTypes != null && constructorArgTypes.length > 0) {
+                // TODO: doesn't work! WTF cglib!
+                return (T) e.create(constructorArgTypes, constructorArgs);
+            } else {
+                return (T) e.create();
+            }
         }
     }
 

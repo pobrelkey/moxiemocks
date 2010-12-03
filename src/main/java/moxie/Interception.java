@@ -46,15 +46,19 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
 
     private final Class<T> clazz;
     protected final String name;
+    private final Class[] constructorArgTypes;
+    private final Object[] constructorArgs;
     private final Throwable whereInstantiated;
     private final List<Invocation> invocations = new ArrayList<Invocation>();
     private MoxieFlags flags;
     private GroupImpl methods;
     protected T proxy;
 
-    protected Interception(Class<T> clazz, String name, MoxieFlags flags, InstantiationStackTrace instantiationStackTrace) {
+    protected Interception(Class<T> clazz, String name, MoxieFlags flags, InstantiationStackTrace instantiationStackTrace, Class[] constructorArgTypes, Object[] constructorArgs) {
         this.clazz = clazz;
         this.name = name;
+        this.constructorArgTypes = constructorArgTypes;
+        this.constructorArgs = constructorArgs;
         this.flags = MoxieOptions.MOCK_DEFAULTS;
         this.whereInstantiated = instantiationStackTrace;
         this.methods = new GroupImpl(name, flags);
@@ -70,7 +74,7 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
 
     T proxy() {
         if (proxy == null) {
-            proxy = MoxieUtils.newProxyInstance(clazz, this);
+            proxy = MoxieUtils.newProxyInstance(clazz, this, constructorArgTypes, constructorArgs);
         }
         return proxy;
     }
