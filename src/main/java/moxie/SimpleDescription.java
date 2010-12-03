@@ -51,7 +51,13 @@ class SimpleDescription implements Description {
     }
 
     public Description appendValue(Object o) {
-        printWriter.print(o);
+        String value;
+        try {
+            value = String.valueOf(o);
+        } catch (Throwable e) {
+            value = String.format("%s@%x", o.getClass().getName(), System.identityHashCode(o));
+        }
+        printWriter.print(value);
         return this;
     }
 
@@ -67,7 +73,7 @@ class SimpleDescription implements Description {
                 printWriter.print(separator);
             }
             first = false;
-            printWriter.print(value);
+            appendValue(value);
         }
         printWriter.print(end);
         return this;

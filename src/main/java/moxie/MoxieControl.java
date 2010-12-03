@@ -66,6 +66,14 @@ public interface MoxieControl {
      */
     <T> T mock(Class<T> clazz, String name, MoxieOptions... options);
 
+    <T> T mock(Class<T> clazz, Class[] constructorArgTypes, Object[] constructorArgs);
+
+    <T> T mock(Class<T> clazz, String name, Class[] constructorArgTypes, Object[] constructorArgs);
+
+    <T> T mock(Class<T> clazz, Class[] constructorArgTypes, Object[] constructorArgs, MoxieOptions... options);
+
+    <T> T mock(Class<T> clazz, String name, Class[] constructorArgTypes, Object[] constructorArgs, MoxieOptions... options);
+
     /**
      * Creates a spy object, i.e. a proxy which wraps an actual object on which expectations can be set
      * and checks can be performed.

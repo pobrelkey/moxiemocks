@@ -43,22 +43,38 @@ class MoxieControlImpl implements MoxieControl {
 
 
     public <T> T mock(Class<T> clazz) {
-        return mock(clazz, (String) null, MoxieOptions.MOCK_DEFAULTS);
+        return mock(clazz, null, new Class[0], new Object[0], MoxieOptions.MOCK_DEFAULTS);
     }
 
     public <T> T mock(Class<T> clazz, String name) {
-        return mock(clazz, name, MoxieOptions.MOCK_DEFAULTS);
+        return mock(clazz, name, new Class[0], new Object[0], MoxieOptions.MOCK_DEFAULTS);
     }
 
     public <T> T mock(Class<T> clazz, MoxieOptions... options) {
-        return mock(clazz, null, options);
+        return mock(clazz, null, new Class[0], new Object[0], options);
     }
 
     public <T> T mock(Class<T> clazz, String name, MoxieOptions... options) {
+        return mock(clazz, name, new Class[0], new Object[0], options);
+    }
+
+    public <T> T mock(Class<T> clazz, Class[] constructorArgTypes, Object[] constructorArgs) {
+        return mock(clazz, null, constructorArgTypes, constructorArgs, MoxieOptions.MOCK_DEFAULTS);
+    }
+
+    public <T> T mock(Class<T> clazz, String name, Class[] constructorArgTypes, Object[] constructorArgs) {
+        return mock(clazz, name, constructorArgTypes, constructorArgs, MoxieOptions.MOCK_DEFAULTS);
+    }
+
+    public <T> T mock(Class<T> clazz, Class[] constructorArgTypes, Object[] constructorArgs, MoxieOptions... options) {
+        return mock(clazz, null, constructorArgTypes, constructorArgs, options);
+    }
+
+    public <T> T mock(Class<T> clazz, String name, Class[] constructorArgTypes, Object[] constructorArgs, MoxieOptions... options) {
         if (name == null || name.length() == 0) {
             name = clazz.getSimpleName();
         }
-        MockImpl<T> mock = new MockImpl(clazz, name, MoxieOptions.mergeWithDefaults(MoxieOptions.MOCK_DEFAULTS, options), invocations);
+        MockImpl<T> mock = new MockImpl(clazz, name, MoxieOptions.mergeWithDefaults(MoxieOptions.MOCK_DEFAULTS, options), invocations, constructorArgTypes, constructorArgs);
         T result = mock.proxy();
         mocksAndGroups.put(result, mock);
         return result;

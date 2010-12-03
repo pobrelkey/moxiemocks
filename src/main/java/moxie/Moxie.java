@@ -136,6 +136,23 @@ public abstract class Moxie extends MoxieMatchers {
         return instance.mock(clazz, name, options);
     }
 
+    static public <T> T mock(Class<T> clazz, Class[] constructorArgTypes, Object[] constructorArgs) {
+        return instance.mock(clazz, constructorArgTypes, constructorArgs);
+    }
+
+    static public <T> T mock(Class<T> clazz, String name, Class[] constructorArgTypes, Object[] constructorArgs) {
+        return instance.mock(clazz, name, constructorArgTypes, constructorArgs);
+    }
+
+    static public <T> T mock(Class<T> clazz, Class[] constructorArgTypes, Object[] constructorArgs, MoxieOptions... options) {
+        return instance.mock(clazz, constructorArgTypes, constructorArgs, options);
+    }
+
+    static public <T> T mock(Class<T> clazz, String name, Class[] constructorArgTypes, Object[] constructorArgs, MoxieOptions... options) {
+        return instance.mock(clazz, name, constructorArgTypes, constructorArgs, options);
+    }
+
+
     /**
      * Creates a spy object, i.e. a proxy which wraps an actual object on which expectations can be set
      * and checks can be performed.

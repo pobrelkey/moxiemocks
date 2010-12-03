@@ -30,7 +30,7 @@ class SpyImpl<T> extends Interception<T> {
     private final T realObject;
 
     SpyImpl(T realObject, String name, MoxieFlags flags, List<Invocation> invocations) {
-        super((Class<T>) realObject.getClass(), name, flags, new InstantiationStackTrace("spy object \"" + name + "\" was instantiated here"));
+        super((Class<T>) realObject.getClass(), name, flags, new InstantiationStackTrace("spy object \"" + name + "\" was instantiated here"), new Class[0], new Object[0]);
         this.realObject = realObject;
     }
 

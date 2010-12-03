@@ -236,6 +236,9 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      */
     Expectation<T> andConsecutivelyReturn(Object... results);
 
+    Expectation<T> willConsecutivelyReturn(Iterable results);
+    Expectation<T> andConsecutivelyReturn(Iterable results);
+    
     /**
      * <p>
      * On a spy object, when a call otherwise fulfilling this expectation is received, delegate to the object being spied upon,
