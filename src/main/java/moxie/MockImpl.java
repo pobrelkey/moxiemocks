@@ -32,19 +32,19 @@ class MockImpl<T> extends Interception<T> {
     }
 
     protected MethodBehavior defaultBehavior(Method method, final Object[] args) {
-        if (OBJECT_TO_STRING.equals(method)) {
+        if (TO_STRING.matches(method)) {
             return new MethodBehavior() {
                 public Object invoke() throws Throwable {
                     return "[mock object \"" + name + "\"]";
                 }
             };
-        } else if (OBJECT_EQUALS.equals(method)) {
+        } else if (EQUALS.matches(method)) {
             return new MethodBehavior() {
                 public Object invoke() throws Throwable {
                     return args[0] == proxy;
                 }
             };
-        } else if (OBJECT_HASH_CODE.equals(method)) {
+        } else if (HASH_CODE.matches(method)) {
             return new MethodBehavior() {
                 public Object invoke() throws Throwable {
                     return System.identityHashCode(proxy);

@@ -22,11 +22,6 @@
 
 package moxie;
 
-import net.sf.cglib.core.ClassGenerator;
-import net.sf.cglib.core.CollectionUtils;
-import net.sf.cglib.core.DefaultGeneratorStrategy;
-import net.sf.cglib.core.VisibilityPredicate;
-import net.sf.cglib.proxy.CallbackFilter;
 import net.sf.cglib.proxy.Enhancer;
 import org.hamcrest.SelfDescribing;
 
@@ -34,6 +29,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -160,16 +156,19 @@ abstract class MoxieUtils {
     static public <T> T newProxyInstance(Class<T> clazz, final InvocationHandler invocationHandler, Class[] constructorArgTypes, Object[] constructorArgs) {
         if (clazz.isInterface()) {
             return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, invocationHandler);
+        } else if (clazz.getDeclaringClass() != null && !Modifier.isStatic(clazz.getModifiers())) {
+            throw new IllegalArgumentException("cannot mock a non-static inner class: " + clazz.getName());
         } else {
             Enhancer e = new Enhancer();
+            e.setClassLoader(clazz.getClassLoader());
             e.setSuperclass(clazz);
             e.setCallback(new net.sf.cglib.proxy.InvocationHandler() {
                 public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                     return invocationHandler.invoke(proxy, method, args);
                 }
             });
+            e.setInterceptDuringConstruction(false);
             if (constructorArgTypes != null && constructorArgTypes.length > 0) {
-                // TODO: doesn't work! WTF cglib!
                 return (T) e.create(constructorArgTypes, constructorArgs);
             } else {
                 return (T) e.create();
