@@ -193,7 +193,7 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
 
                 return MoxieUtils.defaultValue(method.getReturnType());
             }
-        });
+        }, interception.getConstructorArgTypes(), interception.getConstructorArgs());
     }
 
     public T will() {

@@ -25,24 +25,30 @@ package moxie;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 abstract class Interception<T> implements InvocationHandler, Verifiable {
 
-    protected static Method OBJECT_TO_STRING;
-    protected static Method OBJECT_EQUALS;
-    protected static Method OBJECT_HASH_CODE;
-    protected static Method OBJECT_FINALIZE;
-    static {
-        try {
-            OBJECT_TO_STRING = Object.class.getDeclaredMethod("toString");
-            OBJECT_EQUALS    = Object.class.getDeclaredMethod("equals", Object.class);
-            OBJECT_HASH_CODE = Object.class.getDeclaredMethod("hashCode");
-            OBJECT_FINALIZE  = Object.class.getDeclaredMethod("finalize");
-        } catch (NoSuchMethodException e) {
-            throw new MoxieUnexpectedError("WTF!", e);
+    static class MethodMatcher {
+        private final String methodName;
+        private final Class returnType;
+        private final List<Class> paramTypes;
+
+        public MethodMatcher(String methodName, Class returnType, Class... paramTypes) {
+            this.methodName = methodName;
+            this.returnType = returnType;
+            this.paramTypes = Arrays.asList(paramTypes);
+        }
+
+        boolean matches(Method m) {
+            return m != null && methodName.equals(m.getName()) && returnType.equals(m.getReturnType()) && paramTypes.equals(Arrays.asList(m.getParameterTypes()));
         }
     }
+    protected static MethodMatcher TO_STRING = new MethodMatcher("toString", String.class);
+    protected static MethodMatcher EQUALS = new MethodMatcher("equals", Boolean.TYPE, Object.class);
+    protected static MethodMatcher HASH_CODE = new MethodMatcher("hashCode", Integer.TYPE);
+    protected static MethodMatcher FINALIZE = new MethodMatcher("finalize", Void.TYPE);
 
     private final Class<T> clazz;
     protected final String name;
@@ -102,10 +108,10 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
                 }
             }
         } else if (!flags.isAutoStubbing()
-                && !OBJECT_EQUALS.equals(method)
-                && !OBJECT_HASH_CODE.equals(method)
-                && !OBJECT_TO_STRING.equals(method)
-                && !OBJECT_FINALIZE.equals(method)) {
+                && !EQUALS.matches(method)
+                && !HASH_CODE.matches(method)
+                && !TO_STRING.matches(method)
+                && !FINALIZE.matches(method)) {
             methods.throwUnexpectedInvocationError("unexpected method invocation", method, args);
         }
 
@@ -151,5 +157,13 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
 
     void addExpectation(ExpectationImpl<T> expectation) {
         methods.add(expectation);
+    }
+
+    Class[] getConstructorArgTypes() {
+        return constructorArgTypes;
+    }
+
+    Object[] getConstructorArgs() {
+        return constructorArgs;
     }
 }
