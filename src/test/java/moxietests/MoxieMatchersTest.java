@@ -109,6 +109,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testArrayThat_happyPath() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Object[] anArray = new Object[]{"1","2","3"};
@@ -118,6 +119,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void testArrayThat_sadPath() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().arrayObjectCall(Moxie.<Object[]>arrayThat(new IsSame(new Object[]{"1","2","3"})));
@@ -1714,6 +1716,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void booleanThat_booleanCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().booleanCall(Moxie.booleanThat(new IsEqual(Boolean.TRUE)));
@@ -1722,6 +1725,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void booleanThat_booleanObjectCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().booleanObjectCall(Moxie.booleanThat(new IsEqual(Boolean.TRUE)));
@@ -1730,6 +1734,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void booleanThat_booleanCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().booleanCall(Moxie.booleanThat(new IsEqual(Boolean.TRUE)));
@@ -1737,6 +1742,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void booleanThat_booleanObjectCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().booleanObjectCall(Moxie.booleanThat(new IsEqual(Boolean.TRUE)));
@@ -2304,6 +2310,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void byteThat_byteCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().byteCall(Moxie.byteThat(new IsEqual((byte) 2)));
@@ -2312,6 +2319,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void byteThat_byteObjectCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().byteObjectCall(Moxie.byteThat(new IsEqual((byte) 2)));
@@ -2320,6 +2328,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void byteThat_byteCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().byteCall(Moxie.byteThat(new IsEqual((byte) 2)));
@@ -2327,6 +2336,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void byteThat_byteObjectCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().byteObjectCall(Moxie.byteThat(new IsEqual((byte) 2)));
@@ -2926,6 +2936,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void charThat_charCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().charCall(Moxie.charThat(new IsEqual('2')));
@@ -2934,6 +2945,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void charThat_charObjectCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().charObjectCall(Moxie.charThat(new IsEqual('2')));
@@ -2942,6 +2954,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void charThat_charCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().charCall(Moxie.charThat(new IsEqual('2')));
@@ -2949,6 +2962,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void charThat_charObjectCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().charObjectCall(Moxie.charThat(new IsEqual('2')));
@@ -3548,6 +3562,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void shortThat_shortCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().shortCall(Moxie.shortThat(new IsEqual((short) 2)));
@@ -3556,6 +3571,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void shortThat_shortObjectCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().shortObjectCall(Moxie.shortThat(new IsEqual((short) 2)));
@@ -3564,6 +3580,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void shortThat_shortCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().shortCall(Moxie.shortThat(new IsEqual((short) 2)));
@@ -3571,6 +3588,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void shortThat_shortObjectCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().shortObjectCall(Moxie.shortThat(new IsEqual((short) 2)));
@@ -4170,6 +4188,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void intThat_intCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().intCall(Moxie.intThat(new IsEqual(2)));
@@ -4178,6 +4197,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void intThat_intObjectCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().intObjectCall(Moxie.intThat(new IsEqual(2)));
@@ -4186,6 +4206,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void intThat_intCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().intCall(Moxie.intThat(new IsEqual(2)));
@@ -4193,6 +4214,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void intThat_intObjectCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().intObjectCall(Moxie.intThat(new IsEqual(2)));
@@ -4792,6 +4814,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void longThat_longCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().longCall(Moxie.longThat(new IsEqual((long) 2)));
@@ -4800,6 +4823,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void longThat_longObjectCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().longObjectCall(Moxie.longThat(new IsEqual((long) 2)));
@@ -4808,6 +4832,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void longThat_longCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().longCall(Moxie.longThat(new IsEqual((long) 2)));
@@ -4815,6 +4840,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void longThat_longObjectCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().longObjectCall(Moxie.longThat(new IsEqual((long) 2)));
@@ -5414,6 +5440,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void floatThat_floatCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().floatCall(Moxie.floatThat(new IsEqual((float) 2)));
@@ -5422,6 +5449,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void floatThat_floatObjectCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().floatObjectCall(Moxie.floatThat(new IsEqual((float) 2)));
@@ -5430,6 +5458,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void floatThat_floatCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().floatCall(Moxie.floatThat(new IsEqual((float) 2)));
@@ -5437,6 +5466,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void floatThat_floatObjectCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().floatObjectCall(Moxie.floatThat(new IsEqual((float) 2)));
@@ -6036,6 +6066,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void doubleThat_doubleCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().doubleCall(Moxie.doubleThat(new IsEqual((double) 2)));
@@ -6044,6 +6075,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void doubleThat_doubleObjectCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().doubleObjectCall(Moxie.doubleThat(new IsEqual((double) 2)));
@@ -6052,6 +6084,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void doubleThat_doubleCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().doubleCall(Moxie.doubleThat(new IsEqual((double) 2)));
@@ -6059,6 +6092,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void doubleThat_doubleObjectCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().doubleObjectCall(Moxie.doubleThat(new IsEqual((double) 2)));
@@ -6448,6 +6482,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void and_stringCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().stringCall(Moxie.and(new String[]{Moxie.lt("4"), Moxie.gt("2")}));
@@ -6455,6 +6490,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void and_stringCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().stringCall(Moxie.and(new String[]{Moxie.lt("4"), Moxie.gt("2")}));
@@ -6463,6 +6499,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void and_stringCall_sadPath2() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().stringCall(Moxie.and(new String[]{Moxie.lt("4"), Moxie.gt("2")}));
@@ -6470,6 +6507,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void or_stringCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().stringCall(Moxie.or(new String[]{Moxie.gt("4"), Moxie.lt("2")}));
@@ -6478,6 +6516,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void or_stringCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().stringCall(Moxie.or(new String[]{Moxie.gt("4"), Moxie.lt("2")}));
@@ -6485,6 +6524,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void or_stringCall_happyPath2() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().stringCall(Moxie.or(new String[]{Moxie.gt("4"), Moxie.lt("2")}));
@@ -6508,6 +6548,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void argThat_stringCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().stringCall(Moxie.<String>argThat(new IsEqual("2")));
@@ -6516,6 +6557,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void argThat_stringCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().stringCall(Moxie.<String>argThat(new IsEqual("2")));
@@ -6523,6 +6565,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void aryEq_arrayStringCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().arrayStringCall(Moxie.aryEq(new String[]{"1", "2", "3"}));
@@ -6531,6 +6574,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void aryEq_varargsStringCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().varargsStringCall(Moxie.aryEq(new String[]{"1", "2", "3"}));
@@ -6539,6 +6583,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void aryEq_arrayStringCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().arrayStringCall(Moxie.aryEq(new String[]{"1", "2", "3"}));
@@ -6546,6 +6591,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void aryEq_varargsStringCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().varargsStringCall(Moxie.aryEq(new String[]{"1", "2", "3"}));
@@ -6553,6 +6599,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void aryEq_arrayStringCall_sadPath2() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().arrayStringCall(Moxie.aryEq(new String[]{"1", "2", "3"}));
@@ -6560,6 +6607,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void aryEq_varargsStringCall_sadPath2() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().varargsStringCall(Moxie.aryEq(new String[]{"1", "2", "3"}));
@@ -6567,6 +6615,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void aryEq_arrayStringCall_sadPath3() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().arrayStringCall(Moxie.aryEq(new String[]{"1", "2", "3"}));
@@ -6574,6 +6623,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void aryEq_varargsStringCall_sadPath3() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().varargsStringCall(Moxie.aryEq(new String[]{"1", "2", "3"}));
@@ -6581,6 +6631,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void array_arrayStringCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().arrayStringCall(Moxie.array(new String[]{Moxie.lt("2"), Moxie.lt("3"), Moxie.lt("4")}));
@@ -6589,6 +6640,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void array_varargsStringCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().varargsStringCall(Moxie.array(new String[]{Moxie.lt("2"), Moxie.lt("3"), Moxie.lt("4")}));
@@ -6597,6 +6649,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void array_arrayStringCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().arrayStringCall(Moxie.array(new String[]{Moxie.lt("2"), Moxie.lt("3"), Moxie.lt("4")}));
@@ -6604,6 +6657,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void array_varargsStringCall_sadPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().varargsStringCall(Moxie.array(new String[]{Moxie.lt("2"), Moxie.lt("3"), Moxie.lt("4")}));
@@ -6611,6 +6665,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void array_arrayStringCall_sadPath2() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().arrayStringCall(Moxie.array(new String[]{Moxie.lt("2"), Moxie.lt("3"), Moxie.lt("4")}));
@@ -6618,6 +6673,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void array_varargsStringCall_sadPath2() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().varargsStringCall(Moxie.array(new String[]{Moxie.lt("2"), Moxie.lt("3"), Moxie.lt("4")}));
@@ -6625,6 +6681,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void array_arrayStringCall_sadPath3() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().arrayStringCall(Moxie.array(new String[]{Moxie.lt("2"), Moxie.lt("3"), Moxie.lt("4")}));
@@ -6632,6 +6689,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void array_varargsStringCall_sadPath3() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().varargsStringCall(Moxie.array(new String[]{Moxie.lt("2"), Moxie.lt("3"), Moxie.lt("4")}));
@@ -6639,6 +6697,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void array_arrayStringCall_happyPath2() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().arrayStringCall(Moxie.array(new String[]{Moxie.lt("2"), Moxie.lt("3"), Moxie.lt("4")}));
@@ -6647,6 +6706,7 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void array_varargsStringCall_happyPath2() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().varargsStringCall(Moxie.array(new String[]{Moxie.lt("2"), Moxie.lt("3"), Moxie.lt("4")}));
@@ -6973,6 +7033,7 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void aryEq_arrayStringCall_sadPath4() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().arrayStringCall(Moxie.aryEq(new String[]{"1"}));
@@ -6980,13 +7041,15 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void aryEq_varargsStringCall_sadPath4() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().varargsStringCall(Moxie.aryEq(new String[]{"1"}));
-        mock.varargsStringCall(null);
+        mock.varargsStringCall((String[]) null);
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void array_arrayStringCall_sadPath4() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().arrayStringCall(Moxie.array(new String[]{Moxie.eq("1")}));
@@ -6994,10 +7057,11 @@ public class MoxieMatchersTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void array_varargsStringCall_sadPath4() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().varargsStringCall(Moxie.array(new String[]{Moxie.eq("1")}));
-        mock.varargsStringCall(null);
+        mock.varargsStringCall((String[]) null);
     }
 
 
