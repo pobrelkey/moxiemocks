@@ -22,7 +22,10 @@
 
 package moxietests;
 
-import moxie.*;
+import moxie.Group;
+import moxie.Moxie;
+import moxie.MoxieFailedVerificationError;
+import moxie.MoxieUnexpectedInvocationError;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -39,6 +42,7 @@ public class ExpectationTest {
     private static final List<String> STRINGS = Arrays.asList("zero", "one", "two", "three", "four");
 
     @Test
+    @SuppressWarnings("unchecked")
     public void never_happyPath() {
         List mock = Moxie.mock(List.class);
         Moxie.expect(mock).never().will().add(Moxie.anything());
@@ -48,6 +52,7 @@ public class ExpectationTest {
         Moxie.verify(mock);
     }
 
+    @SuppressWarnings("unchecked")
     @Test(expected = MoxieUnexpectedInvocationError.class)
     public void never_sadPath() {
         List mock = Moxie.mock(List.class);
@@ -366,6 +371,7 @@ public class ExpectationTest {
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
+    @SuppressWarnings("unchecked")
     public void andVerifyThrow_happyPath() {
         List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
         Moxie.expect(spy).andVerifyThrow(Moxie.isA(IndexOutOfBoundsException.class)).when().get(-1);
@@ -374,6 +380,7 @@ public class ExpectationTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void andVerifyThrow_sadPath1() {
         List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
         Moxie.expect(spy).andVerifyThrow(Moxie.isA(IndexOutOfBoundsException.class)).when().get(2);
@@ -381,6 +388,7 @@ public class ExpectationTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void andVerifyThrow_sadPath2() {
         List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
         Moxie.expect(spy).andVerifyThrow(Moxie.isA(MostUnusualError.class)).when().get(-1);
@@ -419,6 +427,7 @@ public class ExpectationTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void groupedExpectations_happyPath1() {
         List mock = Moxie.mock(List.class);
         List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
@@ -438,6 +447,7 @@ public class ExpectationTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void groupedExpectations_sadPath1() {
         List mock = Moxie.mock(List.class);
         List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
@@ -455,6 +465,7 @@ public class ExpectationTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void groupedExpectations_happyPath2() {
         List mock = Moxie.mock(List.class);
         List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
@@ -481,6 +492,7 @@ public class ExpectationTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void groupedExpectations_sadPath2() {
         List mock = Moxie.mock(List.class);
         List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
@@ -505,6 +517,7 @@ public class ExpectationTest {
     }
 
     @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
     public void groupedExpectations_sadPath3() {
         List mock = Moxie.mock(List.class);
         List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
@@ -532,6 +545,7 @@ public class ExpectationTest {
     }
 
     @Test(expected=MoxieFailedVerificationError.class)
+    @SuppressWarnings("unchecked")
     public void groupedExpectations_sadPath4() {
         List mock = Moxie.mock(List.class);
         List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));

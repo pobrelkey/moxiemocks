@@ -1626,6 +1626,59 @@ public abstract class MoxieMatchers {
         return reportMatcher(arraySizeMatcher(sizeMatcher), double[].class);
     }
 
+    @SuppressWarnings("unchecked")
+    static public <T> T captureTo(Collection<T> destination) {
+        return (T) reportMatcher(captureMatcher(destination), Object.class);
+    }
+
+    static public boolean captureBooleanTo(Collection<Boolean> destination) {
+        return reportMatcher(captureMatcher(destination), Boolean.TYPE);
+    }
+
+    static public byte captureByteTo(Collection<Byte> destination) {
+        return reportMatcher(captureMatcher(destination), Byte.TYPE);
+    }
+
+    static public char captureCharTo(Collection<Character> destination) {
+        return reportMatcher(captureMatcher(destination), Character.TYPE);
+    }
+
+    static public double captureDoubleTo(Collection<Double> destination) {
+        return reportMatcher(captureMatcher(destination), Double.TYPE);
+    }
+
+    static public float captureFloatTo(Collection<Float> destination) {
+        return reportMatcher(captureMatcher(destination), Float.TYPE);
+    }
+
+    static public int captureIntTo(Collection<Integer> destination) {
+        return reportMatcher(captureMatcher(destination), Integer.TYPE);
+    }
+
+    static public long captureLongTo(Collection<Long> destination) {
+        return reportMatcher(captureMatcher(destination), Long.TYPE);
+    }
+
+    static public short captureShortTo(Collection<Short> destination) {
+        return reportMatcher(captureMatcher(destination), Short.TYPE);
+    }
+
+    ////////////////////////////////////////////////////////////////
+
+    private static <T> Matcher captureMatcher(final Collection<T> captureTo) {
+        return new BaseMatcher() {
+            @SuppressWarnings("unchecked")
+            public boolean matches(Object o) {
+                captureTo.add((T) o);
+                return true;
+            }
+
+            public void describeTo(Description description) {
+                description.appendText("capture this argument");
+            }
+        };
+    }
+
     private static BaseMatcher arraySizeMatcher(final Matcher sizeMatcher) {
         return new BaseMatcher() {
             public boolean matches(Object o) {
