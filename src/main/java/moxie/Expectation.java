@@ -236,7 +236,32 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      */
     Expectation<T> andConsecutivelyReturn(Object... results);
 
+    /**
+     * <p>
+     * When a call fulfilling this expectation is received, return the first value in the {@link Iterable}
+     * on the first invocation, the second value on the second invocation, et cetera.
+     * <p>
+     * Note that {@link #willConsecutivelyReturn(Iterable) willConsecutivelyReturn()} and {@link #andConsecutivelyReturn(Iterable) andConsecutivelyReturn()} do exactly the same thing -
+     * use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param results the values to be returned
+     * @return this object, for call chaining
+     */
     Expectation<T> willConsecutivelyReturn(Iterable results);
+
+    /**
+     * <p>
+     * When a call fulfilling this expectation is received, return the first value in the {@link Iterable}
+     * on the first invocation, the second value on the second invocation, et cetera.
+     * <p>
+     * Note that {@link #willConsecutivelyReturn(Iterable) willConsecutivelyReturn()} and {@link #andConsecutivelyReturn(Iterable) andConsecutivelyReturn()} do exactly the same thing -
+     * use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param results the values to be returned
+     * @return this object, for call chaining
+     */
     Expectation<T> andConsecutivelyReturn(Iterable results);
     
     /**

@@ -127,10 +127,6 @@ class CardinalityImpl<T> implements Cardinality<T> {
         return (maxTimes == null || count < maxTimes);
     }
 
-    boolean canMatch() {
-        return isMatch(count + 1);
-    }
-
     boolean incrementCount() {
         boolean result = isMatch(++count);
         if (result && satisfactions != null) {
@@ -144,10 +140,6 @@ class CardinalityImpl<T> implements Cardinality<T> {
 
     boolean isSatisfied() {
         return isMatch(count);
-    }
-
-    void reset() {
-        count = 0;
     }
 
     void whenCardinalitySatisfied(Runnable satisfaction) {
