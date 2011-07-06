@@ -46,21 +46,21 @@ abstract class MoxieUtils {
     private static final Float ZERO_FLOAT = new Float((float) 0);
 
     static <T> T defaultValue(Class<T> clazz) {
-        if (clazz == Boolean.TYPE) {
+        if (clazz == Boolean.TYPE || clazz == Boolean.class) {
             return (T) Boolean.FALSE;
-        } else if (clazz == Character.TYPE) {
+        } else if (clazz == Character.TYPE || clazz == Character.class) {
             return (T) ZERO_CHAR;
-        } else if (clazz == Byte.TYPE) {
+        } else if (clazz == Byte.TYPE || clazz == Byte.class) {
             return (T) ZERO_BYTE;
-        } else if (clazz == Short.TYPE) {
+        } else if (clazz == Short.TYPE || clazz == Short.class) {
             return (T) ZERO_SHORT;
-        } else if (clazz == Integer.TYPE) {
+        } else if (clazz == Integer.TYPE || clazz == Integer.class) {
             return (T) ZERO_INT;
-        } else if (clazz == Long.TYPE) {
+        } else if (clazz == Long.TYPE || clazz == Long.class) {
             return (T) ZERO_LONG;
-        } else if (clazz == Float.TYPE) {
+        } else if (clazz == Float.TYPE || clazz == Float.class) {
             return (T) ZERO_FLOAT;
-        } else if (clazz == Double.TYPE) {
+        } else if (clazz == Double.TYPE || clazz == Double.class) {
             return (T) ZERO_DOUBLE;
         } else {
             return null;

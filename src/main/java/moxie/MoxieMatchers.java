@@ -410,7 +410,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T eq(T value) {
-        return (T) reportMatcher(new IsEqual(value), null);
+        return (T) reportMatcher(new IsEqual(value), (value != null ? value.getClass() : null));
     }
 
     /**
@@ -419,7 +419,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T isA(Class<T> clazz) {
-        return (T) reportMatcher(new IsInstanceOf(clazz), null);
+        return (T) reportMatcher(new IsInstanceOf(clazz), clazz);
     }
 
     /**
@@ -455,7 +455,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T same(T value) {
-        return (T) reportMatcher(new IsSame(value), null);
+        return (T) reportMatcher(new IsSame(value), (value != null ? value.getClass() : null));
     }
 
     /**
@@ -1583,7 +1583,7 @@ public abstract class MoxieMatchers {
                 description.appendText("a map with size ");
                 sizeMatcher.describeTo(description);
             }
-        }, Collection.class);
+        }, Map.class);
     }
 
     static public <T> T[] arrayLength(int size) {
