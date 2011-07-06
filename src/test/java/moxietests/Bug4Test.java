@@ -19,7 +19,7 @@ public class Bug4Test {
     @Test
     public void blah() {
         Moxie.expect(mockList).andReturn(null).on().get(Moxie.isA(Integer.TYPE));
-
+        mockList.get(2);
     }
 
 }
