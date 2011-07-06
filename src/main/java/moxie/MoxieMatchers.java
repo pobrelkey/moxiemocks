@@ -419,7 +419,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T isA(Class<T> clazz) {
-        return (T) reportMatcher(new IsInstanceOf(clazz), clazz);
+        return (T) reportMatcher(new IsInstanceOf(MoxieUtils.toNonPrimitive(clazz)), clazz);
     }
 
     /**
