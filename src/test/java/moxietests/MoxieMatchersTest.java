@@ -23,12 +23,19 @@
 package moxietests;
 
 import moxie.Moxie;
+import moxie.MoxieMatchers;
 import moxie.MoxieUnexpectedInvocationError;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsSame;
+import org.junit.Assert;
 import org.junit.Test;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 
 public class MoxieMatchersTest {
@@ -90,6 +97,18 @@ public class MoxieMatchersTest {
         void varargsDoubleObjectCall(Double... p);
         void varargsStringCall(String... p);
         void varargsObjectCall(Object... p);
+    }
+
+    public static class SimpleBean {
+        private Object someProperty;
+
+        private SimpleBean(Object someProperty) {
+            this.someProperty = someProperty;
+        }
+
+        public Object getSomeProperty() {
+            return someProperty;
+        }
     }
 
     @Test
@@ -176,6 +195,201 @@ public class MoxieMatchersTest {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().objectCall(Moxie.eq(3.0,1.5));
         mock.objectCall("2");
+    }
+
+    @Test
+    public void testCaptureTo_happyPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<String> list = new ArrayList<String>();
+        Moxie.expect(mock).will().stringCall(Moxie.captureTo(list));
+        mock.stringCall("boing");
+        Assert.assertEquals(Collections.singletonList("boing"), list);
+    }
+
+    @Test
+    public void testCaptureBooleanTo_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Boolean> list = new ArrayList<Boolean>();
+        Moxie.expect(mock).will().booleanCall(Moxie.captureBooleanTo(list));
+        mock.booleanCall(true);
+        Assert.assertEquals(Collections.singletonList(true), list);
+    }
+
+    @Test
+    public void testCaptureBooleanTo_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Boolean> list = new ArrayList<Boolean>();
+        Moxie.expect(mock).will().booleanObjectCall(Moxie.captureBooleanTo(list));
+        mock.booleanObjectCall(true);
+        Assert.assertEquals(Collections.singletonList(true), list);
+    }
+
+
+    @Test
+    public void testCaptureByteTo_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Byte> list = new ArrayList<Byte>();
+        Moxie.expect(mock).will().byteCall(Moxie.captureByteTo(list));
+        mock.byteCall((byte) 3);
+        Assert.assertEquals(Collections.singletonList((byte) 3), list);
+    }
+
+    @Test
+    public void testCaptureByteTo_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Byte> list = new ArrayList<Byte>();
+        Moxie.expect(mock).will().byteObjectCall(Moxie.captureByteTo(list));
+        mock.byteObjectCall((byte) 3);
+        Assert.assertEquals(Collections.singletonList((byte) 3), list);
+    }
+
+
+    @Test
+    public void testCaptureCharacterTo_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Character> list = new ArrayList<Character>();
+        Moxie.expect(mock).will().charCall(Moxie.captureCharTo(list));
+        mock.charCall((char) 3);
+        Assert.assertEquals(Collections.singletonList((char) 3), list);
+    }
+
+    @Test
+    public void testCaptureCharacterTo_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Character> list = new ArrayList<Character>();
+        Moxie.expect(mock).will().charObjectCall(Moxie.captureCharTo(list));
+        mock.charObjectCall((char) 3);
+        Assert.assertEquals(Collections.singletonList((char) 3), list);
+    }
+
+
+    @Test
+    public void testCaptureShortTo_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Short> list = new ArrayList<Short>();
+        Moxie.expect(mock).will().shortCall(Moxie.captureShortTo(list));
+        mock.shortCall((short) 3);
+        Assert.assertEquals(Collections.singletonList((short) 3), list);
+    }
+
+    @Test
+    public void testCaptureShortTo_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Short> list = new ArrayList<Short>();
+        Moxie.expect(mock).will().shortObjectCall(Moxie.captureShortTo(list));
+        mock.shortObjectCall((short) 3);
+        Assert.assertEquals(Collections.singletonList((short) 3), list);
+    }
+
+
+    @Test
+    public void testCaptureIntegerTo_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        Moxie.expect(mock).will().intCall(Moxie.captureIntTo(list));
+        mock.intCall(3);
+        Assert.assertEquals(Collections.singletonList(3), list);
+    }
+
+    @Test
+    public void testCaptureIntegerTo_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        Moxie.expect(mock).will().intObjectCall(Moxie.captureIntTo(list));
+        mock.intObjectCall(3);
+        Assert.assertEquals(Collections.singletonList(3), list);
+    }
+
+
+    @Test
+    public void testCaptureLongTo_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Long> list = new ArrayList<Long>();
+        Moxie.expect(mock).will().longCall(Moxie.captureLongTo(list));
+        mock.longCall((long) 3);
+        Assert.assertEquals(Collections.singletonList((long) 3), list);
+    }
+
+    @Test
+    public void testCaptureLongTo_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Long> list = new ArrayList<Long>();
+        Moxie.expect(mock).will().longObjectCall(Moxie.captureLongTo(list));
+        mock.longObjectCall((long) 3);
+        Assert.assertEquals(Collections.singletonList((long) 3), list);
+    }
+
+
+    @Test
+    public void testCaptureFloatTo_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Float> list = new ArrayList<Float>();
+        Moxie.expect(mock).will().floatCall(Moxie.captureFloatTo(list));
+        mock.floatCall((float) 3);
+        Assert.assertEquals(Collections.singletonList((float) 3), list);
+    }
+
+    @Test
+    public void testCaptureFloatTo_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Float> list = new ArrayList<Float>();
+        Moxie.expect(mock).will().floatObjectCall(Moxie.captureFloatTo(list));
+        mock.floatObjectCall((float) 3);
+        Assert.assertEquals(Collections.singletonList((float) 3), list);
+    }
+
+
+    @Test
+    public void testCaptureDoubleTo_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Double> list = new ArrayList<Double>();
+        Moxie.expect(mock).will().doubleCall(Moxie.captureDoubleTo(list));
+        mock.doubleCall((double) 3);
+        Assert.assertEquals(Collections.singletonList((double) 3), list);
+    }
+
+    @Test
+    public void testCaptureDoubleTo_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        ArrayList<Double> list = new ArrayList<Double>();
+        Moxie.expect(mock).will().doubleObjectCall(Moxie.captureDoubleTo(list));
+        mock.doubleObjectCall((double) 3);
+        Assert.assertEquals(Collections.singletonList((double) 3), list);
+    }
+
+    @Test
+    public void testHasProperty_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().objectCall(Moxie.hasProperty("someProperty", 123));
+        mock.objectCall(new SimpleBean(123));
+    }
+
+    @Test
+    public void testHasProperty_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().objectCall(Moxie.hasProperty("someProperty", Moxie.gt(45)));
+        mock.objectCall(new SimpleBean(123));
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void testHasProperty_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().objectCall(Moxie.hasProperty("someProperty", 45));
+        mock.objectCall(new SimpleBean(123));
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void testHasProperty_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().objectCall(Moxie.hasProperty("someProperty", Moxie.lt(99)));
+        mock.objectCall(new SimpleBean(123));
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void testHasProperty_sadPath3() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().objectCall(Moxie.hasProperty("anotherProperty", 123));
+        mock.objectCall(new SimpleBean(123));
     }
 
     //
@@ -1747,6 +1961,44 @@ public class MoxieMatchersTest {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().booleanObjectCall(Moxie.booleanThat(new IsEqual(Boolean.TRUE)));
         mock.booleanObjectCall(false);
+    }
+
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void and_booleanCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().booleanCall(Moxie.and(new boolean[]{Moxie.eq(true), Moxie.eq(false)}));
+        mock.booleanCall(true);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void and_booleanObjectCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().booleanObjectCall(Moxie.and(new boolean[]{Moxie.eq(true), Moxie.eq(false)}));
+        mock.booleanObjectCall(true);
+    }
+
+    @Test
+    public void or_booleanCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().booleanCall(Moxie.or(new boolean[]{Moxie.eq(true), Moxie.eq(false)}));
+        mock.booleanCall(true);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void or_booleanObjectCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().booleanObjectCall(Moxie.or(new boolean[]{Moxie.eq(true), Moxie.eq(false)}));
+        mock.booleanObjectCall(true);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void or_booleanObjectCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().booleanObjectCall(Moxie.or(new boolean[]{Moxie.eq(true), Moxie.eq(false)}));
+        mock.booleanObjectCall(null);
     }
 
     @Test
@@ -6805,6 +7057,50 @@ public class MoxieMatchersTest {
     }
 
     @Test
+    public void eqIgnoreWhiteSpace_stringCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().stringCall(Moxie.eqIgnoreWhiteSpace("Fred Flintstone"));
+        mock.stringCall("Fred Flintstone");
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void eqIgnoreWhiteSpace_stringCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().stringCall(Moxie.eqIgnoreWhiteSpace("Fred  Flintstone"));
+        mock.stringCall(" Fred Flintstone ");
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void eqIgnoreWhiteSpace_stringCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().stringCall(Moxie.eqIgnoreWhiteSpace("Fred Flintstone"));
+        mock.stringCall("FredFlintstone");
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void eqIgnoreWhiteSpace_stringCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().stringCall(Moxie.eqIgnoreWhiteSpace("Fred Flintstone"));
+        mock.stringCall("Andrew Flintoff");
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void eqIgnoreWhiteSpace_stringCall_sadPath3() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().stringCall(Moxie.eqIgnoreWhiteSpace("Fred Flintstone"));
+        mock.stringCall(" Andrew  Flintoff ");
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void eqIgnoreWhiteSpace_stringCall_sadPath4() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().stringCall(Moxie.eqIgnoreWhiteSpace("Fred Flintstone"));
+        mock.stringCall("AndrewFlintoff");
+    }
+
+    @Test
     public void anyArray_objectCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().objectCall(Moxie.anyArray());
@@ -7064,5 +7360,1691 @@ public class MoxieMatchersTest {
         mock.varargsStringCall((String[]) null);
     }
 
+
+//////////////////////////////////////////  test batch 2 begins here
+
+    @Test
+    public void anyVarargs_arrayObjectCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayObjectCall(Moxie.anyVarargs());
+        mock.arrayObjectCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyVarargs_varargsObjectCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsObjectCall(Moxie.anyVarargs());
+        mock.varargsObjectCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyVarargs_arrayObjectCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayObjectCall(Moxie.anyVarargs());
+        mock.arrayObjectCall(new Object[]{new Object[]{"foo","bar"}});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyVarargs_varargsObjectCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsObjectCall(Moxie.anyVarargs());
+        mock.varargsObjectCall(new Object[]{"foo","bar"});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyVarargs_arrayObjectCall_happyPath3() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayObjectCall(Moxie.anyVarargs());
+        mock.arrayObjectCall(new Object[]{"blah"});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyVarargs_varargsObjectCall_happyPath3() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsObjectCall(Moxie.anyVarargs());
+        mock.varargsObjectCall("blah");
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void booleanArrayLength_arrayBooleanCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayBooleanCall(Moxie.booleanArrayLength(3));
+        mock.arrayBooleanCall(new boolean[]{true, false, true});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void booleanArrayLength_varargsBooleanCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsBooleanCall(Moxie.booleanArrayLength(3));
+        mock.varargsBooleanCall(true, false, true);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void booleanArrayLength_arrayBooleanCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayBooleanCall(Moxie.booleanArrayLength(MoxieMatchers.gt(2)));
+        mock.arrayBooleanCall(new boolean[]{true, false, true});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void booleanArrayLength_varargsBooleanCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsBooleanCall(Moxie.booleanArrayLength(MoxieMatchers.gt(2)));
+        mock.varargsBooleanCall(true, false, true);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void booleanArrayLength_arrayBooleanCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayBooleanCall(Moxie.booleanArrayLength(4));
+        mock.arrayBooleanCall(new boolean[]{true, false, true});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void booleanArrayLength_varargsBooleanCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsBooleanCall(Moxie.booleanArrayLength(4));
+        mock.varargsBooleanCall(true, false, true);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void booleanArrayLength_arrayBooleanCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayBooleanCall(Moxie.booleanArrayLength(MoxieMatchers.lt(3)));
+        mock.arrayBooleanCall(new boolean[]{true, false, true});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void booleanArrayLength_varargsBooleanCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsBooleanCall(Moxie.booleanArrayLength(MoxieMatchers.lt(3)));
+        mock.varargsBooleanCall(true, false, true);
+    }
+
+    @Test
+    public void booleanArrayWith_arrayBooleanCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayBooleanCall(Moxie.booleanArrayWith(false));
+        mock.arrayBooleanCall(new boolean[]{true, false});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void booleanArrayWith_varargsBooleanCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsBooleanCall(Moxie.booleanArrayWith(false));
+        mock.varargsBooleanCall(true, false);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void booleanArrayWith_arrayBooleanCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayBooleanCall(Moxie.booleanArrayWith(false));
+        mock.arrayBooleanCall(new boolean[]{true, true});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void booleanArrayWith_varargsBooleanCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsBooleanCall(Moxie.booleanArrayWith(false));
+        mock.varargsBooleanCall(true, true);
+    }
+
+    @Test
+    public void booleanArrayWithAll_arrayBooleanCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayBooleanCall(Moxie.booleanArrayWithAll(MoxieMatchers.eq(true), MoxieMatchers.eq(false)));
+        mock.arrayBooleanCall(new boolean[]{true, false});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void booleanArrayWithAll_varargsBooleanCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsBooleanCall(Moxie.booleanArrayWithAll(MoxieMatchers.eq(true), MoxieMatchers.eq(false)));
+        mock.varargsBooleanCall(true, false);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void booleanArrayWithAll_arrayBooleanCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayBooleanCall(Moxie.booleanArrayWithAll(MoxieMatchers.eq(true), MoxieMatchers.eq(false)));
+        mock.arrayBooleanCall(new boolean[]{false, false});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void booleanArrayWithAll_varargsBooleanCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsBooleanCall(Moxie.booleanArrayWithAll(MoxieMatchers.eq(true), MoxieMatchers.eq(false)));
+        mock.varargsBooleanCall(false, false);
+    }
+
+    @Test
+    public void anyBooleanVarargs_arrayBooleanCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayBooleanCall(Moxie.anyBooleanVarargs());
+        mock.arrayBooleanCall(new boolean[]{true, false});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyBooleanVarargs_varargsBooleanCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsBooleanCall(Moxie.anyBooleanVarargs());
+        mock.varargsBooleanCall(true, false);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyBooleanVarargs_arrayBooleanCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayBooleanCall(Moxie.anyBooleanVarargs());
+        mock.arrayBooleanCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyBooleanVarargs_varargsBooleanCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsBooleanCall(Moxie.anyBooleanVarargs());
+        mock.varargsBooleanCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void byteArrayLength_arrayByteCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayByteCall(Moxie.byteArrayLength(3));
+        mock.arrayByteCall(new byte[]{(byte) 1, (byte) 2, (byte) 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void byteArrayLength_varargsByteCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsByteCall(Moxie.byteArrayLength(3));
+        mock.varargsByteCall((byte) 1, (byte) 2, (byte) 3);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void byteArrayLength_arrayByteCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayByteCall(Moxie.byteArrayLength(MoxieMatchers.gt(2)));
+        mock.arrayByteCall(new byte[]{(byte) 1, (byte) 2, (byte) 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void byteArrayLength_varargsByteCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsByteCall(Moxie.byteArrayLength(MoxieMatchers.gt(2)));
+        mock.varargsByteCall((byte) 1, (byte) 2, (byte) 3);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void byteArrayLength_arrayByteCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayByteCall(Moxie.byteArrayLength(4));
+        mock.arrayByteCall(new byte[]{(byte) 1, (byte) 2});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void byteArrayLength_varargsByteCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsByteCall(Moxie.byteArrayLength(4));
+        mock.varargsByteCall((byte) 1, (byte) 2);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void byteArrayLength_arrayByteCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayByteCall(Moxie.byteArrayLength(MoxieMatchers.gt(3)));
+        mock.arrayByteCall(new byte[]{(byte) 1, (byte) 2});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void byteArrayLength_varargsByteCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsByteCall(Moxie.byteArrayLength(MoxieMatchers.gt(3)));
+        mock.varargsByteCall((byte) 1, (byte) 2);
+    }
+
+    @Test
+    public void byteArrayWith_arrayByteCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayByteCall(Moxie.byteArrayWith((byte) 8));
+        mock.arrayByteCall(new byte[]{(byte) 3, (byte) 5, (byte) 7, (byte) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void byteArrayWith_varargsByteCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsByteCall(Moxie.byteArrayWith((byte) 8));
+        mock.varargsByteCall((byte) 3, (byte) 5, (byte) 7, (byte) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void byteArrayWith_arrayByteCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayByteCall(Moxie.byteArrayWith(MoxieMatchers.gt((byte) 7)));
+        mock.arrayByteCall(new byte[]{(byte) 3, (byte) 5, (byte) 7, (byte) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void byteArrayWith_varargsByteCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsByteCall(Moxie.byteArrayWith(MoxieMatchers.gt((byte) 7)));
+        mock.varargsByteCall((byte) 3, (byte) 5, (byte) 7, (byte) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void byteArrayWith_arrayByteCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayByteCall(Moxie.byteArrayWith((byte) 4));
+        mock.arrayByteCall(new byte[]{(byte) 3, (byte) 5, (byte) 7, (byte) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void byteArrayWith_varargsByteCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsByteCall(Moxie.byteArrayWith((byte) 4));
+        mock.varargsByteCall((byte) 3, (byte) 5, (byte) 7, (byte) 8);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void byteArrayWith_arrayByteCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayByteCall(Moxie.byteArrayWith(MoxieMatchers.lt((byte) 2)));
+        mock.arrayByteCall(new byte[]{(byte) 3, (byte) 5, (byte) 7, (byte) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void byteArrayWith_varargsByteCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsByteCall(Moxie.byteArrayWith(MoxieMatchers.lt((byte) 2)));
+        mock.varargsByteCall((byte) 3, (byte) 5, (byte) 7, (byte) 8);
+    }
+
+    @Test
+    public void byteArrayWithAll_arrayByteCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayByteCall(Moxie.byteArrayWithAll((byte) 8, (byte) 3));
+        mock.arrayByteCall(new byte[]{(byte) 3, (byte) 5, (byte) 7, (byte) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void byteArrayWithAll_varargsByteCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsByteCall(Moxie.byteArrayWithAll((byte) 8, (byte) 3));
+        mock.varargsByteCall((byte) 3, (byte) 5, (byte) 7, (byte) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void byteArrayWithAll_arrayByteCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayByteCall(Moxie.byteArrayWithAll(MoxieMatchers.lt((byte) 4), MoxieMatchers.gt((byte) 6)));
+        mock.arrayByteCall(new byte[]{(byte) 3, (byte) 5, (byte) 7, (byte) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void byteArrayWithAll_varargsByteCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsByteCall(Moxie.byteArrayWithAll(MoxieMatchers.lt((byte) 4), MoxieMatchers.gt((byte) 6)));
+        mock.varargsByteCall((byte) 3, (byte) 5, (byte) 7, (byte) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void byteArrayWithAll_arrayByteCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayByteCall(Moxie.byteArrayWithAll((byte) 8, (byte) 4));
+        mock.arrayByteCall(new byte[]{(byte) 3, (byte) 5, (byte) 7, (byte) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void byteArrayWithAll_varargsByteCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsByteCall(Moxie.byteArrayWithAll((byte) 8, (byte) 4));
+        mock.varargsByteCall((byte) 3, (byte) 5, (byte) 7, (byte) 8);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void byteArrayWithAll_arrayByteCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayByteCall(Moxie.byteArrayWithAll(MoxieMatchers.lt((byte) 6), MoxieMatchers.gt((byte) 9)));
+        mock.arrayByteCall(new byte[]{(byte) 3, (byte) 5, (byte) 7, (byte) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void byteArrayWithAll_varargsByteCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsByteCall(Moxie.byteArrayWithAll(MoxieMatchers.lt((byte) 6), MoxieMatchers.gt((byte) 9)));
+        mock.varargsByteCall((byte) 3, (byte) 5, (byte) 7, (byte) 8);
+    }
+
+    @Test
+    public void anyByteVarargs_arrayByteCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayByteCall(Moxie.anyByteVarargs());
+        mock.arrayByteCall(new byte[]{(byte) 1, (byte) 2, (byte) 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyByteVarargs_varargsByteCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsByteCall(Moxie.anyByteVarargs());
+        mock.varargsByteCall((byte) 1, (byte) 2, (byte) 3);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyByteVarargs_arrayByteCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayByteCall(Moxie.anyByteVarargs());
+        mock.arrayByteCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyByteVarargs_varargsByteCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsByteCall(Moxie.anyByteVarargs());
+        mock.varargsByteCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void charArrayLength_arrayCharCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayCharCall(Moxie.charArrayLength(3));
+        mock.arrayCharCall(new char[]{'1', '2', '3'});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void charArrayLength_varargsCharCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsCharCall(Moxie.charArrayLength(3));
+        mock.varargsCharCall('1', '2', '3');
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void charArrayLength_arrayCharCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayCharCall(Moxie.charArrayLength(MoxieMatchers.gt(2)));
+        mock.arrayCharCall(new char[]{'1', '2', '3'});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void charArrayLength_varargsCharCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsCharCall(Moxie.charArrayLength(MoxieMatchers.gt(2)));
+        mock.varargsCharCall('1', '2', '3');
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void charArrayLength_arrayCharCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayCharCall(Moxie.charArrayLength(4));
+        mock.arrayCharCall(new char[]{'1', '2'});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void charArrayLength_varargsCharCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsCharCall(Moxie.charArrayLength(4));
+        mock.varargsCharCall('1', '2');
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void charArrayLength_arrayCharCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayCharCall(Moxie.charArrayLength(MoxieMatchers.gt(3)));
+        mock.arrayCharCall(new char[]{'1', '2'});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void charArrayLength_varargsCharCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsCharCall(Moxie.charArrayLength(MoxieMatchers.gt(3)));
+        mock.varargsCharCall('1', '2');
+    }
+
+    @Test
+    public void charArrayWith_arrayCharCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayCharCall(Moxie.charArrayWith('8'));
+        mock.arrayCharCall(new char[]{'3', '5', '7', '8'});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void charArrayWith_varargsCharCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsCharCall(Moxie.charArrayWith('8'));
+        mock.varargsCharCall('3', '5', '7', '8');
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void charArrayWith_arrayCharCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayCharCall(Moxie.charArrayWith(MoxieMatchers.gt('7')));
+        mock.arrayCharCall(new char[]{'3', '5', '7', '8'});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void charArrayWith_varargsCharCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsCharCall(Moxie.charArrayWith(MoxieMatchers.gt('7')));
+        mock.varargsCharCall('3', '5', '7', '8');
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void charArrayWith_arrayCharCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayCharCall(Moxie.charArrayWith('4'));
+        mock.arrayCharCall(new char[]{'3', '5', '7', '8'});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void charArrayWith_varargsCharCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsCharCall(Moxie.charArrayWith('4'));
+        mock.varargsCharCall('3', '5', '7', '8');
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void charArrayWith_arrayCharCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayCharCall(Moxie.charArrayWith(MoxieMatchers.lt('2')));
+        mock.arrayCharCall(new char[]{'3', '5', '7', '8'});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void charArrayWith_varargsCharCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsCharCall(Moxie.charArrayWith(MoxieMatchers.lt('2')));
+        mock.varargsCharCall('3', '5', '7', '8');
+    }
+
+    @Test
+    public void charArrayWithAll_arrayCharCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayCharCall(Moxie.charArrayWithAll('8', '3'));
+        mock.arrayCharCall(new char[]{'3', '5', '7', '8'});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void charArrayWithAll_varargsCharCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsCharCall(Moxie.charArrayWithAll('8', '3'));
+        mock.varargsCharCall('3', '5', '7', '8');
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void charArrayWithAll_arrayCharCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayCharCall(Moxie.charArrayWithAll(MoxieMatchers.lt('4'), MoxieMatchers.gt('6')));
+        mock.arrayCharCall(new char[]{'3', '5', '7', '8'});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void charArrayWithAll_varargsCharCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsCharCall(Moxie.charArrayWithAll(MoxieMatchers.lt('4'), MoxieMatchers.gt('6')));
+        mock.varargsCharCall('3', '5', '7', '8');
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void charArrayWithAll_arrayCharCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayCharCall(Moxie.charArrayWithAll('8', '4'));
+        mock.arrayCharCall(new char[]{'3', '5', '7', '8'});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void charArrayWithAll_varargsCharCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsCharCall(Moxie.charArrayWithAll('8', '4'));
+        mock.varargsCharCall('3', '5', '7', '8');
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void charArrayWithAll_arrayCharCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayCharCall(Moxie.charArrayWithAll(MoxieMatchers.lt('6'), MoxieMatchers.gt('9')));
+        mock.arrayCharCall(new char[]{'3', '5', '7', '8'});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void charArrayWithAll_varargsCharCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsCharCall(Moxie.charArrayWithAll(MoxieMatchers.lt('6'), MoxieMatchers.gt('9')));
+        mock.varargsCharCall('3', '5', '7', '8');
+    }
+
+    @Test
+    public void anyCharVarargs_arrayCharCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayCharCall(Moxie.anyCharVarargs());
+        mock.arrayCharCall(new char[]{'1', '2', '3'});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyCharVarargs_varargsCharCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsCharCall(Moxie.anyCharVarargs());
+        mock.varargsCharCall('1', '2', '3');
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyCharVarargs_arrayCharCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayCharCall(Moxie.anyCharVarargs());
+        mock.arrayCharCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyCharVarargs_varargsCharCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsCharCall(Moxie.anyCharVarargs());
+        mock.varargsCharCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void shortArrayLength_arrayShortCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayShortCall(Moxie.shortArrayLength(3));
+        mock.arrayShortCall(new short[]{(short) 1, (short) 2, (short) 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void shortArrayLength_varargsShortCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsShortCall(Moxie.shortArrayLength(3));
+        mock.varargsShortCall((short) 1, (short) 2, (short) 3);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void shortArrayLength_arrayShortCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayShortCall(Moxie.shortArrayLength(MoxieMatchers.gt(2)));
+        mock.arrayShortCall(new short[]{(short) 1, (short) 2, (short) 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void shortArrayLength_varargsShortCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsShortCall(Moxie.shortArrayLength(MoxieMatchers.gt(2)));
+        mock.varargsShortCall((short) 1, (short) 2, (short) 3);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void shortArrayLength_arrayShortCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayShortCall(Moxie.shortArrayLength(4));
+        mock.arrayShortCall(new short[]{(short) 1, (short) 2});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void shortArrayLength_varargsShortCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsShortCall(Moxie.shortArrayLength(4));
+        mock.varargsShortCall((short) 1, (short) 2);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void shortArrayLength_arrayShortCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayShortCall(Moxie.shortArrayLength(MoxieMatchers.gt(3)));
+        mock.arrayShortCall(new short[]{(short) 1, (short) 2});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void shortArrayLength_varargsShortCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsShortCall(Moxie.shortArrayLength(MoxieMatchers.gt(3)));
+        mock.varargsShortCall((short) 1, (short) 2);
+    }
+
+    @Test
+    public void shortArrayWith_arrayShortCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayShortCall(Moxie.shortArrayWith((short) 8));
+        mock.arrayShortCall(new short[]{(short) 3, (short) 5, (short) 7, (short) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void shortArrayWith_varargsShortCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsShortCall(Moxie.shortArrayWith((short) 8));
+        mock.varargsShortCall((short) 3, (short) 5, (short) 7, (short) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void shortArrayWith_arrayShortCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayShortCall(Moxie.shortArrayWith(MoxieMatchers.gt((short) 7)));
+        mock.arrayShortCall(new short[]{(short) 3, (short) 5, (short) 7, (short) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void shortArrayWith_varargsShortCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsShortCall(Moxie.shortArrayWith(MoxieMatchers.gt((short) 7)));
+        mock.varargsShortCall((short) 3, (short) 5, (short) 7, (short) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void shortArrayWith_arrayShortCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayShortCall(Moxie.shortArrayWith((short) 4));
+        mock.arrayShortCall(new short[]{(short) 3, (short) 5, (short) 7, (short) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void shortArrayWith_varargsShortCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsShortCall(Moxie.shortArrayWith((short) 4));
+        mock.varargsShortCall((short) 3, (short) 5, (short) 7, (short) 8);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void shortArrayWith_arrayShortCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayShortCall(Moxie.shortArrayWith(MoxieMatchers.lt((short) 2)));
+        mock.arrayShortCall(new short[]{(short) 3, (short) 5, (short) 7, (short) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void shortArrayWith_varargsShortCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsShortCall(Moxie.shortArrayWith(MoxieMatchers.lt((short) 2)));
+        mock.varargsShortCall((short) 3, (short) 5, (short) 7, (short) 8);
+    }
+
+    @Test
+    public void shortArrayWithAll_arrayShortCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayShortCall(Moxie.shortArrayWithAll((short) 8, (short) 3));
+        mock.arrayShortCall(new short[]{(short) 3, (short) 5, (short) 7, (short) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void shortArrayWithAll_varargsShortCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsShortCall(Moxie.shortArrayWithAll((short) 8, (short) 3));
+        mock.varargsShortCall((short) 3, (short) 5, (short) 7, (short) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void shortArrayWithAll_arrayShortCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayShortCall(Moxie.shortArrayWithAll(MoxieMatchers.lt((short) 4), MoxieMatchers.gt((short) 6)));
+        mock.arrayShortCall(new short[]{(short) 3, (short) 5, (short) 7, (short) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void shortArrayWithAll_varargsShortCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsShortCall(Moxie.shortArrayWithAll(MoxieMatchers.lt((short) 4), MoxieMatchers.gt((short) 6)));
+        mock.varargsShortCall((short) 3, (short) 5, (short) 7, (short) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void shortArrayWithAll_arrayShortCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayShortCall(Moxie.shortArrayWithAll((short) 8, (short) 4));
+        mock.arrayShortCall(new short[]{(short) 3, (short) 5, (short) 7, (short) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void shortArrayWithAll_varargsShortCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsShortCall(Moxie.shortArrayWithAll((short) 8, (short) 4));
+        mock.varargsShortCall((short) 3, (short) 5, (short) 7, (short) 8);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void shortArrayWithAll_arrayShortCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayShortCall(Moxie.shortArrayWithAll(MoxieMatchers.lt((short) 6), MoxieMatchers.gt((short) 9)));
+        mock.arrayShortCall(new short[]{(short) 3, (short) 5, (short) 7, (short) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void shortArrayWithAll_varargsShortCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsShortCall(Moxie.shortArrayWithAll(MoxieMatchers.lt((short) 6), MoxieMatchers.gt((short) 9)));
+        mock.varargsShortCall((short) 3, (short) 5, (short) 7, (short) 8);
+    }
+
+    @Test
+    public void anyShortVarargs_arrayShortCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayShortCall(Moxie.anyShortVarargs());
+        mock.arrayShortCall(new short[]{(short) 1, (short) 2, (short) 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyShortVarargs_varargsShortCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsShortCall(Moxie.anyShortVarargs());
+        mock.varargsShortCall((short) 1, (short) 2, (short) 3);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyShortVarargs_arrayShortCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayShortCall(Moxie.anyShortVarargs());
+        mock.arrayShortCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyShortVarargs_varargsShortCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsShortCall(Moxie.anyShortVarargs());
+        mock.varargsShortCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void intArrayLength_arrayIntCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayIntCall(Moxie.intArrayLength(3));
+        mock.arrayIntCall(new int[]{1, 2, 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void intArrayLength_varargsIntCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsIntCall(Moxie.intArrayLength(3));
+        mock.varargsIntCall(1, 2, 3);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void intArrayLength_arrayIntCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayIntCall(Moxie.intArrayLength(MoxieMatchers.gt(2)));
+        mock.arrayIntCall(new int[]{1, 2, 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void intArrayLength_varargsIntCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsIntCall(Moxie.intArrayLength(MoxieMatchers.gt(2)));
+        mock.varargsIntCall(1, 2, 3);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void intArrayLength_arrayIntCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayIntCall(Moxie.intArrayLength(4));
+        mock.arrayIntCall(new int[]{1, 2});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void intArrayLength_varargsIntCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsIntCall(Moxie.intArrayLength(4));
+        mock.varargsIntCall(1, 2);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void intArrayLength_arrayIntCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayIntCall(Moxie.intArrayLength(MoxieMatchers.gt(3)));
+        mock.arrayIntCall(new int[]{1, 2});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void intArrayLength_varargsIntCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsIntCall(Moxie.intArrayLength(MoxieMatchers.gt(3)));
+        mock.varargsIntCall(1, 2);
+    }
+
+    @Test
+    public void intArrayWith_arrayIntCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayIntCall(Moxie.intArrayWith(8));
+        mock.arrayIntCall(new int[]{3, 5, 7, 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void intArrayWith_varargsIntCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsIntCall(Moxie.intArrayWith(8));
+        mock.varargsIntCall(3, 5, 7, 8);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void intArrayWith_arrayIntCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayIntCall(Moxie.intArrayWith(MoxieMatchers.gt(7)));
+        mock.arrayIntCall(new int[]{3, 5, 7, 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void intArrayWith_varargsIntCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsIntCall(Moxie.intArrayWith(MoxieMatchers.gt(7)));
+        mock.varargsIntCall(3, 5, 7, 8);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void intArrayWith_arrayIntCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayIntCall(Moxie.intArrayWith(4));
+        mock.arrayIntCall(new int[]{3, 5, 7, 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void intArrayWith_varargsIntCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsIntCall(Moxie.intArrayWith(4));
+        mock.varargsIntCall(3, 5, 7, 8);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void intArrayWith_arrayIntCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayIntCall(Moxie.intArrayWith(MoxieMatchers.lt(2)));
+        mock.arrayIntCall(new int[]{3, 5, 7, 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void intArrayWith_varargsIntCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsIntCall(Moxie.intArrayWith(MoxieMatchers.lt(2)));
+        mock.varargsIntCall(3, 5, 7, 8);
+    }
+
+    @Test
+    public void intArrayWithAll_arrayIntCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayIntCall(Moxie.intArrayWithAll(8, 3));
+        mock.arrayIntCall(new int[]{3, 5, 7, 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void intArrayWithAll_varargsIntCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsIntCall(Moxie.intArrayWithAll(8, 3));
+        mock.varargsIntCall(3, 5, 7, 8);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void intArrayWithAll_arrayIntCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayIntCall(Moxie.intArrayWithAll(MoxieMatchers.lt(4), MoxieMatchers.gt(6)));
+        mock.arrayIntCall(new int[]{3, 5, 7, 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void intArrayWithAll_varargsIntCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsIntCall(Moxie.intArrayWithAll(MoxieMatchers.lt(4), MoxieMatchers.gt(6)));
+        mock.varargsIntCall(3, 5, 7, 8);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void intArrayWithAll_arrayIntCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayIntCall(Moxie.intArrayWithAll(8, 4));
+        mock.arrayIntCall(new int[]{3, 5, 7, 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void intArrayWithAll_varargsIntCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsIntCall(Moxie.intArrayWithAll(8, 4));
+        mock.varargsIntCall(3, 5, 7, 8);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void intArrayWithAll_arrayIntCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayIntCall(Moxie.intArrayWithAll(MoxieMatchers.lt(6), MoxieMatchers.gt(9)));
+        mock.arrayIntCall(new int[]{3, 5, 7, 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void intArrayWithAll_varargsIntCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsIntCall(Moxie.intArrayWithAll(MoxieMatchers.lt(6), MoxieMatchers.gt(9)));
+        mock.varargsIntCall(3, 5, 7, 8);
+    }
+
+    @Test
+    public void anyIntVarargs_arrayIntCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayIntCall(Moxie.anyIntVarargs());
+        mock.arrayIntCall(new int[]{1, 2, 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyIntVarargs_varargsIntCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsIntCall(Moxie.anyIntVarargs());
+        mock.varargsIntCall(1, 2, 3);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyIntVarargs_arrayIntCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayIntCall(Moxie.anyIntVarargs());
+        mock.arrayIntCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyIntVarargs_varargsIntCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsIntCall(Moxie.anyIntVarargs());
+        mock.varargsIntCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void longArrayLength_arrayLongCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayLongCall(Moxie.longArrayLength(3));
+        mock.arrayLongCall(new long[]{(long) 1, (long) 2, (long) 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void longArrayLength_varargsLongCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsLongCall(Moxie.longArrayLength(3));
+        mock.varargsLongCall((long) 1, (long) 2, (long) 3);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void longArrayLength_arrayLongCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayLongCall(Moxie.longArrayLength(MoxieMatchers.gt(2)));
+        mock.arrayLongCall(new long[]{(long) 1, (long) 2, (long) 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void longArrayLength_varargsLongCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsLongCall(Moxie.longArrayLength(MoxieMatchers.gt(2)));
+        mock.varargsLongCall((long) 1, (long) 2, (long) 3);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void longArrayLength_arrayLongCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayLongCall(Moxie.longArrayLength(4));
+        mock.arrayLongCall(new long[]{(long) 1, (long) 2});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void longArrayLength_varargsLongCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsLongCall(Moxie.longArrayLength(4));
+        mock.varargsLongCall((long) 1, (long) 2);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void longArrayLength_arrayLongCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayLongCall(Moxie.longArrayLength(MoxieMatchers.gt(3)));
+        mock.arrayLongCall(new long[]{(long) 1, (long) 2});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void longArrayLength_varargsLongCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsLongCall(Moxie.longArrayLength(MoxieMatchers.gt(3)));
+        mock.varargsLongCall((long) 1, (long) 2);
+    }
+
+    @Test
+    public void longArrayWith_arrayLongCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayLongCall(Moxie.longArrayWith((long) 8));
+        mock.arrayLongCall(new long[]{(long) 3, (long) 5, (long) 7, (long) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void longArrayWith_varargsLongCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsLongCall(Moxie.longArrayWith((long) 8));
+        mock.varargsLongCall((long) 3, (long) 5, (long) 7, (long) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void longArrayWith_arrayLongCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayLongCall(Moxie.longArrayWith(MoxieMatchers.gt((long) 7)));
+        mock.arrayLongCall(new long[]{(long) 3, (long) 5, (long) 7, (long) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void longArrayWith_varargsLongCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsLongCall(Moxie.longArrayWith(MoxieMatchers.gt((long) 7)));
+        mock.varargsLongCall((long) 3, (long) 5, (long) 7, (long) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void longArrayWith_arrayLongCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayLongCall(Moxie.longArrayWith((long) 4));
+        mock.arrayLongCall(new long[]{(long) 3, (long) 5, (long) 7, (long) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void longArrayWith_varargsLongCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsLongCall(Moxie.longArrayWith((long) 4));
+        mock.varargsLongCall((long) 3, (long) 5, (long) 7, (long) 8);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void longArrayWith_arrayLongCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayLongCall(Moxie.longArrayWith(MoxieMatchers.lt((long) 2)));
+        mock.arrayLongCall(new long[]{(long) 3, (long) 5, (long) 7, (long) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void longArrayWith_varargsLongCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsLongCall(Moxie.longArrayWith(MoxieMatchers.lt((long) 2)));
+        mock.varargsLongCall((long) 3, (long) 5, (long) 7, (long) 8);
+    }
+
+    @Test
+    public void longArrayWithAll_arrayLongCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayLongCall(Moxie.longArrayWithAll((long) 8, (long) 3));
+        mock.arrayLongCall(new long[]{(long) 3, (long) 5, (long) 7, (long) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void longArrayWithAll_varargsLongCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsLongCall(Moxie.longArrayWithAll((long) 8, (long) 3));
+        mock.varargsLongCall((long) 3, (long) 5, (long) 7, (long) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void longArrayWithAll_arrayLongCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayLongCall(Moxie.longArrayWithAll(MoxieMatchers.lt((long) 4), MoxieMatchers.gt((long) 6)));
+        mock.arrayLongCall(new long[]{(long) 3, (long) 5, (long) 7, (long) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void longArrayWithAll_varargsLongCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsLongCall(Moxie.longArrayWithAll(MoxieMatchers.lt((long) 4), MoxieMatchers.gt((long) 6)));
+        mock.varargsLongCall((long) 3, (long) 5, (long) 7, (long) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void longArrayWithAll_arrayLongCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayLongCall(Moxie.longArrayWithAll((long) 8, (long) 4));
+        mock.arrayLongCall(new long[]{(long) 3, (long) 5, (long) 7, (long) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void longArrayWithAll_varargsLongCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsLongCall(Moxie.longArrayWithAll((long) 8, (long) 4));
+        mock.varargsLongCall((long) 3, (long) 5, (long) 7, (long) 8);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void longArrayWithAll_arrayLongCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayLongCall(Moxie.longArrayWithAll(MoxieMatchers.lt((long) 6), MoxieMatchers.gt((long) 9)));
+        mock.arrayLongCall(new long[]{(long) 3, (long) 5, (long) 7, (long) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void longArrayWithAll_varargsLongCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsLongCall(Moxie.longArrayWithAll(MoxieMatchers.lt((long) 6), MoxieMatchers.gt((long) 9)));
+        mock.varargsLongCall((long) 3, (long) 5, (long) 7, (long) 8);
+    }
+
+    @Test
+    public void anyLongVarargs_arrayLongCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayLongCall(Moxie.anyLongVarargs());
+        mock.arrayLongCall(new long[]{(long) 1, (long) 2, (long) 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyLongVarargs_varargsLongCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsLongCall(Moxie.anyLongVarargs());
+        mock.varargsLongCall((long) 1, (long) 2, (long) 3);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyLongVarargs_arrayLongCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayLongCall(Moxie.anyLongVarargs());
+        mock.arrayLongCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyLongVarargs_varargsLongCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsLongCall(Moxie.anyLongVarargs());
+        mock.varargsLongCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void floatArrayLength_arrayFloatCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayFloatCall(Moxie.floatArrayLength(3));
+        mock.arrayFloatCall(new float[]{(float) 1, (float) 2, (float) 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void floatArrayLength_varargsFloatCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsFloatCall(Moxie.floatArrayLength(3));
+        mock.varargsFloatCall((float) 1, (float) 2, (float) 3);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void floatArrayLength_arrayFloatCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayFloatCall(Moxie.floatArrayLength(MoxieMatchers.gt(2)));
+        mock.arrayFloatCall(new float[]{(float) 1, (float) 2, (float) 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void floatArrayLength_varargsFloatCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsFloatCall(Moxie.floatArrayLength(MoxieMatchers.gt(2)));
+        mock.varargsFloatCall((float) 1, (float) 2, (float) 3);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void floatArrayLength_arrayFloatCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayFloatCall(Moxie.floatArrayLength(4));
+        mock.arrayFloatCall(new float[]{(float) 1, (float) 2});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void floatArrayLength_varargsFloatCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsFloatCall(Moxie.floatArrayLength(4));
+        mock.varargsFloatCall((float) 1, (float) 2);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void floatArrayLength_arrayFloatCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayFloatCall(Moxie.floatArrayLength(MoxieMatchers.gt(3)));
+        mock.arrayFloatCall(new float[]{(float) 1, (float) 2});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void floatArrayLength_varargsFloatCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsFloatCall(Moxie.floatArrayLength(MoxieMatchers.gt(3)));
+        mock.varargsFloatCall((float) 1, (float) 2);
+    }
+
+    @Test
+    public void floatArrayWith_arrayFloatCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayFloatCall(Moxie.floatArrayWith((float) 8));
+        mock.arrayFloatCall(new float[]{(float) 3, (float) 5, (float) 7, (float) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void floatArrayWith_varargsFloatCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsFloatCall(Moxie.floatArrayWith((float) 8));
+        mock.varargsFloatCall((float) 3, (float) 5, (float) 7, (float) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void floatArrayWith_arrayFloatCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayFloatCall(Moxie.floatArrayWith(MoxieMatchers.gt((float) 7)));
+        mock.arrayFloatCall(new float[]{(float) 3, (float) 5, (float) 7, (float) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void floatArrayWith_varargsFloatCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsFloatCall(Moxie.floatArrayWith(MoxieMatchers.gt((float) 7)));
+        mock.varargsFloatCall((float) 3, (float) 5, (float) 7, (float) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void floatArrayWith_arrayFloatCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayFloatCall(Moxie.floatArrayWith((float) 4));
+        mock.arrayFloatCall(new float[]{(float) 3, (float) 5, (float) 7, (float) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void floatArrayWith_varargsFloatCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsFloatCall(Moxie.floatArrayWith((float) 4));
+        mock.varargsFloatCall((float) 3, (float) 5, (float) 7, (float) 8);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void floatArrayWith_arrayFloatCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayFloatCall(Moxie.floatArrayWith(MoxieMatchers.lt((float) 2)));
+        mock.arrayFloatCall(new float[]{(float) 3, (float) 5, (float) 7, (float) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void floatArrayWith_varargsFloatCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsFloatCall(Moxie.floatArrayWith(MoxieMatchers.lt((float) 2)));
+        mock.varargsFloatCall((float) 3, (float) 5, (float) 7, (float) 8);
+    }
+
+    @Test
+    public void floatArrayWithAll_arrayFloatCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayFloatCall(Moxie.floatArrayWithAll((float) 8, (float) 3));
+        mock.arrayFloatCall(new float[]{(float) 3, (float) 5, (float) 7, (float) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void floatArrayWithAll_varargsFloatCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsFloatCall(Moxie.floatArrayWithAll((float) 8, (float) 3));
+        mock.varargsFloatCall((float) 3, (float) 5, (float) 7, (float) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void floatArrayWithAll_arrayFloatCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayFloatCall(Moxie.floatArrayWithAll(MoxieMatchers.lt((float) 4), MoxieMatchers.gt((float) 6)));
+        mock.arrayFloatCall(new float[]{(float) 3, (float) 5, (float) 7, (float) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void floatArrayWithAll_varargsFloatCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsFloatCall(Moxie.floatArrayWithAll(MoxieMatchers.lt((float) 4), MoxieMatchers.gt((float) 6)));
+        mock.varargsFloatCall((float) 3, (float) 5, (float) 7, (float) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void floatArrayWithAll_arrayFloatCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayFloatCall(Moxie.floatArrayWithAll((float) 8, (float) 4));
+        mock.arrayFloatCall(new float[]{(float) 3, (float) 5, (float) 7, (float) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void floatArrayWithAll_varargsFloatCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsFloatCall(Moxie.floatArrayWithAll((float) 8, (float) 4));
+        mock.varargsFloatCall((float) 3, (float) 5, (float) 7, (float) 8);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void floatArrayWithAll_arrayFloatCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayFloatCall(Moxie.floatArrayWithAll(MoxieMatchers.lt((float) 6), MoxieMatchers.gt((float) 9)));
+        mock.arrayFloatCall(new float[]{(float) 3, (float) 5, (float) 7, (float) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void floatArrayWithAll_varargsFloatCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsFloatCall(Moxie.floatArrayWithAll(MoxieMatchers.lt((float) 6), MoxieMatchers.gt((float) 9)));
+        mock.varargsFloatCall((float) 3, (float) 5, (float) 7, (float) 8);
+    }
+
+    @Test
+    public void anyFloatVarargs_arrayFloatCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayFloatCall(Moxie.anyFloatVarargs());
+        mock.arrayFloatCall(new float[]{(float) 1, (float) 2, (float) 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyFloatVarargs_varargsFloatCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsFloatCall(Moxie.anyFloatVarargs());
+        mock.varargsFloatCall((float) 1, (float) 2, (float) 3);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyFloatVarargs_arrayFloatCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayFloatCall(Moxie.anyFloatVarargs());
+        mock.arrayFloatCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyFloatVarargs_varargsFloatCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsFloatCall(Moxie.anyFloatVarargs());
+        mock.varargsFloatCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void doubleArrayLength_arrayDoubleCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayDoubleCall(Moxie.doubleArrayLength(3));
+        mock.arrayDoubleCall(new double[]{(double) 1, (double) 2, (double) 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void doubleArrayLength_varargsDoubleCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsDoubleCall(Moxie.doubleArrayLength(3));
+        mock.varargsDoubleCall((double) 1, (double) 2, (double) 3);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void doubleArrayLength_arrayDoubleCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayDoubleCall(Moxie.doubleArrayLength(MoxieMatchers.gt(2)));
+        mock.arrayDoubleCall(new double[]{(double) 1, (double) 2, (double) 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void doubleArrayLength_varargsDoubleCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsDoubleCall(Moxie.doubleArrayLength(MoxieMatchers.gt(2)));
+        mock.varargsDoubleCall((double) 1, (double) 2, (double) 3);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void doubleArrayLength_arrayDoubleCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayDoubleCall(Moxie.doubleArrayLength(4));
+        mock.arrayDoubleCall(new double[]{(double) 1, (double) 2});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void doubleArrayLength_varargsDoubleCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsDoubleCall(Moxie.doubleArrayLength(4));
+        mock.varargsDoubleCall((double) 1, (double) 2);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void doubleArrayLength_arrayDoubleCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayDoubleCall(Moxie.doubleArrayLength(MoxieMatchers.gt(3)));
+        mock.arrayDoubleCall(new double[]{(double) 1, (double) 2});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void doubleArrayLength_varargsDoubleCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsDoubleCall(Moxie.doubleArrayLength(MoxieMatchers.gt(3)));
+        mock.varargsDoubleCall((double) 1, (double) 2);
+    }
+
+    @Test
+    public void doubleArrayWith_arrayDoubleCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayDoubleCall(Moxie.doubleArrayWith((double) 8));
+        mock.arrayDoubleCall(new double[]{(double) 3, (double) 5, (double) 7, (double) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void doubleArrayWith_varargsDoubleCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsDoubleCall(Moxie.doubleArrayWith((double) 8));
+        mock.varargsDoubleCall((double) 3, (double) 5, (double) 7, (double) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void doubleArrayWith_arrayDoubleCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayDoubleCall(Moxie.doubleArrayWith(MoxieMatchers.gt((double) 7)));
+        mock.arrayDoubleCall(new double[]{(double) 3, (double) 5, (double) 7, (double) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void doubleArrayWith_varargsDoubleCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsDoubleCall(Moxie.doubleArrayWith(MoxieMatchers.gt((double) 7)));
+        mock.varargsDoubleCall((double) 3, (double) 5, (double) 7, (double) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void doubleArrayWith_arrayDoubleCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayDoubleCall(Moxie.doubleArrayWith((double) 4));
+        mock.arrayDoubleCall(new double[]{(double) 3, (double) 5, (double) 7, (double) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void doubleArrayWith_varargsDoubleCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsDoubleCall(Moxie.doubleArrayWith((double) 4));
+        mock.varargsDoubleCall((double) 3, (double) 5, (double) 7, (double) 8);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void doubleArrayWith_arrayDoubleCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayDoubleCall(Moxie.doubleArrayWith(MoxieMatchers.lt((double) 2)));
+        mock.arrayDoubleCall(new double[]{(double) 3, (double) 5, (double) 7, (double) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void doubleArrayWith_varargsDoubleCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsDoubleCall(Moxie.doubleArrayWith(MoxieMatchers.lt((double) 2)));
+        mock.varargsDoubleCall((double) 3, (double) 5, (double) 7, (double) 8);
+    }
+
+    @Test
+    public void doubleArrayWithAll_arrayDoubleCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayDoubleCall(Moxie.doubleArrayWithAll((double) 8, (double) 3));
+        mock.arrayDoubleCall(new double[]{(double) 3, (double) 5, (double) 7, (double) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void doubleArrayWithAll_varargsDoubleCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsDoubleCall(Moxie.doubleArrayWithAll((double) 8, (double) 3));
+        mock.varargsDoubleCall((double) 3, (double) 5, (double) 7, (double) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void doubleArrayWithAll_arrayDoubleCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayDoubleCall(Moxie.doubleArrayWithAll(MoxieMatchers.lt((double) 4), MoxieMatchers.gt((double) 6)));
+        mock.arrayDoubleCall(new double[]{(double) 3, (double) 5, (double) 7, (double) 8});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void doubleArrayWithAll_varargsDoubleCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsDoubleCall(Moxie.doubleArrayWithAll(MoxieMatchers.lt((double) 4), MoxieMatchers.gt((double) 6)));
+        mock.varargsDoubleCall((double) 3, (double) 5, (double) 7, (double) 8);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void doubleArrayWithAll_arrayDoubleCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayDoubleCall(Moxie.doubleArrayWithAll((double) 8, (double) 4));
+        mock.arrayDoubleCall(new double[]{(double) 3, (double) 5, (double) 7, (double) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void doubleArrayWithAll_varargsDoubleCall_sadPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsDoubleCall(Moxie.doubleArrayWithAll((double) 8, (double) 4));
+        mock.varargsDoubleCall((double) 3, (double) 5, (double) 7, (double) 8);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void doubleArrayWithAll_arrayDoubleCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayDoubleCall(Moxie.doubleArrayWithAll(MoxieMatchers.lt((double) 6), MoxieMatchers.gt((double) 9)));
+        mock.arrayDoubleCall(new double[]{(double) 3, (double) 5, (double) 7, (double) 8});
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void doubleArrayWithAll_varargsDoubleCall_sadPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsDoubleCall(Moxie.doubleArrayWithAll(MoxieMatchers.lt((double) 6), MoxieMatchers.gt((double) 9)));
+        mock.varargsDoubleCall((double) 3, (double) 5, (double) 7, (double) 8);
+    }
+
+    @Test
+    public void anyDoubleVarargs_arrayDoubleCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayDoubleCall(Moxie.anyDoubleVarargs());
+        mock.arrayDoubleCall(new double[]{(double) 1, (double) 2, (double) 3});
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyDoubleVarargs_varargsDoubleCall_happyPath1() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsDoubleCall(Moxie.anyDoubleVarargs());
+        mock.varargsDoubleCall((double) 1, (double) 2, (double) 3);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyDoubleVarargs_arrayDoubleCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().arrayDoubleCall(Moxie.anyDoubleVarargs());
+        mock.arrayDoubleCall(null);
+        Moxie.verify(mock);
+    }
+
+    @Test
+    public void anyDoubleVarargs_varargsDoubleCall_happyPath2() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsDoubleCall(Moxie.anyDoubleVarargs());
+        mock.varargsDoubleCall(null);
+        Moxie.verify(mock);
+    }
 
 }
