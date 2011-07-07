@@ -1466,6 +1466,37 @@ public abstract class MoxieMatchers {
     }
 
     /**
+     * Matches an array of <code>byte</code> containing an element matching the given parameter (which may be a {@link MoxieMatchers} invocation).
+     *
+     * @return <code>null</code>
+     */
+    static public byte[] byteArrayWith(byte item) {
+        Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(byte.class, item);
+        return reportMatcher(isArrayContainingMatcher(itemMatcher), byte[].class);
+    }
+
+    /**
+     * <p>
+     * Matches an array of <code>byte</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
+     * </p>
+     * <p>
+     * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
+     * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(byte...) array()}.
+     * </p>
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public byte[] byteArrayWithAll(byte... items) {
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> arrayMatchers = new ArrayList<Matcher>();
+        for (Matcher itemMatcher : itemMatchers) {
+            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+        }
+        return reportMatcher(new AllOf(arrayMatchers), byte[].class);
+    }
+
+    /**
      * Matches an array of <code>char</code> containing an element matching the given parameter (which may be a {@link MoxieMatchers} invocation).
      *
      * @return <code>null</code>
@@ -1790,6 +1821,15 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    static public byte[] anyByteVarargs() {
+        return any(byte[].class);
+    }
+
+    /**
+     * Syntactic sugar matcher; used when matching varargs methods to specify that we don't care what parameters are received in the varargs list.
+     *
+     * @return <code>null</code>
+     */
     static public char[] anyCharVarargs() {
         return any(char[].class);
     }
@@ -1898,6 +1938,16 @@ public abstract class MoxieMatchers {
     static public boolean[] booleanArrayLength(int size) {
         final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
         return reportMatcher(arraySizeMatcher(sizeMatcher), boolean[].class);
+    }
+
+    /**
+     * Matches a <code>byte</code> array of the specified length.  (The length may be a {@link MoxieMatchers} invocation.)
+     *
+     * @return <code>null</code>
+     */
+    static public byte[] byteArrayLength(int size) {
+        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return reportMatcher(arraySizeMatcher(sizeMatcher), byte[].class);
     }
 
     /**
