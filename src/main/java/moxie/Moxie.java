@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2011 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -136,18 +136,58 @@ public abstract class Moxie extends MoxieMatchers {
         return instance.mock(clazz, name, options);
     }
 
+    /**
+     * Creates a mock object of the given type, calling a constructor with the given arguments.  (Used to mock concrete classes that don't have a no-arg constructor.)
+     *
+     * @param clazz               the class that the mock should extend
+     * @param constructorArgTypes the parameter signature of the constructor to be used
+     * @param constructorArgs     values to be passed to the constructor
+     * @param <T>                 the class or interface that the mock should extend/implement
+     * @return a new mock object
+     */
     static public <T> T mock(Class<T> clazz, Class[] constructorArgTypes, Object[] constructorArgs) {
         return instance.mock(clazz, constructorArgTypes, constructorArgs);
     }
 
+    /**
+     * Creates a mock object of the given type, calling a constructor with the given arguments.  (Used to mock concrete classes that don't have a no-arg constructor.)
+     *
+     * @param clazz               the class that the mock should extend
+     * @param name                the name of the mock object - will be used in error messages
+     * @param constructorArgTypes the parameter signature of the constructor to be used
+     * @param constructorArgs     values to be passed to the constructor
+     * @param <T>                 the class or interface that the mock should extend/implement
+     * @return a new mock object
+     */
     static public <T> T mock(Class<T> clazz, String name, Class[] constructorArgTypes, Object[] constructorArgs) {
         return instance.mock(clazz, name, constructorArgTypes, constructorArgs);
     }
 
+    /**
+     * Creates a mock object of the given type, calling a constructor with the given arguments.  (Used to mock concrete classes that don't have a no-arg constructor.)
+     *
+     * @param clazz               the class that the mock should extend
+     * @param constructorArgTypes the parameter signature of the constructor to be used
+     * @param constructorArgs     values to be passed to the constructor
+     * @param options             one or more {@link MoxieOptions} that should apply to the mock
+     * @param <T>                 the class or interface that the mock should extend/implement
+     * @return a new mock object
+     */
     static public <T> T mock(Class<T> clazz, Class[] constructorArgTypes, Object[] constructorArgs, MoxieOptions... options) {
         return instance.mock(clazz, constructorArgTypes, constructorArgs, options);
     }
 
+    /**
+     * Creates a mock object of the given type, calling a constructor with the given arguments.  (Used to mock concrete classes that don't have a no-arg constructor.)
+     *
+     * @param clazz               the class that the mock should extend
+     * @param name                the name of the mock object - will be used in error messages
+     * @param constructorArgTypes the parameter signature of the constructor to be used
+     * @param constructorArgs     values to be passed to the constructor
+     * @param options             one or more {@link MoxieOptions} that should apply to the mock
+     * @param <T>                 the class or interface that the mock should extend/implement
+     * @return a new mock object
+     */
     static public <T> T mock(Class<T> clazz, String name, Class[] constructorArgTypes, Object[] constructorArgs, MoxieOptions... options) {
         return instance.mock(clazz, name, constructorArgTypes, constructorArgs, options);
     }

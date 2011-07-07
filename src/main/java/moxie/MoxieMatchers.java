@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2011 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -120,6 +121,7 @@ public abstract class MoxieMatchers {
      * @param <T> element type of the array
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T> T[] anyArray() {
         return (T[]) reportMatcher(new AnyOf(Arrays.asList(new IsNull(), ANY_ARRAY_MATCHER)), Object[].class);
     }
@@ -201,6 +203,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T> T anything() {
         return (T) any(Object.class);
     }
@@ -210,6 +213,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T> T anyObject() {
         return (T) anything();
     }
@@ -228,6 +232,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code> if the given class is an object, or the primitive's default value if the given class is a primitive
      */
+    @SuppressWarnings("unchecked")
     static public <T> T any(Class<T> clazz) {
         return reportMatcher(new AnyOf(Arrays.asList(new IsNull(), new IsInstanceOf(MoxieUtils.toNonPrimitive(clazz)))), clazz);
     }
@@ -238,6 +243,7 @@ public abstract class MoxieMatchers {
      * @param matcher a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T> T argThat(Matcher<T> matcher) {
         return (T) reportMatcher(matcher, null);
     }
@@ -248,6 +254,7 @@ public abstract class MoxieMatchers {
      * @param matcher a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T> T arrayThat(Matcher<T> matcher) {
         return (T) reportMatcher(matcher, Object[].class);
     }
@@ -337,6 +344,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>false</code>
      */
+    @SuppressWarnings("unchecked")
     static public boolean eq(boolean value) {
         return reportMatcher(new IsEqual(value), Boolean.TYPE);
     }
@@ -346,6 +354,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>0</code>
      */
+    @SuppressWarnings("unchecked")
     static public byte eq(byte value) {
         return reportMatcher(new IsEqual(value), Byte.TYPE);
     }
@@ -355,6 +364,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>'\0'</code>
      */
+    @SuppressWarnings("unchecked")
     static public char eq(char value) {
         return reportMatcher(new IsEqual(value), Character.TYPE);
     }
@@ -364,6 +374,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>0</code>
      */
+    @SuppressWarnings("unchecked")
     static public double eq(double value) {
         return reportMatcher(new IsEqual(value), Double.TYPE);
     }
@@ -373,6 +384,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>0</code>
      */
+    @SuppressWarnings("unchecked")
     static public float eq(float value) {
         return reportMatcher(new IsEqual(value), Float.TYPE);
     }
@@ -382,6 +394,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>0</code>
      */
+    @SuppressWarnings("unchecked")
     static public int eq(int value) {
         return reportMatcher(new IsEqual(value), Integer.TYPE);
     }
@@ -391,6 +404,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>0</code>
      */
+    @SuppressWarnings("unchecked")
     static public long eq(long value) {
         return reportMatcher(new IsEqual(value), Long.TYPE);
     }
@@ -400,6 +414,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>0</code>
      */
+    @SuppressWarnings("unchecked")
     static public short eq(short value) {
         return reportMatcher(new IsEqual(value), Short.TYPE);
     }
@@ -409,6 +424,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T> T eq(T value) {
         return (T) reportMatcher(new IsEqual(value), (value != null ? value.getClass() : null));
     }
@@ -427,6 +443,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T> T isNotNull() {
         return MoxieMatchers.<T>reportMatcher(new IsNot(new IsNull()), null);
     }
@@ -454,6 +471,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T> T same(T value) {
         return (T) reportMatcher(new IsSame(value), (value != null ? value.getClass() : null));
     }
@@ -571,6 +589,7 @@ public abstract class MoxieMatchers {
      * @param matchers one or more match values or {@link MoxieMatchers} invocations
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T> T and(T... matchers) {
         return (T) reportAnd(matchers, null);
     }
@@ -751,20 +770,24 @@ public abstract class MoxieMatchers {
      * @param matchers one or more match values or {@link MoxieMatchers} invocations
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T> T or(T... matchers) {
         return (T) reportOr(matchers, null);
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> T reportAnd(Object matchValuesArray, Class<T> clazz) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(clazz, matchValuesArray);
         return reportMatcher(new AllOf(matchers), clazz);
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> T reportOr(Object matchValuesArray, Class<T> clazz) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(clazz, matchValuesArray);
         return reportMatcher(new AnyOf(matchers), clazz);
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> T reportNot(T matchValue, Class<T> clazz) {
         Matcher matcher = MatcherSyntax.singleMatcherFragment(clazz, matchValue);
         return reportMatcher(new IsNot(matcher), clazz);
@@ -846,6 +869,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T extends Comparable<T>> T geq(T value) {
         return (T) reportMatcher(greaterThanOrEqualTo(value), Comparable.class);
     }
@@ -918,6 +942,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T extends Comparable<T>> T gt(T value) {
         return (T) reportMatcher(greaterThan(value), Comparable.class);
     }
@@ -990,6 +1015,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T extends Comparable<T>> T leq(T value) {
         return (T) reportMatcher(lessThanOrEqualTo(value), Comparable.class);
     }
@@ -1062,6 +1088,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T extends Comparable<T>> T lt(T value) {
         return (T) reportMatcher(lessThan(value), Comparable.class);
     }
@@ -1242,6 +1269,7 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T> T[] array(T... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(null, value);
         return (T[]) reportMatcher(isArrayMatcher(matchers), Object[].class);
@@ -1369,15 +1397,34 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T> T[] aryEq(T... value) {
         return (T[]) reportMatcher(arrayEqualsMatcher(value), Object[].class);
     }
 
+    /**
+     * Matches a non-primitive array containing an element matching the given parameter (which may be a {@link MoxieMatchers} invocation).
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public <T> T[] arrayWith(T item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(Object.class, item);
         return (T[]) reportMatcher(isArrayContainingMatcher(itemMatcher), Object[].class);
     }
 
+    /**
+     * <p>
+     * Matches a non-primitive array containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
+     * </p>
+     * <p>
+     * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
+     * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(Object[]) array()}.
+     * </p>
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public <T> T[] arrayWithAll(T... items) {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
@@ -1387,11 +1434,28 @@ public abstract class MoxieMatchers {
         return (T[]) reportMatcher(new AllOf(arrayMatchers), Object[].class);
     }
 
+    /**
+     * Matches an array of <code>boolean</code> containing an element matching the given parameter (which may be a {@link MoxieMatchers} invocation).
+     *
+     * @return <code>null</code>
+     */
     static public boolean[] booleanArrayWith(boolean item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(boolean.class, item);
         return reportMatcher(isArrayContainingMatcher(itemMatcher), boolean[].class);
     }
 
+    /**
+     * <p>
+     * Matches an array of <code>boolean</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
+     * </p>
+     * <p>
+     * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
+     * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(boolean...) array()}.
+     * </p>
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public boolean[] booleanArrayWithAll(boolean... items) {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
@@ -1401,11 +1465,28 @@ public abstract class MoxieMatchers {
         return reportMatcher(new AllOf(arrayMatchers), boolean[].class);
     }
 
+    /**
+     * Matches an array of <code>char</code> containing an element matching the given parameter (which may be a {@link MoxieMatchers} invocation).
+     *
+     * @return <code>null</code>
+     */
     static public char[] charArrayWith(char item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(char.class, item);
         return reportMatcher(isArrayContainingMatcher(itemMatcher), char[].class);
     }
 
+    /**
+     * <p>
+     * Matches an array of <code>char</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
+     * </p>
+     * <p>
+     * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
+     * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(char...) array()}.
+     * </p>
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public char[] charArrayWithAll(char... items) {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
@@ -1415,11 +1496,28 @@ public abstract class MoxieMatchers {
         return reportMatcher(new AllOf(arrayMatchers), char[].class);
     }
 
+    /**
+     * Matches an array of <code>short</code> containing an element matching the given parameter (which may be a {@link MoxieMatchers} invocation).
+     *
+     * @return <code>null</code>
+     */
     static public short[] shortArrayWith(short item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(short.class, item);
         return reportMatcher(isArrayContainingMatcher(itemMatcher), short[].class);
     }
 
+    /**
+     * <p>
+     * Matches an array of <code>short</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
+     * </p>
+     * <p>
+     * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
+     * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(short...) array()}.
+     * </p>
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public short[] shortArrayWithAll(short... items) {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
@@ -1429,11 +1527,28 @@ public abstract class MoxieMatchers {
         return reportMatcher(new AllOf(arrayMatchers), short[].class);
     }
 
+    /**
+     * Matches an array of <code>int</code> containing an element matching the given parameter (which may be a {@link MoxieMatchers} invocation).
+     *
+     * @return <code>null</code>
+     */
     static public int[] intArrayWith(int item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(int.class, item);
         return reportMatcher(isArrayContainingMatcher(itemMatcher), int[].class);
     }
 
+    /**
+     * <p>
+     * Matches an array of <code>int</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
+     * </p>
+     * <p>
+     * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
+     * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(int...) array()}.
+     * </p>
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public int[] intArrayWithAll(int... items) {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
@@ -1443,11 +1558,28 @@ public abstract class MoxieMatchers {
         return reportMatcher(new AllOf(arrayMatchers), int[].class);
     }
 
+    /**
+     * Matches an array of <code>long</code> containing an element matching the given parameter (which may be a {@link MoxieMatchers} invocation).
+     *
+     * @return <code>null</code>
+     */
     static public long[] longArrayWith(long item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(long.class, item);
         return reportMatcher(isArrayContainingMatcher(itemMatcher), long[].class);
     }
 
+    /**
+     * <p>
+     * Matches an array of <code>long</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
+     * </p>
+     * <p>
+     * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
+     * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(long...)  array()}.
+     * </p>
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public long[] longArrayWithAll(long... items) {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
@@ -1457,11 +1589,28 @@ public abstract class MoxieMatchers {
         return reportMatcher(new AllOf(arrayMatchers), long[].class);
     }
 
+    /**
+     * Matches an array of <code>float</code> containing an element matching the given parameter (which may be a {@link MoxieMatchers} invocation).
+     *
+     * @return <code>null</code>
+     */
     static public float[] floatArrayWith(float item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(float.class, item);
         return reportMatcher(isArrayContainingMatcher(itemMatcher), float[].class);
     }
 
+    /**
+     * <p>
+     * Matches an array of <code>float</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
+     * </p>
+     * <p>
+     * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
+     * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(float...) array()}.
+     * </p>
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public float[] floatArrayWithAll(float... items) {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
@@ -1471,11 +1620,28 @@ public abstract class MoxieMatchers {
         return reportMatcher(new AllOf(arrayMatchers), float[].class);
     }
 
+    /**
+     * Matches an array of <code>double</code> containing an element matching the given parameter (which may be a {@link MoxieMatchers} invocation).
+     *
+     * @return <code>null</code>
+     */
     static public double[] doubleArrayWith(double item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(double.class, item);
         return reportMatcher(isArrayContainingMatcher(itemMatcher), double[].class);
     }
 
+    /**
+     * <p>
+     * Matches an array of <code>double</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
+     * </p>
+     * <p>
+     * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
+     * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(double...) array()}.
+     * </p>
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public double[] doubleArrayWithAll(double... items) {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
@@ -1485,12 +1651,29 @@ public abstract class MoxieMatchers {
         return reportMatcher(new AllOf(arrayMatchers), double[].class);
     }
 
-
+    /**
+     * Matches a {@link java.util.Collection Collection} containing an element matching the given parameter (which may be a {@link MoxieMatchers} invocation).
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public <T, I extends Iterable<T>> I collectionWith(T item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(Object.class, item);
         return (I) reportMatcher(Matchers.hasItem(itemMatcher), Iterable.class);
     }
 
+    /**
+     * <p>
+     * Matches a {@link java.util.Collection Collection} containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
+     * </p>
+     * <p>
+     * Note that the order in which the values to be matched are specified is not significant; the collection merely needs to
+     * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#collection(Object[]) collection()}.
+     * </p>
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public <T, I extends Iterable<T>> I collectionWithAll(T... items) {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
@@ -1500,6 +1683,40 @@ public abstract class MoxieMatchers {
         return (I) reportMatcher(new AllOf(arrayMatchers), Iterable.class);
     }
 
+    /**
+     * <p>
+     * Matches a {@link java.util.Collection Collection} containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations), in order.
+     * </p>
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public <T, I extends Iterable<T>> I collection(T... items) {
+        final List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        return (I) reportMatcher(new BaseMatcher() {
+            public boolean matches(Object o) {
+                Iterator<T> itemsIter = ((Iterable<T>) o).iterator();
+                Iterator<Matcher> matchersIter = itemMatchers.iterator();
+                while (itemsIter.hasNext() && matchersIter.hasNext()) {
+                    if (!matchersIter.next().matches(itemsIter.next())) {
+                        return false;
+                    }
+                }
+                return itemsIter.hasNext() == matchersIter.hasNext();
+            }
+
+            public void describeTo(Description description) {
+                description.appendList("a collection with elements matching: [", ", ", "]", itemMatchers);
+            }
+        }, Iterable.class);
+    }
+
+    /**
+     * Matches a {@link java.util.Map Map} containing an entry whose key and value match the given parameters (which may be {@link MoxieMatchers} invocations).
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public <K, V, M extends Map<? super K, ? super V>> M mapWithEntry(K key, V value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Object.class, Arrays.asList(key, value));
         Matcher keyMatcher = matchers.remove(0);
@@ -1507,57 +1724,127 @@ public abstract class MoxieMatchers {
         return (M) reportMatcher(Matchers.hasEntry(keyMatcher, valueMatcher), Map.class);
     }
 
+    /**
+     * Matches a {@link java.util.Map Map} containing an entry whose key matches the given parameter (which may be a {@link MoxieMatchers} invocation).
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public <K, V, M extends Map<? super K, V>> M mapWithKey(K key) {
         Matcher keyMatcher = MatcherSyntax.singleMatcherFragment(Object.class, key);
         return (M) reportMatcher(Matchers.hasKey(keyMatcher), Map.class);
     }
 
+    /**
+     * Matches a {@link java.util.Map Map} containing an entry whose value matches the given parameter (which may be a {@link MoxieMatchers} invocation).
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public <K, V, M extends Map<K, ? super V>> M mapWithValue(V value) {
         Matcher valueMatcher = MatcherSyntax.singleMatcherFragment(Object.class, value);
         return (M) reportMatcher(Matchers.hasValue(valueMatcher), Map.class);
     }
 
+    /**
+     * Matches an object having a JavaBeans-style getter method exposing a property with the given name, which returns the given value (which may be a {@link MoxieMatchers} invocation).
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public <T> T hasProperty(String propertyName, Object value) {
         Matcher valueMatcher = MatcherSyntax.singleMatcherFragment(Object.class, value);
         return (T) reportMatcher(Matchers.hasProperty(propertyName, valueMatcher), Object.class);
     }
 
+    /**
+     * Matches the given string, ignoring any white space.
+     *
+     * @return <code>null</code>
+     */
     static public String eqIgnoreWhiteSpace(String value) {
         return reportMatcher(Matchers.equalToIgnoringWhiteSpace(value), String.class);
     }
 
+    /**
+     * Syntactic sugar matcher; used when matching varargs methods to specify that we don't care what parameters are received in the varargs list.
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public <T> T[] anyVarargs() {
         return (T[]) any(Object[].class);
     }
 
+    /**
+     * Syntactic sugar matcher; used when matching varargs methods to specify that we don't care what parameters are received in the varargs list.
+     *
+     * @return <code>null</code>
+     */
     static public boolean[] anyBooleanVarargs() {
         return any(boolean[].class);
     }
 
+    /**
+     * Syntactic sugar matcher; used when matching varargs methods to specify that we don't care what parameters are received in the varargs list.
+     *
+     * @return <code>null</code>
+     */
     static public char[] anyCharVarargs() {
         return any(char[].class);
     }
 
+    /**
+     * Syntactic sugar matcher; used when matching varargs methods to specify that we don't care what parameters are received in the varargs list.
+     *
+     * @return <code>null</code>
+     */
     static public short[] anyShortVarargs() {
         return any(short[].class);
     }
 
+    /**
+     * Syntactic sugar matcher; used when matching varargs methods to specify that we don't care what parameters are received in the varargs list.
+     *
+     * @return <code>null</code>
+     */
     static public int[] anyIntVarargs() {
         return any(int[].class);
     }
 
+    /**
+     * Syntactic sugar matcher; used when matching varargs methods to specify that we don't care what parameters are received in the varargs list.
+     *
+     * @return <code>null</code>
+     */
     static public long[] anyLongVarargs() {
         return any(long[].class);
     }
 
+    /**
+     * Syntactic sugar matcher; used when matching varargs methods to specify that we don't care what parameters are received in the varargs list.
+     *
+     * @return <code>null</code>
+     */
     static public float[] anyFloatVarargs() {
         return any(float[].class);
     }
 
+    /**
+     * Syntactic sugar matcher; used when matching varargs methods to specify that we don't care what parameters are received in the varargs list.
+     *
+     * @return <code>null</code>
+     */
     static public double[] anyDoubleVarargs() {
         return any(double[].class);
     }
 
+    /**
+     * Matches a {@link Collection} of the specified size.  (The length may be a {@link MoxieMatchers} invocation.)
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public <C extends Collection> C collectionSize(int size) {
         final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
         return (C) reportMatcher(new BaseMatcher() {
@@ -1572,6 +1859,12 @@ public abstract class MoxieMatchers {
         }, Collection.class);
     }
 
+    /**
+     * Matches a {@link Map} of the specified size.  (The length may be a {@link MoxieMatchers} invocation.)
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public <M extends Map> M mapSize(int size) {
         final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
         return (M) reportMatcher(new BaseMatcher() {
@@ -1586,79 +1879,174 @@ public abstract class MoxieMatchers {
         }, Map.class);
     }
 
+    /**
+     * Matches a non-primitive array of the specified length.  (The length may be a {@link MoxieMatchers} invocation.)
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
     static public <T> T[] arrayLength(int size) {
         final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
         return (T[]) reportMatcher(arraySizeMatcher(sizeMatcher), Object[].class);
     }
 
+    /**
+     * Matches a <code>boolean</code> array of the specified length.  (The length may be a {@link MoxieMatchers} invocation.)
+     *
+     * @return <code>null</code>
+     */
     static public boolean[] booleanArrayLength(int size) {
         final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
         return reportMatcher(arraySizeMatcher(sizeMatcher), boolean[].class);
     }
 
+    /**
+     * Matches a <code>char</code> array of the specified length.  (The length may be a {@link MoxieMatchers} invocation.)
+     *
+     * @return <code>null</code>
+     */
     static public char[] charArrayLength(int size) {
         final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
         return reportMatcher(arraySizeMatcher(sizeMatcher), char[].class);
     }
 
+    /**
+     * Matches a <code>short</code> array of the specified length.  (The length may be a {@link MoxieMatchers} invocation.)
+     *
+     * @return <code>null</code>
+     */
     static public short[] shortArrayLength(int size) {
         final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
         return reportMatcher(arraySizeMatcher(sizeMatcher), short[].class);
     }
 
+    /**
+     * Matches an <code>int</code> array of the specified length.  (The length may be a {@link MoxieMatchers} invocation.)
+     *
+     * @return <code>null</code>
+     */
     static public int[] intArrayLength(int size) {
         final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
         return reportMatcher(arraySizeMatcher(sizeMatcher), int[].class);
     }
 
+    /**
+     * Matches a <code>long</code> array of the specified length.  (The length may be a {@link MoxieMatchers} invocation.)
+     *
+     * @return <code>null</code>
+     */
     static public long[] longArrayLength(int size) {
         final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
         return reportMatcher(arraySizeMatcher(sizeMatcher), long[].class);
     }
 
+    /**
+     * Matches a <code>float</code> array of the specified length.  (The length may be a {@link MoxieMatchers} invocation.)
+     *
+     * @return <code>null</code>
+     */
     static public float[] floatArrayLength(int size) {
         final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
         return reportMatcher(arraySizeMatcher(sizeMatcher), float[].class);
     }
 
+    /**
+     * Matches a <code>double</code> array of the specified length.  (The length may be a {@link MoxieMatchers} invocation.)
+     *
+     * @return <code>null</code>
+     */
     static public double[] doubleArrayLength(int size) {
         final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
         return reportMatcher(arraySizeMatcher(sizeMatcher), double[].class);
     }
 
+    /**
+     * Special matcher used to capture method parameters for later inspection in your tests.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     *
+     * @return <code>null</code>
+     */
     @SuppressWarnings("unchecked")
     static public <T> T captureTo(Collection<T> destination) {
         return (T) reportMatcher(captureMatcher(destination), Object.class);
     }
 
+    /**
+     * Special matcher used to capture method parameters for later inspection in your tests.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     *
+     * @return <code>false</code>
+     */
     static public boolean captureBooleanTo(Collection<Boolean> destination) {
         return reportMatcher(captureMatcher(destination), Boolean.TYPE);
     }
 
+    /**
+     * Special matcher used to capture method parameters for later inspection in your tests.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     *
+     * @return <code>0</code>
+     */
     static public byte captureByteTo(Collection<Byte> destination) {
         return reportMatcher(captureMatcher(destination), Byte.TYPE);
     }
 
+    /**
+     * Special matcher used to capture method parameters for later inspection in your tests.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     *
+     * @return <code>'\0'</code>
+     */
     static public char captureCharTo(Collection<Character> destination) {
         return reportMatcher(captureMatcher(destination), Character.TYPE);
     }
 
+    /**
+     * Special matcher used to capture method parameters for later inspection in your tests.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     *
+     * @return <code>0</code>
+     */
     static public double captureDoubleTo(Collection<Double> destination) {
         return reportMatcher(captureMatcher(destination), Double.TYPE);
     }
 
+    /**
+     * Special matcher used to capture method parameters for later inspection in your tests.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     *
+     * @return <code>0</code>
+     */
     static public float captureFloatTo(Collection<Float> destination) {
         return reportMatcher(captureMatcher(destination), Float.TYPE);
     }
 
+    /**
+     * Special matcher used to capture method parameters for later inspection in your tests.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     *
+     * @return <code>0</code>
+     */
     static public int captureIntTo(Collection<Integer> destination) {
         return reportMatcher(captureMatcher(destination), Integer.TYPE);
     }
 
+    /**
+     * Special matcher used to capture method parameters for later inspection in your tests.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     *
+     * @return <code>0</code>
+     */
     static public long captureLongTo(Collection<Long> destination) {
         return reportMatcher(captureMatcher(destination), Long.TYPE);
     }
 
+    /**
+     * Special matcher used to capture method parameters for later inspection in your tests.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     *
+     * @return <code>0</code>
+     */
     static public short captureShortTo(Collection<Short> destination) {
         return reportMatcher(captureMatcher(destination), Short.TYPE);
     }
@@ -1752,6 +2140,7 @@ public abstract class MoxieMatchers {
                 return elementsList.equals(oList);
             }
 
+            @SuppressWarnings("unchecked")
             public void describeTo(Description description) {
                 description.appendValueList("[", ", ", "]", elementsList);
             }
@@ -1804,6 +2193,7 @@ public abstract class MoxieMatchers {
                 if (o == null) {
                     return false;
                 }
+                @SuppressWarnings("unchecked")
                 int result = value.compareTo(o);
                 return (result > 0 && lessThan) ||
                         (result == 0 && equalTo) ||
