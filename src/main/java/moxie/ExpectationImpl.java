@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2011 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -155,8 +155,8 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
                 throw new IllegalStateException("more consecutive-call handlers ("+consecutiveHandler.size()+") defined than can handle maximum number of calls (" + this.cardinality.getMaxTimes() + ")");
             }
         }
-        return MoxieUtils.newProxyInstance(interception.getInterceptedClass(), new InvocationHandler() {
-            public Object invoke(Object unused, Method method, Object[] params) throws Throwable {
+        return interception.getProxyFactory().createProxy(new MethodIntercept() {
+            public Object intercept(Object proxy, Method method, Object[] params, SuperInvoker superInvoker) throws Throwable {
                 if (ExpectationImpl.this.method != null) {
                     throw new IllegalStateException("method to match already specified");
                 }
@@ -167,7 +167,7 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
                     if (returnType == Void.TYPE && result != null) {
                         throw new IllegalArgumentException("return value specified for void method");
                     } else if (result != null && !returnType.isAssignableFrom(result.getClass())) {
-                        throw new IllegalArgumentException("incompatible result type (" + result.getClass().getName() + ") for method which returns "  + method.getReturnType().getName());
+                        throw new IllegalArgumentException("incompatible result type (" + result.getClass().getName() + ") for method which returns " + method.getReturnType().getName());
                     }
                 }
 

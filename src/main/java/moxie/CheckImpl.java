@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2011 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,6 @@ package moxie;
 
 import org.hamcrest.Matcher;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -88,8 +87,8 @@ class CheckImpl<T> implements Check<T> {
     }
 
     public T on() {
-        return MoxieUtils.newProxyInstance(interception.getInterceptedClass(), new InvocationHandler() {
-            public Object invoke(Object unused, Method method, Object[] params) throws Throwable {
+        return interception.getProxyFactory().createProxy(new MethodIntercept() {
+            public Object intercept(Object proxy, Method method, Object[] params, SuperInvoker superInvoker) throws Throwable {
                 List<Matcher> argMatchers = MatcherSyntax.methodCall(method, params);
                 Matcher argsMatcher = MoxieMatchers.isArrayMatcher(argMatchers);
 
@@ -143,7 +142,7 @@ class CheckImpl<T> implements Check<T> {
 
                 return MoxieUtils.defaultValue(method.getReturnType());
             }
-        });
+        }, interception.getConstructorArgTypes(),  interception.getConstructorArgs());
     }
 
     public T when() {

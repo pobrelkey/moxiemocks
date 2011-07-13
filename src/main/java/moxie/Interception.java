@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2011 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +22,12 @@
 
 package moxie;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-abstract class Interception<T> implements InvocationHandler, Verifiable {
+abstract class Interception<T> implements MethodIntercept, Verifiable {
 
     static class MethodMatcher {
         private final String methodName;
@@ -59,6 +58,7 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
     private MoxieFlags flags;
     private GroupImpl methods;
     protected T proxy;
+    private ProxyFactory<T> proxyFactory;
 
     protected Interception(Class<T> clazz, String name, MoxieFlags flags, InstantiationStackTrace instantiationStackTrace, Class[] constructorArgTypes, Object[] constructorArgs) {
         this.clazz = clazz;
@@ -78,14 +78,21 @@ abstract class Interception<T> implements InvocationHandler, Verifiable {
         this.methods.reset(flags);
     }
 
-    T proxy() {
+    T getProxy() {
         if (proxy == null) {
-            proxy = MoxieUtils.newProxyInstance(clazz, this, constructorArgTypes, constructorArgs);
+            proxy = getProxyFactory().createProxy(this, constructorArgTypes, constructorArgs);
         }
         return proxy;
     }
 
-    public Object invoke(Object unusedProxy, Method method, Object[] args) throws Throwable {
+    ProxyFactory<T> getProxyFactory() {
+        if (proxyFactory == null) {
+            proxyFactory = ProxyFactory.create(clazz);
+        }
+        return proxyFactory;
+    }
+
+    public Object intercept(Object unusedProxy, Method method, Object[] args, SuperInvoker superInvoker) throws Throwable {
         final Invocation invocation = new Invocation(this, method, args);
         invocations.add(invocation);
 
