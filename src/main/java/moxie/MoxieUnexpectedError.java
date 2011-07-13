@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2011 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,5 +28,9 @@ package moxie;
 public class MoxieUnexpectedError extends Error {
     MoxieUnexpectedError(String msg, Throwable t) {
         super(msg, t);
+    }
+
+    public MoxieUnexpectedError(Throwable e) {
+        super(e);
     }
 }

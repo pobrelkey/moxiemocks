@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2011 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,19 +43,19 @@ class MoxieControlImpl implements MoxieControl {
 
 
     public <T> T mock(Class<T> clazz) {
-        return mock(clazz, null, new Class[0], new Object[0], MoxieOptions.MOCK_DEFAULTS);
+        return mock(clazz, null, (Class[]) null, (Object[]) null, MoxieOptions.MOCK_DEFAULTS);
     }
 
     public <T> T mock(Class<T> clazz, String name) {
-        return mock(clazz, name, new Class[0], new Object[0], MoxieOptions.MOCK_DEFAULTS);
+        return mock(clazz, name, (Class[]) null, (Object[]) null, MoxieOptions.MOCK_DEFAULTS);
     }
 
     public <T> T mock(Class<T> clazz, MoxieOptions... options) {
-        return mock(clazz, null, new Class[0], new Object[0], options);
+        return mock(clazz, null, (Class[]) null, (Object[]) null, options);
     }
 
     public <T> T mock(Class<T> clazz, String name, MoxieOptions... options) {
-        return mock(clazz, name, new Class[0], new Object[0], options);
+        return mock(clazz, name, (Class[]) null, (Object[]) null, options);
     }
 
     public <T> T mock(Class<T> clazz, Class[] constructorArgTypes, Object[] constructorArgs) {
@@ -75,7 +75,7 @@ class MoxieControlImpl implements MoxieControl {
             name = clazz.getSimpleName();
         }
         MockImpl<T> mock = new MockImpl(clazz, name, MoxieOptions.mergeWithDefaults(MoxieOptions.MOCK_DEFAULTS, options), invocations, constructorArgTypes, constructorArgs);
-        T result = mock.proxy();
+        T result = mock.getProxy();
         mocksAndGroups.put(result, mock);
         return result;
     }
@@ -89,7 +89,7 @@ class MoxieControlImpl implements MoxieControl {
             name = realObject.getClass().getSimpleName();
         }
         SpyImpl<T> spy = new SpyImpl(realObject, name, MoxieOptions.mergeWithDefaults(MoxieOptions.MOCK_DEFAULTS, options), invocations);
-        T result = spy.proxy();
+        T result = spy.getProxy();
         mocksAndGroups.put(result, spy);
         return result;
     }
