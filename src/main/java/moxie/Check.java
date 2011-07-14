@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2011 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -271,6 +271,162 @@ public interface Check<T> extends Cardinality<Check<T>> {
      * @return a magic proxy object, on which you should call the method to be verified
      */
     T got();
+
+    /**
+     * <p>
+     * Reflectively specify the method on which this check is to be performed.
+     * </p>
+     * <p>
+     * Use this method to check invocations of protected or package-private methods which cannot be specified using the
+     * no-parameters version of this method because they are inaccessible from your test class.
+     * </p>
+     * <p>
+     * Note that {@link #on(String, Object...) on()}, {@link #when(String, Object...) when()},
+     * {@link #get(String, Object...) get()} and {@link #got(String, Object...) got()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param methodName  The name of the method to be checked
+     * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
+     */
+    void on(String methodName, Object... params);
+
+    /**
+     * <p>
+     * Reflectively specify the method on which this check is to be performed.
+     * </p>
+     * <p>
+     * Use this method to check invocations of protected or package-private methods which cannot be specified using the
+     * no-parameters version of this method because they are inaccessible from your test class.
+     * </p>
+     * <p>
+     * Note that {@link #on(String, Object...) on()}, {@link #when(String, Object...) when()},
+     * {@link #get(String, Object...) get()} and {@link #got(String, Object...) got()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param methodName  The name of the method to be checked
+     * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
+     */
+    void when(String methodName, Object... params);
+
+    /**
+     * <p>
+     * Reflectively specify the method on which this check is to be performed.
+     * </p>
+     * <p>
+     * Use this method to check invocations of protected or package-private methods which cannot be specified using the
+     * no-parameters version of this method because they are inaccessible from your test class.
+     * </p>
+     * <p>
+     * Note that {@link #on(String, Object...) on()}, {@link #when(String, Object...) when()},
+     * {@link #get(String, Object...) get()} and {@link #got(String, Object...) got()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param methodName  The name of the method to be checked
+     * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
+     */
+    void get(String methodName, Object... params);
+
+    /**
+     * <p>
+     * Reflectively specify the method on which this check is to be performed.
+     * </p>
+     * <p>
+     * Use this method to check invocations of protected or package-private methods which cannot be specified using the
+     * no-parameters version of this method because they are inaccessible from your test class.
+     * </p>
+     * <p>
+     * Note that {@link #on(String, Object...) on()}, {@link #when(String, Object...) when()},
+     * {@link #get(String, Object...) get()} and {@link #got(String, Object...) got()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param methodName  The name of the method to be checked
+     * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
+     */
+    void got(String methodName, Object... params);
+
+    /**
+     * <p>
+     * Reflectively specify the method on which this check is to be performed.
+     * </p>
+     * <p>
+     * Use this method to check invocations of protected or package-private methods which cannot be specified using the
+     * no-parameters version of this method because they are inaccessible from your test class.
+     * </p>
+     * <p>
+     * Note that {@link #on(String, Class[], Object...) on()}, {@link #when(String, Class[], Object...) when()},
+     * {@link #get(String, Class[], Object...) get()} and {@link #got(String, Class[], Object...) got()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param methodName      The name of the method to be checked
+     * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
+     * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
+     */
+    void on(String methodName, Class[] paramSignature, Object... params);
+
+    /**
+     * <p>
+     * Reflectively specify the method on which this check is to be performed.
+     * </p>
+     * <p>
+     * Use this method to check invocations of protected or package-private methods which cannot be specified using the
+     * no-parameters version of this method because they are inaccessible from your test class.
+     * </p>
+     * <p>
+     * Note that {@link #on(String, Class[], Object...) on()}, {@link #when(String, Class[], Object...) when()},
+     * {@link #get(String, Class[], Object...) get()} and {@link #got(String, Class[], Object...) got()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param methodName      The name of the method to be checked
+     * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
+     * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
+     */
+    void when(String methodName, Class[] paramSignature, Object... params);
+
+    /**
+     * <p>
+     * Reflectively specify the method on which this check is to be performed.
+     * </p>
+     * <p>
+     * Use this method to check invocations of protected or package-private methods which cannot be specified using the
+     * no-parameters version of this method because they are inaccessible from your test class.
+     * </p>
+     * <p>
+     * Note that {@link #on(String, Class[], Object...) on()}, {@link #when(String, Class[], Object...) when()},
+     * {@link #get(String, Class[], Object...) get()} and {@link #got(String, Class[], Object...) got()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param methodName      The name of the method to be checked
+     * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
+     * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
+     */
+    void get(String methodName, Class[] paramSignature, Object... params);
+
+    /**
+     * <p>
+     * Reflectively specify the method on which this check is to be performed.
+     * </p>
+     * <p>
+     * Use this method to check invocations of protected or package-private methods which cannot be specified using the
+     * no-parameters version of this method because they are inaccessible from your test class.
+     * </p>
+     * <p>
+     * Note that {@link #on(String, Class[], Object...) on()}, {@link #when(String, Class[], Object...) when()},
+     * {@link #get(String, Class[], Object...) get()} and {@link #got(String, Class[], Object...) got()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param methodName      The name of the method to be checked
+     * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
+     * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
+     */
+    void got(String methodName, Class[] paramSignature, Object... params);
 
     /**
      * <p>

@@ -165,47 +165,74 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
         }
         return interception.getProxyFactory().createProxy(new MethodIntercept() {
             public Object intercept(Object proxy, Method method, Object[] params, SuperInvoker superInvoker) throws Throwable {
-                if (ExpectationImpl.this.method != null) {
-                    throw new IllegalStateException("method to match already specified");
-                }
-
-                if (handler instanceof ReturnHandler) {
-                    Class returnType = MoxieUtils.toNonPrimitive(method.getReturnType());
-                    Object result = ((ReturnHandler) handler).getResult();
-                    if (returnType == Void.TYPE && result != null) {
-                        throw new IllegalArgumentException("return value specified for void method");
-                    } else if (result != null && !returnType.isAssignableFrom(result.getClass())) {
-                        throw new IllegalArgumentException("incompatible result type (" + result.getClass().getName() + ") for method which returns " + method.getReturnType().getName());
-                    }
-                }
-
-                if (handler instanceof ThrowHandler) {
-                    Throwable throwable = ((ThrowHandler) handler).getThrowable();
-                    if (throwable instanceof Exception && !(throwable instanceof RuntimeException)) {
-                        boolean foundCompatibleException = false;
-                        for (Class<?> exceptionType : method.getExceptionTypes()) {
-                            if (exceptionType.isAssignableFrom(throwable.getClass())) {
-                                foundCompatibleException = true;
-                                break;
-                            }
-                        }
-                        if (!foundCompatibleException) {
-                            throw new IllegalArgumentException("exception is of type not thrown by the method (" + throwable.getClass().getName() + ")");
-                        }
-                    }
-                }
-
-                ExpectationImpl.this.method = method;
-                argMatchers = MatcherSyntax.methodCall(method, params);
-                interception.addExpectation(ExpectationImpl.this);
-
+                handleInvocation(method, params);
                 return MoxieUtils.defaultValue(method.getReturnType());
             }
         }, interception.getConstructorArgTypes(), interception.getConstructorArgs());
     }
 
+    private void handleInvocation(Method method, Object[] params) {
+        if (this.method != null) {
+            throw new IllegalStateException("method to match already specified");
+        }
+
+        if (handler instanceof ReturnHandler) {
+            Class returnType = MoxieUtils.toNonPrimitive(method.getReturnType());
+            Object result = ((ReturnHandler) handler).getResult();
+            if (returnType == Void.TYPE && result != null) {
+                throw new IllegalArgumentException("return value specified for void method");
+            } else if (result != null && !returnType.isAssignableFrom(result.getClass())) {
+                throw new IllegalArgumentException("incompatible result type (" + result.getClass().getName() + ") for method which returns " + method.getReturnType().getName());
+            }
+        }
+
+        if (handler instanceof ThrowHandler) {
+            Throwable throwable = ((ThrowHandler) handler).getThrowable();
+            if (throwable instanceof Exception && !(throwable instanceof RuntimeException)) {
+                boolean foundCompatibleException = false;
+                for (Class<?> exceptionType : method.getExceptionTypes()) {
+                    if (exceptionType.isAssignableFrom(throwable.getClass())) {
+                        foundCompatibleException = true;
+                        break;
+                    }
+                }
+                if (!foundCompatibleException) {
+                    throw new IllegalArgumentException("exception is of type not thrown by the method (" + throwable.getClass().getName() + ")");
+                }
+            }
+        }
+
+        this.method = method;
+        argMatchers = MatcherSyntax.methodCall(method, params);
+        interception.addExpectation(this);
+    }
+
     public T will() {
         return on();
+    }
+
+    public void on(String methodName, Object... params) {
+        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, null, params), params);
+    }
+
+    public void when(String methodName, Object... params) {
+        on(methodName, params);
+    }
+
+    public void will(String methodName, Object... params) {
+        on(methodName, params);
+    }
+
+    public void on(String methodName, Class[] paramSignature, Object... params) {
+        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, paramSignature, params), params);
+    }
+
+    public void when(String methodName, Class[] paramSignature, Object... params) {
+        on(methodName, paramSignature, params);
+    }
+
+    public void will(String methodName, Class[] paramSignature, Object... params) {
+        on(methodName, paramSignature, params);
     }
 
     public T when() {

@@ -536,4 +536,115 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      */
     T will();
 
+    /**
+     * <p>
+     * Reflectively specify the method on which this expectation is to be set.
+     * </p>
+     * <p>
+     * Use this method to set expectations on protected or package-private methods which cannot be specified using the
+     * no-parameters version of this method because they are inaccessible from your test class.
+     * </p>
+     * <p>
+     * Note that {@link #on(String, Object...) on()}, {@link #when(String, Object...) when()} and {@link #will(String, Object...) will()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param methodName  The name of the method on which to set the expectation
+     * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
+     */
+    void on(String methodName, Object... params);
+
+    /**
+     * <p>
+     * Reflectively specify the method on which this expectation is to be set.
+     * </p>
+     * <p>
+     * Use this method to set expectations on protected or package-private methods which cannot be specified using the
+     * no-parameters version of this method because they are inaccessible from your test class.
+     * </p>
+     * <p>
+     * Note that {@link #on(String, Object...) on()}, {@link #when(String, Object...) when()} and {@link #will(String, Object...) will()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param methodName  The name of the method on which to set the expectation
+     * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
+     */
+    void when(String methodName, Object... params);
+
+    /**
+     * <p>
+     * Reflectively specify the method on which this expectation is to be set.
+     * </p>
+     * <p>
+     * Use this method to set expectations on protected or package-private methods which cannot be specified using the
+     * no-parameters version of this method because they are inaccessible from your test class.
+     * </p>
+     * <p>
+     * Note that {@link #on(String, Object...) on()}, {@link #when(String, Object...) when()} and {@link #will(String, Object...) will()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param methodName  The name of the method on which to set the expectation
+     * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
+     */
+    void will(String methodName, Object... params);
+
+    /**
+     * <p>
+     * Reflectively specify the method on which this expectation is to be set.
+     * </p>
+     * <p>
+     * Use this method to set expectations on protected or package-private methods which cannot be specified using the
+     * no-parameters version of this method because they are inaccessible from your test class.
+     * </p>
+     * <p>
+     * Note that {@link #on(String, Class[], Object...) on()}, {@link #when(String, Class[], Object...) when()} and {@link #will(String, Class[], Object...) will()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param methodName      The name of the method on which to set the expectation
+     * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
+     * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
+     */
+    void on(String methodName, Class[] paramSignature, Object... params);
+
+    /**
+     * <p>
+     * Reflectively specify the method on which this expectation is to be set.
+     * </p>
+     * <p>
+     * Use this method to set expectations on protected or package-private methods which cannot be specified using the
+     * no-parameters version of this method because they are inaccessible from your test class.
+     * </p>
+     * <p>
+     * Note that {@link #on(String, Class[], Object...) on()}, {@link #when(String, Class[], Object...) when()} and {@link #will(String, Class[], Object...) will()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param methodName      The name of the method on which to set the expectation
+     * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
+     * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
+     */
+    void when(String methodName, Class[] paramSignature, Object... params);
+
+    /**
+     * <p>
+     * Reflectively specify the method on which this expectation is to be set.
+     * </p>
+     * <p>
+     * Use this method to set expectations on protected or package-private methods which cannot be specified using the
+     * no-parameters version of this method because they are inaccessible from your test class.
+     * </p>
+     * <p>
+     * Note that {@link #on(String, Class[], Object...) on()}, {@link #when(String, Class[], Object...) when()} and {@link #will(String, Class[], Object...) will()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param methodName      The name of the method on which to set the expectation
+     * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
+     * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
+     */
+    void will(String methodName, Class[] paramSignature, Object... params);
+
 }
