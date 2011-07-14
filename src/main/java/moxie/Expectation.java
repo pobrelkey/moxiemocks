@@ -463,6 +463,42 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
 
     /**
      * <p>
+     * When a call fulfilling this expectation is received, pass control to the original implementation
+     * of the method on the concrete class being mocked.
+     * </p>
+     * <p>
+     * This option only makes sense for mocks of concrete classes; specifying it for an interface mock
+     * or a spy will raise an {@link IllegalStateException}.
+     * </p>
+     * <p>
+     * Note that {@link #willCallOriginal()} and {@link #andCallOriginal()} do exactly the same thing -
+     * use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @return this object, for call chaining
+     */
+    Expectation<T> willCallOriginal();
+
+    /**
+     * <p>
+     * When a call fulfilling this expectation is received, pass control to the original implementation
+     * of the method on the concrete class being mocked.
+     * </p>
+     * <p>
+     * This option only makes sense for mocks of concrete classes; specifying it for an interface mock
+     * or a spy will raise an {@link IllegalStateException}.
+     * </p>
+     * <p>
+     * Note that {@link #willCallOriginal()} and {@link #andCallOriginal()} do exactly the same thing -
+     * use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @return this object, for call chaining
+     */
+    Expectation<T> andCallOriginal();
+
+    /**
+     * <p>
      * The method that this expectation should match follows this call.
      * </p>
      * <p>

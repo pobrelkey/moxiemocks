@@ -31,8 +31,14 @@ class MockImpl<T> extends Interception<T> {
         super(clazz, name, flags, new InstantiationStackTrace("mock object \"" + name + "\" was instantiated here"), constructorArgTypes, constructorArgs);
     }
 
-    protected MethodBehavior defaultBehavior(Method method, final Object[] args) {
-        if (TO_STRING.matches(method)) {
+    protected MethodBehavior defaultBehavior(Method method, final Object[] args, final SuperInvoker superInvoker) {
+        if (superInvoker != null && Boolean.TRUE.equals(flags.isPartial())) {
+            return new MethodBehavior() {
+                public Object invoke() throws Throwable {
+                    return superInvoker.invokeSuper(args);
+                }
+            };
+        } else if (TO_STRING.matches(method)) {
             return new MethodBehavior() {
                 public Object invoke() throws Throwable {
                     return "[mock object \"" + name + "\"]";

@@ -55,7 +55,7 @@ abstract class Interception<T> implements MethodIntercept, Verifiable {
     private final Object[] constructorArgs;
     private final Throwable whereInstantiated;
     private final List<Invocation> invocations = new ArrayList<Invocation>();
-    private MoxieFlags flags;
+    protected MoxieFlags flags;
     private GroupImpl methods;
     protected T proxy;
     private ProxyFactory<T> proxyFactory;
@@ -96,7 +96,7 @@ abstract class Interception<T> implements MethodIntercept, Verifiable {
         final Invocation invocation = new Invocation(this, method, args);
         invocations.add(invocation);
 
-        MethodBehavior methodBehavior = defaultBehavior(method, args);
+        MethodBehavior methodBehavior = defaultBehavior(method, args, superInvoker);
         final ExpectationImpl expectation = methods.match(method, args, methodBehavior);
         if (expectation != null) {
             expectation.whenCardinalitySatisfied(new Runnable() {
@@ -106,7 +106,7 @@ abstract class Interception<T> implements MethodIntercept, Verifiable {
             });
             if (expectation.getHandler() != null) {
                 try {
-                    Object result = expectation.getHandler().invoke(unusedProxy, method, args);
+                    Object result = expectation.getHandler().intercept(unusedProxy, method, args, superInvoker);
                     invocation.setValueReturned(result);
                     return result;
                 } catch (Throwable t) {
@@ -132,7 +132,7 @@ abstract class Interception<T> implements MethodIntercept, Verifiable {
         }
     }
 
-    abstract protected MethodBehavior defaultBehavior(Method method, Object[] args);
+    abstract protected MethodBehavior defaultBehavior(Method method, Object[] args, SuperInvoker superInvoker);
 
     Class<T> getInterceptedClass() {
         return clazz;

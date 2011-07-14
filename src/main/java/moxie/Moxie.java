@@ -137,7 +137,17 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * Creates a mock object of the given type, calling a constructor with the given arguments.  (Used to mock concrete classes that don't have a no-arg constructor.)
+     * <p>
+     * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
+     * This method is provided for partial mocking of objects that use constructor dependency injection,
+     * and to ease portability of legacy JMock 1/EasyMock tests.
+     * </p>
+     * <p>
+     * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
+     * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
+     * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
+     * to using constructors if Objenesis isn't on the classpath.
+     * </p>
      *
      * @param clazz               the class that the mock should extend
      * @param constructorArgTypes the parameter signature of the constructor to be used
@@ -150,7 +160,17 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * Creates a mock object of the given type, calling a constructor with the given arguments.  (Used to mock concrete classes that don't have a no-arg constructor.)
+     * <p>
+     * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
+     * This method is provided for partial mocking of objects that use constructor dependency injection,
+     * and to ease portability of legacy JMock 1/EasyMock tests.
+     * </p>
+     * <p>
+     * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
+     * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
+     * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
+     * to using constructors if Objenesis isn't on the classpath.
+     * </p>
      *
      * @param clazz               the class that the mock should extend
      * @param name                the name of the mock object - will be used in error messages
@@ -164,7 +184,17 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * Creates a mock object of the given type, calling a constructor with the given arguments.  (Used to mock concrete classes that don't have a no-arg constructor.)
+     * <p>
+     * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
+     * This method is provided for partial mocking of objects that use constructor dependency injection,
+     * and to ease portability of legacy JMock 1/EasyMock tests.
+     * </p>
+     * <p>
+     * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
+     * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
+     * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
+     * to using constructors if Objenesis isn't on the classpath.
+     * </p>
      *
      * @param clazz               the class that the mock should extend
      * @param constructorArgTypes the parameter signature of the constructor to be used
@@ -178,7 +208,17 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * Creates a mock object of the given type, calling a constructor with the given arguments.  (Used to mock concrete classes that don't have a no-arg constructor.)
+     * <p>
+     * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
+     * This method is provided for partial mocking of objects that use constructor dependency injection,
+     * and to ease portability of legacy JMock 1/EasyMock tests.
+     * </p>
+     * <p>
+     * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
+     * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
+     * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
+     * to using constructors if Objenesis isn't on the classpath.
+     * </p>
      *
      * @param clazz               the class that the mock should extend
      * @param name                the name of the mock object - will be used in error messages
