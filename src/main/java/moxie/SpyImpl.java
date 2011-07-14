@@ -34,7 +34,7 @@ class SpyImpl<T> extends Interception<T> {
         this.realObject = realObject;
     }
 
-    protected MethodBehavior defaultBehavior(final Method method, final Object[] args) {
+    protected MethodBehavior defaultBehavior(final Method method, final Object[] args, SuperInvoker superInvoker) {
         // return an idempotent method invoker
         return new MethodBehavior() {
             private Object result;

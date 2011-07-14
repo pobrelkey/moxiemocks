@@ -26,4 +26,6 @@ interface MoxieFlags {
     Boolean isStrictlyOrdered();
 
     Boolean isAutoStubbing();
+
+    Boolean isPartial();
 }

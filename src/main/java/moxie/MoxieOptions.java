@@ -30,12 +30,12 @@ public enum MoxieOptions implements MoxieFlags {
     /**
      * The order in which expectations are fulfilled on this mock/group will be strictly checked; out-of-order calls will fail.
      */
-    UNORDERED(Boolean.FALSE, null),
+    UNORDERED(Boolean.FALSE, null, null),
 
     /**
      * The order in which expectations are fulfilled on this mock/group will not be checked.
      */
-    ORDERED(Boolean.TRUE, null),
+    ORDERED(Boolean.TRUE, null, null),
 
     /**
      * <p>
@@ -43,7 +43,7 @@ public enum MoxieOptions implements MoxieFlags {
      * perform the default behavior without raising an error.
      * </p>
      * <p>
-     * On mocks, the default behavior for most methods is to return the method return type's default value
+     * On normal mocks, the default behavior for most methods is to return the method return type's default value
      * (<code>null</code> for methods returning objects, zero or <code>false</code> for methods
      * returning primitives).  The exceptions are three methods from {@link Object}:
      * <ul>
@@ -53,10 +53,13 @@ public enum MoxieOptions implements MoxieFlags {
      * </ul>
      * </p>
      * <p>
+     * On {@link #PARTIAL} mocks, the default behavior is to pass control to the method on the class being mocked.
+     * </p>
+     * <p>
      * On spies, the default behavior is always to delegate to the underlying object.
      * </p>
      */
-    PERMISSIVE(null, Boolean.TRUE),
+    PERMISSIVE(null, Boolean.TRUE, null),
 
     /**
      * <p>
@@ -68,23 +71,40 @@ public enum MoxieOptions implements MoxieFlags {
      * unless a {@link Expectation#never() never()} expectation is explicitly set for those methods.  
      * </p>
      */
-    PRESCRIPTIVE(null, Boolean.FALSE),
+    PRESCRIPTIVE(null, Boolean.FALSE, null),
+
+    /**
+     * <p>
+     * The default behavior for methods on this mock will be to pass control to the original implementation
+     * of the method on the concrete class being mocked.
+     * </p>
+     * <p>
+     * This option only makes sense for mocks of concrete classes; specifying it for an interface mock
+     * or a spy will raise an {@link IllegalArgumentException}.
+     * </p>
+     * <p>
+     * Most users of this option will probably want to specify {@link #PERMISSIVE} at the same time,
+     * lest unexpected method calls raise an error.
+     * </p>
+     */
+    PARTIAL(null ,null, Boolean.TRUE),
 
     /**
      * Represents Moxie's default settings for mocks/spies ({@link #UNORDERED} and {@link #PRESCRIPTIVE}).
      */
-    MOCK_DEFAULTS(Boolean.FALSE, Boolean.FALSE),
+    MOCK_DEFAULTS(Boolean.FALSE, Boolean.FALSE, null),
 
     /**
      * Represents Moxie's default settings for {@link Group}s ({@link #ORDERED}).
      */
-    GROUP_DEFAULTS(Boolean.TRUE, null);
+    GROUP_DEFAULTS(Boolean.TRUE, null, null);
 
-    final private Boolean strictlyOrdered, autoStubbing;
+    final private Boolean strictlyOrdered, autoStubbing, partial;
 
-    MoxieOptions(Boolean strictlyOrdered, Boolean autoStubbing) {
+    MoxieOptions(Boolean strictlyOrdered, Boolean autoStubbing, Boolean partial) {
         this.strictlyOrdered = strictlyOrdered;
         this.autoStubbing = autoStubbing;
+        this.partial = partial;
     }
 
     /**
@@ -101,8 +121,15 @@ public enum MoxieOptions implements MoxieFlags {
         return autoStubbing;
     }
 
+    /**
+     * @deprecated Moxie internal method.
+     */
+    public Boolean isPartial() {
+        return partial;
+    }
+
     static MoxieFlags merge(MoxieFlags... options) {
-        Boolean strictlyOrdered = null, autoStubbing = null;
+        Boolean strictlyOrdered = null, autoStubbing = null, partial = null;
         if (options != null) {
             for (MoxieFlags flags : options) {
                 if (flags.isStrictlyOrdered() != null) {
@@ -119,15 +146,23 @@ public enum MoxieOptions implements MoxieFlags {
                         throw new IllegalArgumentException("Specified options are contradictory regarding auto-stubbing of method calls");
                     }
                 }
+                if (flags.isPartial() != null) {
+                    if (partial == null) {
+                        partial = flags.isPartial();
+                    } else if (!partial.equals(flags.isPartial())) {
+                        throw new IllegalArgumentException("Specified options are contradictory regarding partial mocking");
+                    }
+                }
             }
         }
-        return new SimpleMoxieFlags(strictlyOrdered, autoStubbing);
+        return new SimpleMoxieFlags(strictlyOrdered, autoStubbing, partial);
     }
 
     static MoxieFlags mergeWithDefaults(MoxieFlags defaults, MoxieFlags... options) {
         MoxieFlags merged = merge(options);
         return new SimpleMoxieFlags(
                 merged.isStrictlyOrdered() != null ? merged.isStrictlyOrdered() : defaults.isStrictlyOrdered(),
-                merged.isAutoStubbing() != null ? merged.isAutoStubbing() : defaults.isAutoStubbing());
+                merged.isAutoStubbing() != null ? merged.isAutoStubbing() : defaults.isAutoStubbing(),
+                merged.isPartial() != null ? merged.isPartial() : defaults.isPartial());
     }
 }

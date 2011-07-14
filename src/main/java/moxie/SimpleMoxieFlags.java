@@ -25,10 +25,12 @@ package moxie;
 class SimpleMoxieFlags implements MoxieFlags {
     private final Boolean strictlyOrdered;
     private final Boolean autoStubbing;
+    private final Boolean partial;
 
-    public SimpleMoxieFlags(Boolean strictlyOrdered, Boolean autoStubbing) {
+    public SimpleMoxieFlags(Boolean strictlyOrdered, Boolean autoStubbing, Boolean partial) {
         this.strictlyOrdered = strictlyOrdered;
         this.autoStubbing = autoStubbing;
+        this.partial = partial;
     }
 
     public Boolean isStrictlyOrdered() {
@@ -37,5 +39,9 @@ class SimpleMoxieFlags implements MoxieFlags {
 
     public Boolean isAutoStubbing() {
         return autoStubbing;
+    }
+
+    public Boolean isPartial() {
+        return partial;
     }
 }

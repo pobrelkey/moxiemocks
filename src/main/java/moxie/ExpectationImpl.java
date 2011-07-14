@@ -42,7 +42,7 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
     private CardinalityImpl cardinality = new CardinalityImpl<CardinalityImpl>().once();
 
     private Set<GroupImpl> groups = null;
-    private InvocationHandler handler = null;
+    private MethodIntercept handler = null;
     private Method method;
     private List<Matcher> argMatchers = new ArrayList<Matcher>();
     private boolean defaultCardinality = true;
@@ -120,18 +120,18 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
     }
 
     public Expectation<T> willReturn(Object result) {
-        return willHandleWith(new ReturnHandler(result));
+        return doWillHandleWith(new ReturnHandler(result));
     }
 
     public Expectation<T> willThrow(Throwable throwable) {
-        return willHandleWith(new ThrowHandler(throwable));
+        return doWillHandleWith(new ThrowHandler(throwable));
     }
 
     public Expectation<T> willDelegateTo(T delegate) {
-        return willHandleWith(new DelegateHandler(delegate));
+        return doWillHandleWith(new DelegateHandler(delegate));
     }
 
-    public Expectation<T> willHandleWith(InvocationHandler handler) {
+    private Expectation<T> doWillHandleWith(MethodIntercept handler) {
         if (this.handler instanceof ConsecutiveHandler) {
             ((ConsecutiveHandler) this.handler).add(handler);
         } else if (this.handler != null) {
@@ -140,6 +140,14 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
             this.handler = handler;
         }
         return this;
+    }
+
+    public Expectation<T> willHandleWith(final InvocationHandler handler) {
+        return doWillHandleWith(new MethodIntercept() {
+            public Object intercept(Object proxy, Method method, Object[] args, SuperInvoker superInvoker) throws Throwable {
+                return handler.invoke(proxy, method, args);
+            }
+        });
     }
 
     public T on() {
@@ -276,6 +284,14 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
         return willHandleWith(handler);
     }
 
+    public Expectation<T> andCallOriginal() {
+        return willCallOriginal();
+    }
+
+    public Expectation<T> willCallOriginal() {
+        return doWillHandleWith(new OriginalHandler());
+    }
+
     boolean match(Method method, Object[] args, MethodBehavior behavior, GroupImpl group) {
         if (!this.method.equals(method)) {
             return false;
@@ -312,7 +328,7 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
         return true;
     }
 
-    InvocationHandler getHandler() {
+    MethodIntercept getHandler() {
         return handler;
     }
 
@@ -358,14 +374,14 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
         }
     }
 
-    static private class ReturnHandler implements InvocationHandler, SelfDescribing {
+    static private class ReturnHandler implements MethodIntercept, SelfDescribing {
         private final Object result;
 
         public ReturnHandler(Object result) {
             this.result = result;
         }
 
-        public Object invoke(Object mockObject, Method method, Object[] parameters) throws Throwable {
+        public Object intercept(Object mockObject, Method method, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
             return result;
         }
 
@@ -379,14 +395,14 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
         }
     }
 
-    static private class ThrowHandler implements InvocationHandler, SelfDescribing {
+    static private class ThrowHandler implements MethodIntercept, SelfDescribing {
         private final Throwable throwable;
 
         public ThrowHandler(Throwable throwable) {
             this.throwable = throwable;
         }
 
-        public Object invoke(Object mockObject, Method method, Object[] parameters) throws Throwable {
+        public Object intercept(Object mockObject, Method method, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
             throwable.fillInStackTrace();
             throw throwable;
         }
@@ -401,14 +417,14 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
         }
     }
 
-    static private class DelegateHandler implements InvocationHandler, SelfDescribing {
+    static private class DelegateHandler implements MethodIntercept, SelfDescribing {
         private final Object delegate;
 
         public DelegateHandler(Object delegate) {
             this.delegate = delegate;
         }
 
-        public Object invoke(Object mockObject, Method method, Object[] parameters) throws Throwable {
+        public Object intercept(Object mockObject, Method method, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
             return method.invoke(delegate, parameters);
         }
 
@@ -418,34 +434,34 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
         }
     }
 
-    static private class ConsecutiveHandler implements InvocationHandler, SelfDescribing {
-        private final List<InvocationHandler> handlers = new ArrayList<InvocationHandler>();
-        private Iterator<InvocationHandler> iterator = null;
+    static private class ConsecutiveHandler implements MethodIntercept, SelfDescribing {
+        private final List<MethodIntercept> handlers = new ArrayList<MethodIntercept>();
+        private Iterator<MethodIntercept> iterator = null;
 
-        public ConsecutiveHandler(InvocationHandler handler) {
+        public ConsecutiveHandler(MethodIntercept handler) {
             handlers.add(handler);
         }
 
-        public ConsecutiveHandler add(InvocationHandler invocationHandler) {
+        public ConsecutiveHandler add(MethodIntercept invocationHandler) {
             handlers.add(invocationHandler);
             return this;
         }
 
-        public Object invoke(Object mockObject, Method method, Object[] parameters) throws Throwable {
+        public Object intercept(Object mockObject, Method method, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
             if (iterator == null) {
                 iterator = handlers.iterator();
             }
             if (!iterator.hasNext()) {
                 throw new MoxieUnexpectedError("not enough consecutive-call handlers", null);
             }
-            return iterator.next().invoke(mockObject, method, parameters);
+            return iterator.next().intercept(mockObject, method, parameters, superInvoker);
         }
 
         public void describeTo(Description description) {
             description.appendText("consecutively ");
 
-            for (Iterator<InvocationHandler> it = handlers.iterator(); it.hasNext(); ) {
-                InvocationHandler handler = it.next();
+            for (Iterator<MethodIntercept> it = handlers.iterator(); it.hasNext(); ) {
+                MethodIntercept handler = it.next();
                 if (handler instanceof SelfDescribing) {
                     ((SelfDescribing) handler).describeTo(description);
                 } else {
@@ -461,4 +477,15 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
             return handlers.size();
         }
     }
+
+    static private class OriginalHandler implements MethodIntercept, SelfDescribing {
+        public Object intercept(Object mockObject, Method method, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
+            return superInvoker.invokeSuper(parameters);
+        }
+
+        public void describeTo(Description description) {
+            description.appendText("call original method implementation");
+        }
+    }
+
 }
