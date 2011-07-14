@@ -43,6 +43,7 @@ abstract class MoxieUtils {
     private static final Double ZERO_DOUBLE = new Double((double) 0);
     private static final Float ZERO_FLOAT = new Float((float) 0);
 
+    @SuppressWarnings("unchecked")
     static <T> T defaultValue(Class<T> clazz) {
         if (clazz == Boolean.TYPE || clazz == Boolean.class) {
             return (T) Boolean.FALSE;
@@ -125,7 +126,8 @@ abstract class MoxieUtils {
         }
     }
 
-    static public <T> T createThreadLocalProxy(final Class<T> clazz, final Factory<T> factory) {
+    @SuppressWarnings("unchecked")
+    static <T> T createThreadLocalProxy(final Class<T> clazz, final Factory<T> factory) {
         final ThreadLocal<T> threadLocal = new ThreadLocal<T>();
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, new InvocationHandler() {
             public Object invoke(Object proxyUnused, Method method, Object[] params) throws Throwable {
@@ -136,10 +138,6 @@ abstract class MoxieUtils {
                 }
                 try {
                     return method.invoke(delegate, params);
-                } catch (IllegalAccessException e) {
-                    throw e;
-                } catch (IllegalArgumentException e) {
-                    throw e;
                 } catch (InvocationTargetException e) {
                     throw e.getTargetException();
                 }
@@ -194,6 +192,7 @@ abstract class MoxieUtils {
      * @param <T>      presumed boxed type of the items in the list
      * @return an {@link java.util.ArrayList} containing the elements of the array
      */
+    @SuppressWarnings("unchecked")
     static <T> List<T> listFromArray(Object srcArray) {
         int srcLength = Array.getLength(srcArray);
         List<T> dest = new ArrayList<T>();
@@ -213,6 +212,49 @@ abstract class MoxieUtils {
             desc.appendText(message);
             desc.appendList("    ", "\n    ", "\n", new ArrayList<T>(selfDescribing));
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    static Method guessMethod(Class interceptedClass, String methodName, Class[] paramSignature, Object[] params) {
+        if (paramSignature == null) {
+            paramSignature = new Class[params.length];
+            for (int i = 0; i < params.length; i++) {
+                paramSignature[i] = (params[i] != null) ? params[i].getClass() : null;
+            }
+        }
+        for (Class clazz = interceptedClass; clazz != null; clazz = clazz.getSuperclass()) {
+            Method likelyMatch = null;
+methods:
+            for (Method m : clazz.getDeclaredMethods()) {
+                if (!m.getName().equals(methodName)) {
+                    continue;
+                }
+                Class[] mSignature = m.getParameterTypes();
+                if (mSignature.length > params.length) {
+                    continue;
+                }
+                // TODO: handle varargs gracefully in client methods
+                if (mSignature.length < params.length && !m.isVarArgs()) {
+                    continue;
+                }
+                for (int i = 0; i < paramSignature.length; i++) {
+                    Class paramClass = paramSignature[i];
+                    Class mClass = (i >= mSignature.length ? mSignature[mSignature.length-1] : mSignature[i]);
+                    if (paramClass != null && !mClass.isAssignableFrom(paramClass)) {
+                        continue methods;
+                    }
+                }
+                if (likelyMatch != null) {
+                    throw new IllegalArgumentException("Multiple methods named \"" + methodName + "\" found on class " + interceptedClass.getName() + " matching specified parameters/signature");
+                } else {
+                    likelyMatch = m;
+                }
+            }
+            if (likelyMatch != null) {
+                return likelyMatch;
+            }
+        }
+        throw new IllegalArgumentException("No method \"" + methodName + "\" found on class " + interceptedClass.getName() + " matching specified parameters/signature");
     }
 
     static interface Factory<F> {

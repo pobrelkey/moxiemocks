@@ -89,60 +89,63 @@ class CheckImpl<T> implements Check<T> {
     public T on() {
         return interception.getProxyFactory().createProxy(new MethodIntercept() {
             public Object intercept(Object proxy, Method method, Object[] params, SuperInvoker superInvoker) throws Throwable {
-                List<Matcher> argMatchers = MatcherSyntax.methodCall(method, params);
-                Matcher argsMatcher = MoxieMatchers.isArrayMatcher(argMatchers);
-
-                int cursor = 0;
-                if (groups != null) {
-                    for (GroupImpl group : groups) {
-                        if (group.getCheckCursor() > cursor) {
-                            cursor = group.getCheckCursor();
-                        }
-                    }
-                }
-
-                Integer lastMatch = null;
-
-                for (; cursor < invocations.size(); cursor++) {
-                    final Invocation invocation = invocations.get(cursor);
-                    if (interception.equals(invocation.getInterception()) && method.equals(invocation.getMethod()) && argsMatcher.matches(invocation.getArguments())) {
-                        if (unexpectedly && invocation.getExpectationSatisfied() != null) {
-                            continue;
-                        }
-                        if (throwableMatcher != null && !throwableMatcher.matches(invocation.getExceptionThrown())) {
-                            continue;
-                        }
-                        if (resultMatcher != null && !resultMatcher.matches(invocation.getValueReturned())) {
-                            continue;
-                        }
-
-                        cardinality.incrementCount();
-                        lastMatch = cursor;
-                        if (!negated) {
-                            cardinality.whenCardinalitySatisfied(new Runnable() {
-                                public void run() {
-                                    invocation.setCheckSatisfied(CheckImpl.this);
-                                }
-                            });
-                        }
-                    }
-                }
-
-                if (cardinality.isSatisfied() && negated) {
-                    throwFailedCheckError("check matched one or more method invocations", method, argMatchers);
-                } else if (!cardinality.isSatisfied() && !negated) {
-                    throwFailedCheckError("check failed to match the correct number of method invocations", method, argMatchers);
-                }
-
-                if (lastMatch != null && groups != null && !negated) {
-                    for (GroupImpl group : groups) {
-                        group.setCheckCursor(lastMatch);
-                    }
-                }
-
+                handleInvocation(method, params);
                 return MoxieUtils.defaultValue(method.getReturnType());
             }
         }, interception.getConstructorArgTypes(),  interception.getConstructorArgs());
+    }
+
+    private void handleInvocation(Method method, Object[] params) {
+        List<Matcher> argMatchers = MatcherSyntax.methodCall(method, params);
+        Matcher argsMatcher = MoxieMatchers.isArrayMatcher(argMatchers);
+
+        int cursor = 0;
+        if (groups != null) {
+            for (GroupImpl group : groups) {
+                if (group.getCheckCursor() > cursor) {
+                    cursor = group.getCheckCursor();
+                }
+            }
+        }
+
+        Integer lastMatch = null;
+
+        for (; cursor < invocations.size(); cursor++) {
+            final Invocation invocation = invocations.get(cursor);
+            if (interception.equals(invocation.getInterception()) && method.equals(invocation.getMethod()) && argsMatcher.matches(invocation.getArguments())) {
+                if (unexpectedly && invocation.getExpectationSatisfied() != null) {
+                    continue;
+                }
+                if (throwableMatcher != null && !throwableMatcher.matches(invocation.getExceptionThrown())) {
+                    continue;
+                }
+                if (resultMatcher != null && !resultMatcher.matches(invocation.getValueReturned())) {
+                    continue;
+                }
+
+                cardinality.incrementCount();
+                lastMatch = cursor;
+                if (!negated) {
+                    cardinality.whenCardinalitySatisfied(new Runnable() {
+                        public void run() {
+                            invocation.setCheckSatisfied(CheckImpl.this);
+                        }
+                    });
+                }
+            }
+        }
+
+        if (cardinality.isSatisfied() && negated) {
+            throwFailedCheckError("check matched one or more method invocations", method, argMatchers);
+        } else if (!cardinality.isSatisfied() && !negated) {
+            throwFailedCheckError("check failed to match the correct number of method invocations", method, argMatchers);
+        }
+
+        if (lastMatch != null && groups != null && !negated) {
+            for (GroupImpl group : groups) {
+                group.setCheckCursor(lastMatch);
+            }
+        }
     }
 
     public T when() {
@@ -155,6 +158,38 @@ class CheckImpl<T> implements Check<T> {
 
     public T got() {
         return on();
+    }
+
+    public void on(String methodName, Object... params) {
+        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, null, params), params);
+    }
+
+    public void when(String methodName, Object... params) {
+        on(methodName, params);
+    }
+
+    public void get(String methodName, Object... params) {
+        on(methodName, params);
+    }
+
+    public void got(String methodName, Object... params) {
+        on(methodName, params);
+    }
+
+    public void on(String methodName, Class[] paramSignature, Object... params) {
+        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, paramSignature, params), params);
+    }
+
+    public void when(String methodName, Class[] paramSignature, Object... params) {
+        on(methodName, paramSignature, params);
+    }
+
+    public void get(String methodName, Class[] paramSignature, Object... params) {
+        on(methodName, paramSignature, params);
+    }
+
+    public void got(String methodName, Class[] paramSignature, Object... params) {
+        on(methodName, paramSignature, params);
     }
 
     public Check<T> inGroup(Group... groups) {
