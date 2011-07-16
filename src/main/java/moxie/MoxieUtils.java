@@ -257,6 +257,11 @@ methods:
         throw new IllegalArgumentException("No method \"" + methodName + "\" found on class " + interceptedClass.getName() + " matching specified parameters/signature");
     }
 
+    @SuppressWarnings("unchecked")
+    static <T> Class<T[]> arrayClassFor(Class<T> clazz) {
+        return (Class<T[]>) Array.newInstance(clazz, 0).getClass();
+    }
+
     static interface Factory<F> {
         F create();
     }
