@@ -244,19 +244,42 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    static public <T> T argThat(Matcher<T> matcher) {
-        return (T) reportMatcher(matcher, null);
+    static public <T> T argThat(Matcher<? super T> matcher) {
+        return argThat(null, matcher);
+    }
+
+    /**
+     * Matches an object parameter using the given custom matcher.
+     *
+     * @param clazz   Type of the parameter to be matched
+     * @param matcher a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public <T> T argThat(Class<T> clazz, Matcher<? super T> matcher) {
+        return reportMatcher(matcher, clazz);
     }
 
     /**
      * Matches an array parameter or varargs array using the given custom matcher.
      *
-     * @param matcher a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
+     * @param matcher A <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    static public <T> T arrayThat(Matcher<T> matcher) {
-        return (T) reportMatcher(matcher, Object[].class);
+    static public <T> T[] arrayThat(Matcher<? super T> matcher) {
+        return (T[]) arrayThat(Object.class, (Matcher) matcher);
+    }
+
+    /**
+     * Matches an array parameter or varargs array using the given custom matcher.
+     *
+     * @param clazz   Constituent type of the array
+     * @param matcher A <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
+     * @return <code>null</code>
+     */
+    static public <T> T[] arrayThat(Class<T> clazz, Matcher<? super T> matcher) {
+        return reportMatcher(matcher, MoxieUtils.arrayClassFor(clazz));
     }
 
     /**
@@ -265,7 +288,7 @@ public abstract class MoxieMatchers {
      * @param matcher a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
      * @return <code>false</code>
      */
-    static public boolean booleanThat(Matcher<Boolean> matcher) {
+    static public boolean booleanThat(Matcher<? super Boolean> matcher) {
         return reportMatcher(matcher, Boolean.TYPE);
     }
 
@@ -275,7 +298,7 @@ public abstract class MoxieMatchers {
      * @param matcher a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
      * @return <code>0</code>
      */
-    static public byte byteThat(Matcher<Byte> matcher) {
+    static public byte byteThat(Matcher<? super Byte> matcher) {
         return reportMatcher(matcher, Byte.TYPE);
     }
 
@@ -285,7 +308,7 @@ public abstract class MoxieMatchers {
      * @param matcher a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
      * @return <code>'\0'</code>
      */
-    static public char charThat(Matcher<Character> matcher) {
+    static public char charThat(Matcher<? super Character> matcher) {
         return reportMatcher(matcher, Character.TYPE);
     }
 
@@ -295,7 +318,7 @@ public abstract class MoxieMatchers {
      * @param matcher a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
      * @return <code>0</code>
      */
-    static public double doubleThat(Matcher<Double> matcher) {
+    static public double doubleThat(Matcher<? super Double> matcher) {
         return reportMatcher(matcher, Double.TYPE);
     }
 
@@ -305,7 +328,7 @@ public abstract class MoxieMatchers {
      * @param matcher a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
      * @return <code>0</code>
      */
-    static public float floatThat(Matcher<Float> matcher) {
+    static public float floatThat(Matcher<? super Float> matcher) {
         return reportMatcher(matcher, Float.TYPE);
     }
 
@@ -315,7 +338,7 @@ public abstract class MoxieMatchers {
      * @param matcher a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
      * @return <code>0</code>
      */
-    static public int intThat(Matcher<Integer> matcher) {
+    static public int intThat(Matcher<? super Integer> matcher) {
         return reportMatcher(matcher, Integer.TYPE);
     }
 
@@ -325,7 +348,7 @@ public abstract class MoxieMatchers {
      * @param matcher a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
      * @return <code>0</code>
      */
-    static public long longThat(Matcher<Long> matcher) {
+    static public long longThat(Matcher<? super Long> matcher) {
         return reportMatcher(matcher, Long.TYPE);
     }
 
@@ -335,7 +358,7 @@ public abstract class MoxieMatchers {
      * @param matcher a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
      * @return <code>0</code>
      */
-    static public short shortThat(Matcher<Short> matcher) {
+    static public short shortThat(Matcher<? super Short> matcher) {
         return reportMatcher(matcher, Short.TYPE);
     }
 
@@ -445,7 +468,16 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T> T isNotNull() {
-        return MoxieMatchers.<T>reportMatcher(new IsNot(new IsNull()), null);
+        return (T) isNotNull(Object.class);
+    }
+
+    /**
+     * Matches any non-<code>null</code> parameter.
+     *
+     * @return <code>null</code>
+     */
+    static public <T> T isNotNull(Class<T> clazz) {
+        return reportMatcher(new IsNot<T>(new IsNull<T>()), clazz);
     }
 
     /**
@@ -453,19 +485,39 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T> T isNull() {
-        return MoxieMatchers.<T>reportMatcher(new IsNull(), null);
+        return (T) isNull(Object.class);
     }
 
     /**
-     * Synonym for {@link #isNotNull}.
+     * Matches only when the parameter is <code>null</code>.
      *
      * @return <code>null</code>
      */
-    static public <T> T notNull() {
-        return MoxieMatchers.<T>isNotNull();
+    static public <T> T isNull(Class<T> clazz) {
+        return reportMatcher(new IsNull<T>(), clazz);
     }
 
+    /**
+     * Synonym for {@link #isNotNull() isNotNull}.
+     *
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public <T> T notNull() {
+        return (T) notNull(Object.class);
+    }
+
+    /**
+     * Synonym for {@link #isNotNull(Class) isNotNull}.
+     *
+     * @return <code>null</code>
+     */
+    static public <T> T notNull(Class<T> clazz) {
+        return isNotNull(clazz);
+    }
+    
     /**
      * Matches when the parameter is referentially equal to the given value.
      *
@@ -803,20 +855,43 @@ public abstract class MoxieMatchers {
     }
 
     /**
+     * Matches a {@link String} matching the given regular expression pattern.
+     *
+     * @param pattern Regular expression to match against the string
+     * @return <code>null</code>
+     */
+    static public String matchesRegexp(String pattern) {
+        return matchesRegexp(String.class, pattern);
+    }
+
+    /**
      * Matches a parameter whose {@link String} representation matches the given regular expression pattern.
+     *
+     * @param clazz   Type of the object to be matched
+     * @param pattern Regular expression to match against object's string representation
+     * @return <code>null</code>
+     */
+    static public <T> T matchesRegexp(Class<T> clazz, String pattern) {
+        return matchesRegexp(clazz, Pattern.compile(pattern));
+    }
+
+    /**
+     * Matches a {@link String} matching the given {@link Pattern}.
      *
      * @return <code>null</code>
      */
-    static public <T> T matchesRegexp(String pattern) {
-        return MoxieMatchers.<T>matchesRegexp(Pattern.compile(pattern));
+    static public String matchesRegexp(Pattern pattern) {
+        return matchesRegexp(String.class, pattern);
     }
 
     /**
      * Matches a parameter whose {@link String} representation matches the given {@link Pattern}.
      *
+     * @param clazz   Type of the object to be matched
+     * @param pattern Regular expression to match against object's string representation
      * @return <code>null</code>
      */
-    static public <T> T matchesRegexp(final Pattern pattern) {
+    static public <T> T matchesRegexp(Class<T> clazz, final Pattern pattern) {
         return reportMatcher(new BaseMatcher() {
             public boolean matches(Object o) {
                 return (o != null) && pattern.matcher(o.toString()).matches();
@@ -1688,7 +1763,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    static public <T, I extends Iterable<T>> I collectionWith(T item) {
+    static public <T, I extends Collection<T>> I collectionWith(T item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(Object.class, item);
         return (I) reportMatcher(Matchers.hasItem(itemMatcher), Iterable.class);
     }
@@ -1705,7 +1780,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    static public <T, I extends Iterable<T>> I collectionWithAll(T... items) {
+    static public <T, I extends Collection<T>> I collectionWithAll(T... items) {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
@@ -1722,7 +1797,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    static public <T, I extends Iterable<T>> I collection(T... items) {
+    static public <T, I extends Collection<T>> I collection(T... items) {
         final List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
         return (I) reportMatcher(new BaseMatcher() {
             public boolean matches(Object o) {
@@ -1780,12 +1855,26 @@ public abstract class MoxieMatchers {
     /**
      * Matches an object having a JavaBeans-style getter method exposing a property with the given name, which returns the given value (which may be a {@link MoxieMatchers} invocation).
      *
+     * @param propertyName  Name of the property - for example, a property name of "count" implies a getter named <code>getCount()</code>
+     * @param value         Desired value of the property (raw value or {@link MoxieMatchers} invocation)
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
     static public <T> T hasProperty(String propertyName, Object value) {
+        return (T) hasProperty(Object.class, propertyName, value);
+    }
+
+    /**
+     * Matches an object having a JavaBeans-style getter method exposing a property with the given name, which returns the given value (which may be a {@link MoxieMatchers} invocation).
+     *
+     * @param clazz         Type of the object on which to look for the property
+     * @param propertyName  Name of the property to match - for example, a property name of "count" implies a getter named <code>getCount()</code>
+     * @param value         Desired value of the property (raw value or {@link MoxieMatchers} invocation)
+     * @return <code>null</code>
+     */
+    static public <T> T hasProperty(Class<T> clazz, String propertyName, Object value) {
         Matcher valueMatcher = MatcherSyntax.singleMatcherFragment(Object.class, value);
-        return (T) reportMatcher(Matchers.hasProperty(propertyName, valueMatcher), Object.class);
+        return reportMatcher(Matchers.hasProperty(propertyName, valueMatcher), clazz);
     }
 
     /**
@@ -1804,7 +1893,17 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T> T[] anyVarargs() {
-        return (T[]) any(Object[].class);
+        return (T[]) anyVarargs(Object.class);
+    }
+
+    /**
+     * Syntactic sugar matcher; used when matching varargs methods to specify that we don't care what parameters are received in the varargs list.
+     *
+     * @param clazz Constituent type of the varargs array
+     * @return <code>null</code>
+     */
+    static public <T> T[] anyVarargs(Class<T> clazz) {
+        return any(MoxieUtils.arrayClassFor(clazz));
     }
 
     /**
@@ -1926,8 +2025,19 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T> T[] arrayLength(int size) {
+        return (T[]) arrayLength(Object.class, size);
+    }
+
+    /**
+     * Matches a non-primitive array of the specified length.  (The length may be a {@link MoxieMatchers} invocation.)
+     *
+     * @param clazz  Constituent type of the array
+     * @param size   Desired size of the array (raw value or {@link MoxieMatchers} invocation)
+     * @return <code>null</code>
+     */
+    static public <T> T[] arrayLength(Class<T> clazz, int size) {
         final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
-        return (T[]) reportMatcher(arraySizeMatcher(sizeMatcher), Object[].class);
+        return reportMatcher(arraySizeMatcher(sizeMatcher), MoxieUtils.arrayClassFor(clazz));
     }
 
     /**
