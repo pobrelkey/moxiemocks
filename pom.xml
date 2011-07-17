@@ -134,11 +134,6 @@
                 <configuration>
                     <instructions>
                         <Export-Package>moxie</Export-Package>
-                        <!-- bytecode instrumentation TODO
-                        <Agent-Class>moxie.MoxieAgent</Agent-Class>
-                        <Premain-Class>moxie.MoxieAgent</Premain-Class>
-                        <Can-Redefine-Classes>true</Can-Redefine-Classes>
-                        -->
                     </instructions>
                 </configuration>
             </plugin>
@@ -155,8 +150,6 @@
     <reporting>
         <plugins>
             <plugin>
-                <!--<groupId>org.codehaus.mojo</groupId>-->
-                <!--<artifactId>emma-maven-plugin</artifactId>-->
                 <groupId>org.sonatype.maven.plugin</groupId>
                 <artifactId>emma-maven-plugin</artifactId>
                 <version>1.2</version>

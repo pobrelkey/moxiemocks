@@ -30,13 +30,14 @@ import org.hamcrest.core.IsSame;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 public class MoxieMatchersTest {
 
@@ -97,6 +98,9 @@ public class MoxieMatchersTest {
         void varargsDoubleObjectCall(Double... p);
         void varargsStringCall(String... p);
         void varargsObjectCall(Object... p);
+
+        void collectionCall(Collection<String> c);
+        void mapCall(Map<String, Integer> c);
     }
 
     public static class SimpleBean {
@@ -148,7 +152,7 @@ public class MoxieMatchersTest {
     @Test
     public void testMatchesRegexp_happyPath() {
         TestInterface mock = Moxie.mock(TestInterface.class);
-        Moxie.expect(mock).will().stringCall(Moxie.<String>matchesRegexp("^a.*z$"));
+        Moxie.expect(mock).will().stringCall(Moxie.matchesRegexp("^a.*z$"));
         mock.stringCall("alcatraz");
         Moxie.verify(mock);
     }
@@ -156,7 +160,22 @@ public class MoxieMatchersTest {
     @Test(expected=MoxieUnexpectedInvocationError.class)
     public void testMatchesRegexp_sadPath() {
         TestInterface mock = Moxie.mock(TestInterface.class);
-        Moxie.expect(mock).will().stringCall(Moxie.<String>matchesRegexp("^a.*z$"));
+        Moxie.expect(mock).will().stringCall(Moxie.matchesRegexp("^a.*z$"));
+        mock.stringCall("san quentin");
+    }
+
+    @Test
+    public void testMatchesRegexp_pattern_happyPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().stringCall(Moxie.matchesRegexp(Pattern.compile("^a.*z$")));
+        mock.stringCall("alcatraz");
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void testMatchesRegexp_pattern_sadPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().stringCall(Moxie.matchesRegexp(Pattern.compile("^a.*z$")));
         mock.stringCall("san quentin");
     }
 
@@ -391,6 +410,195 @@ public class MoxieMatchersTest {
         Moxie.expect(mock).will().objectCall(Moxie.hasProperty("anotherProperty", 123));
         mock.objectCall(new SimpleBean(123));
     }
+
+    @Test
+    public void arrayLength_happyPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsStringCall(Moxie.<String>arrayLength(3));
+        mock.varargsStringCall("Huey", "Dewey", "Louie");
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void arrayLength_sadPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsStringCall(Moxie.<String>arrayLength(3));
+        mock.varargsStringCall("Blinky", "Pinky", "Inky", "Clyde");
+    }
+
+    @Test
+    public void arrayWith_happyPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsStringCall(Moxie.<String>arrayWith("Louie"));
+        mock.varargsStringCall("Huey", "Dewey", "Louie");
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void arrayWith_sadPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsStringCall(Moxie.<String>arrayWith("Louie"));
+        mock.varargsStringCall("Blinky", "Pinky", "Inky", "Clyde");
+    }
+
+    @Test
+    public void arrayWithAll_happyPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsStringCall(Moxie.<String>arrayWithAll("Dewey", "Huey"));
+        mock.varargsStringCall("Huey", "Dewey", "Louie");
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void arrayWithAll_sadPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).will().varargsStringCall(Moxie.<String>arrayWithAll("Blinky", "Speedy"));
+        mock.varargsStringCall("Blinky", "Pinky", "Inky", "Clyde");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void collectionSize_happyPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().collectionCall(Moxie.collectionSize(3));
+        mock.collectionCall(Arrays.asList("foo", "bar", "baz"));
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
+    public void collectionSize_sadPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().collectionCall(Moxie.collectionSize(Moxie.gt(3)));
+        mock.collectionCall(Arrays.asList("foo", "bar", "baz"));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void mapSize_happyPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().mapCall(Moxie.mapSize(3));
+        HashMap<String, Integer> map = new HashMap<String, Integer>();
+        map.put("three", 3);
+        map.put("four", 4);
+        map.put("five", 5);
+        mock.mapCall(map);
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
+    public void mapSize_sadPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().mapCall(Moxie.mapSize(Moxie.gt(3)));
+        HashMap<String, Integer> map = new HashMap<String, Integer>();
+        map.put("three", 3);
+        map.put("four", 4);
+        map.put("five", 5);
+        mock.mapCall(map);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void mapWithEntry_happyPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().mapCall(Moxie.mapWithEntry(Moxie.hasSubstring("tux"), Moxie.gt(50)));
+        mock.mapCall(Collections.singletonMap("pawtuxent", 99));
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
+    public void mapWithEntry_sadPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().mapCall(Moxie.mapWithEntry(Moxie.hasSubstring("tux"), Moxie.gt(50)));
+        HashMap<String, Integer> map = new HashMap<String, Integer>();
+        map.put("unrelated", 907);
+        map.put("tuxedo", 4);
+        map.put("five", 5);
+        mock.mapCall(map);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void mapWithKey_happyPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().mapCall(Moxie.mapWithKey(Moxie.hasSubstring("Tux")));
+        mock.mapCall(Collections.singletonMap("Tennessee Tuxedo", 99));
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
+    public void mapWithKey_sadPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().mapCall(Moxie.mapWithKey(Moxie.hasSubstring("Tux")));
+        mock.mapCall(Collections.singletonMap("Kumquat", 99));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void mapWithValue_happyPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().mapCall(Moxie.mapWithValue(Moxie.gt(10)));
+        mock.mapCall(Collections.singletonMap("Tux the Penguin", 99));
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    @SuppressWarnings("unchecked")
+    public void mapWithValue_sadPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().mapCall(Moxie.mapWithValue(Moxie.gt(10)));
+        mock.mapCall(Collections.singletonMap("Tux the Penguin", -59607));
+    }
+
+    @Test
+    public void collection_happyPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().collectionCall(Moxie.<Collection<String>>collection("1", "2", Moxie.hasSubstring("3")));
+        mock.collectionCall(Arrays.asList("1", "2", "33"));
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void collection_sadPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().collectionCall(Moxie.<Collection<String>>collection("1", "2", Moxie.hasSubstring("3")));
+        mock.collectionCall(Arrays.asList("33", "2", "1"));
+    }
+
+    @Test
+    public void collectionWith_happyPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().collectionCall(Moxie.<Collection<String>>collectionWith(Moxie.hasSubstring("3")));
+        mock.collectionCall(Arrays.asList("1", "2", "33"));
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void collectionWith_sadPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().collectionCall(Moxie.<Collection<String>>collectionWith(Moxie.hasSubstring("3")));
+        mock.collectionCall(Arrays.asList("8", "9", "three"));
+    }
+
+    @Test
+    public void collectionWithAll_happyPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().collectionCall(Moxie.<Collection<String>>collectionWithAll("1", "2", Moxie.hasSubstring("3")));
+        mock.collectionCall(Arrays.asList("33", "2", "1", "4"));
+        Moxie.verify(mock);
+    }
+
+    @Test(expected=MoxieUnexpectedInvocationError.class)
+    public void collectionWithAll_sadPath() {
+        TestInterface mock = Moxie.mock(TestInterface.class);
+        Moxie.expect(mock).on().collectionCall(Moxie.<Collection<String>>collectionWithAll("1", "2", Moxie.hasSubstring("3")));
+        mock.collectionCall(Arrays.asList("three", "2", "1", "4"));
+    }
+
+
 
     //
     // Below this point tests are automatically generated by the MoxieMatchers.rb script in this directory.

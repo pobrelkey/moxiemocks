@@ -1573,7 +1573,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public boolean[] booleanArrayWithAll(boolean... items) {
-        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(boolean.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
             arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
@@ -1604,7 +1604,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public byte[] byteArrayWithAll(byte... items) {
-        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(byte.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
             arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
@@ -1635,7 +1635,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public char[] charArrayWithAll(char... items) {
-        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(char.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
             arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
@@ -1666,7 +1666,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public short[] shortArrayWithAll(short... items) {
-        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(short.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
             arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
@@ -1697,7 +1697,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public int[] intArrayWithAll(int... items) {
-        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(int.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
             arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
@@ -1728,7 +1728,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public long[] longArrayWithAll(long... items) {
-        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(long.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
             arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
@@ -1759,7 +1759,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public float[] floatArrayWithAll(float... items) {
-        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(float.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
             arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
@@ -1790,7 +1790,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public double[] doubleArrayWithAll(double... items) {
-        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
+        List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(double.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
             arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
@@ -1801,12 +1801,31 @@ public abstract class MoxieMatchers {
     /**
      * Matches a {@link java.util.Collection Collection} containing an element matching the given parameter (which may be a {@link MoxieMatchers} invocation).
      *
+     * @param item             Item to be found in the collection (raw value or {@link MoxieMatchers} invocation)
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    static public <T, I extends Collection<T>> I collectionWith(T item) {
+    static public <T extends Iterable> T collectionWith(Object item) {
+        return (T) collectionWith(Iterable.class, item);
+    }
+
+    /**
+     * <p>
+     * Matches a {@link java.util.Collection Collection} containing an element matching the given parameter (which may be a {@link MoxieMatchers} invocation).
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
+     *
+     * @param collectionClass  Type of the collection to be matched
+     * @param item             Item to be found in the collection (raw value or {@link MoxieMatchers} invocation)
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public <T extends Iterable> T collectionWith(Class<T> collectionClass, Object item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(Object.class, item);
-        return (I) reportMatcher(Matchers.hasItem(itemMatcher), Iterable.class);
+        return reportMatcher(Matchers.hasItem(itemMatcher), collectionClass);
     }
 
     /**
@@ -1821,27 +1840,68 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    static public <T, I extends Collection<T>> I collectionWithAll(T... items) {
+    static public <T extends Iterable> T collectionWithAll(Object... items) {
+        return (T) collectionWithAll(Iterable.class, items);
+    }
+
+    /**
+     * <p>
+     * Matches a {@link java.util.Collection Collection} containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
+     * <p>
+     * Note that the order in which the values to be matched are specified is not significant; the collection merely needs to
+     * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#collection(Object[]) collection()}.
+     * </p>
+     *
+     * @param collectionClass  Type of the collection to be matched
+     * @param items            Items to be found in the collection (raw values or {@link MoxieMatchers} invocations)
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public <T extends Iterable> T collectionWithAll(Class<T> collectionClass, Object... items) {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
             arrayMatchers.add(Matchers.hasItem(itemMatcher));
         }
-        return (I) reportMatcher(new AllOf(arrayMatchers), Iterable.class);
+        return reportMatcher(new AllOf(arrayMatchers), collectionClass);
     }
 
     /**
      * <p>
-     * Matches a {@link java.util.Collection Collection} containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations), in order.
+     * Matches a {@link java.util.Collection Collection} or {@link java.lang.Iterable Iterable} containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations), in order.
      * </p>
      *
+     * @param items            Values to be found in the collection (raw values or {@link MoxieMatchers} invocations)
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    static public <T, I extends Collection<T>> I collection(T... items) {
+    static public <T extends Iterable> T collection(Object... items) {
+        return (T) collection(Iterable.class, items);
+    }
+
+    /**
+     * <p>
+     * Matches a {@link java.util.Collection Collection} or {@link java.lang.Iterable Iterable} containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations), in order.
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
+     *
+     * @param collectionClass  Type of the collection to be matched
+     * @param items            Values to be found in the collection (raw values or {@link MoxieMatchers} invocations)
+     * @return <code>null</code>
+     */
+    static public <T extends Iterable> T collection(Class<T> collectionClass, Object... items) {
         final List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
-        return (I) reportMatcher(new BaseMatcher() {
+        return reportMatcher(new BaseMatcher() {
             public boolean matches(Object o) {
+                @SuppressWarnings("unchecked")
                 Iterator<T> itemsIter = ((Iterable<T>) o).iterator();
                 Iterator<Matcher> matchersIter = itemMatchers.iterator();
                 while (itemsIter.hasNext() && matchersIter.hasNext()) {
@@ -1855,43 +1915,103 @@ public abstract class MoxieMatchers {
             public void describeTo(Description description) {
                 description.appendList("a collection with elements matching: [", ", ", "]", itemMatchers);
             }
-        }, Iterable.class);
+        }, collectionClass);
     }
 
     /**
      * Matches a {@link java.util.Map Map} containing an entry whose key and value match the given parameters (which may be {@link MoxieMatchers} invocations).
      *
+     * @param key      Key of the desired entry (raw value or {@link MoxieMatchers} invocation)
+     * @param value    Value of the desired entry (raw value or {@link MoxieMatchers} invocation)
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    static public <K, V, M extends Map<? super K, ? super V>> M mapWithEntry(K key, V value) {
+    static public <M extends Map> M mapWithEntry(Object key, Object value) {
+        return (M) mapWithEntry(Map.class, key, value);
+    }
+
+    /**
+     * <p>
+     * Matches a {@link java.util.Map Map} containing an entry whose key and value match the given parameters (which may be {@link MoxieMatchers} invocations).
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
+     *
+     * @param mapClass Type of the map to be matched
+     * @param key      Key of the desired entry (raw value or {@link MoxieMatchers} invocation)
+     * @param value    Value of the desired entry (raw value or {@link MoxieMatchers} invocation)
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public <M extends Map> M mapWithEntry(Class<M> mapClass, Object key, Object value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Object.class, Arrays.asList(key, value));
         Matcher keyMatcher = matchers.remove(0);
         Matcher valueMatcher = matchers.remove(0);
-        return (M) reportMatcher(Matchers.hasEntry(keyMatcher, valueMatcher), Map.class);
+        return reportMatcher(Matchers.hasEntry(keyMatcher, valueMatcher), mapClass);
     }
 
     /**
      * Matches a {@link java.util.Map Map} containing an entry whose key matches the given parameter (which may be a {@link MoxieMatchers} invocation).
      *
+     * @param key      Key to be found in the map (raw value or {@link MoxieMatchers} invocation)
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    static public <K, V, M extends Map<? super K, V>> M mapWithKey(K key) {
+    static public <M extends Map> M mapWithKey(Object key) {
+        return (M) mapWithKey(Map.class, key);
+    }
+
+    /**
+     * <p>
+     * Matches a {@link java.util.Map Map} containing an entry whose key matches the given parameter (which may be a {@link MoxieMatchers} invocation).
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
+     *
+     * @param mapClass Type of the map to be matched
+     * @param key      Key to be found in the map (raw value or {@link MoxieMatchers} invocation)
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public <M extends Map> M mapWithKey(Class<M> mapClass, Object key) {
         Matcher keyMatcher = MatcherSyntax.singleMatcherFragment(Object.class, key);
-        return (M) reportMatcher(Matchers.hasKey(keyMatcher), Map.class);
+        return reportMatcher(Matchers.hasKey(keyMatcher), mapClass);
     }
 
     /**
      * Matches a {@link java.util.Map Map} containing an entry whose value matches the given parameter (which may be a {@link MoxieMatchers} invocation).
      *
+     * @param value    Value to be found in the map (raw value or {@link MoxieMatchers} invocation)
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    static public <K, V, M extends Map<K, ? super V>> M mapWithValue(V value) {
-        Matcher valueMatcher = MatcherSyntax.singleMatcherFragment(Object.class, value);
-        return (M) reportMatcher(Matchers.hasValue(valueMatcher), Map.class);
+    static public <M extends Map> M mapWithValue(Object value) {
+        return (M) mapWithValue(Map.class, value);
     }
+
+    /**
+     * <p>
+     * Matches a {@link java.util.Map Map} containing an entry whose value matches the given parameter (which may be a {@link MoxieMatchers} invocation).
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
+     *
+     * @param mapClass Type of the map to be matched
+     * @param value    Value to be found in the map (raw value or {@link MoxieMatchers} invocation)
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public <M extends Map> M mapWithValue(Class<M> mapClass, Object value) {
+        Matcher valueMatcher = MatcherSyntax.singleMatcherFragment(Object.class, value);
+        return reportMatcher(Matchers.hasValue(valueMatcher), mapClass);
+    }
+
 
     /**
      * Matches an object having a JavaBeans-style getter method exposing a property with the given name, which returns the given value (which may be a {@link MoxieMatchers} invocation).
@@ -2028,12 +2148,30 @@ public abstract class MoxieMatchers {
     /**
      * Matches a {@link Collection} of the specified size.  (The length may be a {@link MoxieMatchers} invocation.)
      *
+     * @param size             Desired size of the collection (raw value or {@link MoxieMatchers} invocation)
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
     static public <C extends Collection> C collectionSize(int size) {
+        return (C) collectionSize(Collection.class, size);
+    }
+
+    /**
+     * <p>
+     * Matches a {@link Collection} of the specified size.  (The length may be a {@link MoxieMatchers} invocation.)
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
+     *
+     * @param collectionClass  Type of the expected collection
+     * @param size             Desired size of the collection (raw value or {@link MoxieMatchers} invocation)
+     * @return <code>null</code>
+     */
+    static public <C extends Collection> C collectionSize(Class<C> collectionClass, int size) {
         final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
-        return (C) reportMatcher(new BaseMatcher() {
+        return reportMatcher(new BaseMatcher() {
             public boolean matches(Object o) {
                 return o != null && sizeMatcher.matches(((Collection) o).size());
             }
@@ -2042,18 +2180,36 @@ public abstract class MoxieMatchers {
                 description.appendText("a collection with size ");
                 sizeMatcher.describeTo(description);
             }
-        }, Collection.class);
+        }, collectionClass);
     }
 
     /**
      * Matches a {@link Map} of the specified size.  (The length may be a {@link MoxieMatchers} invocation.)
      *
+     * @param size      Desired size of the map (raw value or {@link MoxieMatchers} invocation)
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
     static public <M extends Map> M mapSize(int size) {
+        return (M) mapSize(Map.class, size);
+    }
+
+    /**
+     * <p>
+     * Matches a {@link Map} of the specified size.  (The length may be a {@link MoxieMatchers} invocation.)
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
+     *
+     * @param mapClass  Type of the expected map
+     * @param size      Desired size of the map (raw value or {@link MoxieMatchers} invocation)
+     * @return <code>null</code>
+     */
+    static public <M extends Map> M mapSize(Class<M> mapClass, int size) {
         final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
-        return (M) reportMatcher(new BaseMatcher() {
+        return reportMatcher(new BaseMatcher() {
             public boolean matches(Object o) {
                 return o != null && sizeMatcher.matches(((Map) o).size());
             }
@@ -2062,7 +2218,7 @@ public abstract class MoxieMatchers {
                 description.appendText("a map with size ");
                 sizeMatcher.describeTo(description);
             }
-        }, Map.class);
+        }, mapClass);
     }
 
     /**
@@ -2175,93 +2331,109 @@ public abstract class MoxieMatchers {
 
     /**
      * Special matcher used to capture method parameters for later inspection in your tests.
-     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then exit successfully.
      *
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
     static public <T> T captureTo(Collection<T> destination) {
-        return (T) reportMatcher(captureMatcher(destination), Object.class);
+        return (T) captureTo(Object.class, (Collection) destination);
+    }
+
+    /**
+     * <p>
+     * Special matcher used to capture method parameters for later inspection in your tests.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then exit successfully.
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
+     *
+     * @return <code>null</code>
+     */
+    static public <T> T captureTo(Class<T> clazz, Collection<? super T> destination) {
+        return reportMatcher(captureMatcher(destination), clazz);
     }
 
     /**
      * Special matcher used to capture method parameters for later inspection in your tests.
-     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then exit successfully.
      *
      * @return <code>false</code>
      */
-    static public boolean captureBooleanTo(Collection<Boolean> destination) {
-        return reportMatcher(captureMatcher(destination), Boolean.TYPE);
+    static public boolean captureBooleanTo(Collection<? super Boolean> destination) {
+        return captureTo(Boolean.TYPE, destination);
     }
 
     /**
      * Special matcher used to capture method parameters for later inspection in your tests.
-     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then exit successfully.
      *
      * @return <code>0</code>
      */
-    static public byte captureByteTo(Collection<Byte> destination) {
-        return reportMatcher(captureMatcher(destination), Byte.TYPE);
+    static public byte captureByteTo(Collection<? super Byte> destination) {
+        return captureTo(Byte.TYPE, destination);
     }
 
     /**
      * Special matcher used to capture method parameters for later inspection in your tests.
-     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then exit successfully.
      *
      * @return <code>'\0'</code>
      */
-    static public char captureCharTo(Collection<Character> destination) {
-        return reportMatcher(captureMatcher(destination), Character.TYPE);
+    static public char captureCharTo(Collection<? super Character> destination) {
+        return captureTo(Character.TYPE, destination);
     }
 
     /**
      * Special matcher used to capture method parameters for later inspection in your tests.
-     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then exit successfully.
      *
      * @return <code>0</code>
      */
-    static public double captureDoubleTo(Collection<Double> destination) {
-        return reportMatcher(captureMatcher(destination), Double.TYPE);
+    static public double captureDoubleTo(Collection<? super Double> destination) {
+        return captureTo(Double.TYPE, destination);
     }
 
     /**
      * Special matcher used to capture method parameters for later inspection in your tests.
-     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then exit successfully.
      *
      * @return <code>0</code>
      */
-    static public float captureFloatTo(Collection<Float> destination) {
-        return reportMatcher(captureMatcher(destination), Float.TYPE);
+    static public float captureFloatTo(Collection<? super Float> destination) {
+        return captureTo(Float.TYPE, destination);
     }
 
     /**
      * Special matcher used to capture method parameters for later inspection in your tests.
-     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then exit successfully.
      *
      * @return <code>0</code>
      */
-    static public int captureIntTo(Collection<Integer> destination) {
-        return reportMatcher(captureMatcher(destination), Integer.TYPE);
+    static public int captureIntTo(Collection<? super Integer> destination) {
+        return captureTo(Integer.TYPE, destination);
     }
 
     /**
      * Special matcher used to capture method parameters for later inspection in your tests.
-     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then exit successfully.
      *
      * @return <code>0</code>
      */
-    static public long captureLongTo(Collection<Long> destination) {
-        return reportMatcher(captureMatcher(destination), Long.TYPE);
+    static public long captureLongTo(Collection<? super Long> destination) {
+        return captureTo(Long.TYPE, destination);
     }
 
     /**
      * Special matcher used to capture method parameters for later inspection in your tests.
-     * When this matcher is run, the matcher will add the value encountered to the given collection, then return <code>true</code>.
+     * When this matcher is run, the matcher will add the value encountered to the given collection, then exit successfully.
      *
      * @return <code>0</code>
      */
-    static public short captureShortTo(Collection<Short> destination) {
-        return reportMatcher(captureMatcher(destination), Short.TYPE);
+    static public short captureShortTo(Collection<? super Short> destination) {
+        return captureTo(Short.TYPE, destination);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -2292,7 +2464,6 @@ public abstract class MoxieMatchers {
             }
         };
     }
-
 
     // Hamcrest's IsArray matcher doesn't look as if it works on primitive arrays.
     static Matcher isArrayMatcher(final List<Matcher> elementMatchers) {

@@ -452,6 +452,12 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
         }
 
         public Object intercept(Object mockObject, Method method, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
+            try {
+                method = delegate.getClass().getMethod(method.getName(), method.getParameterTypes());
+                method.setAccessible(true);
+            } catch (NoSuchMethodException e) {
+                // oh well, try with original method
+            }
             return method.invoke(delegate, parameters);
         }
 

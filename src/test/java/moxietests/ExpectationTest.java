@@ -27,7 +27,6 @@ import moxie.Moxie;
 import moxie.MoxieFailedVerificationError;
 import moxie.MoxieUnexpectedInvocationError;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.Writer;
@@ -405,7 +404,6 @@ public class ExpectationTest {
     }
 
     @Test
-    @Ignore(value = "TODO: be smart about interfaces")
     public void andDelegateTo_happyPath2() {
         List<String> spy = Moxie.spy(new ArrayList<String>(STRINGS));
         Moxie.expect(spy).andDelegateTo(Arrays.asList("nul", "un", "deux")).when().get(1);
