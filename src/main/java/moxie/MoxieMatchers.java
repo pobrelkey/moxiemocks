@@ -249,7 +249,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
+     * <p>
      * Matches an object parameter using the given custom matcher.
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
      *
      * @param clazz   Type of the parameter to be matched
      * @param matcher a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
@@ -272,7 +278,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
+     * <p>
      * Matches an array parameter or varargs array using the given custom matcher.
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
      *
      * @param clazz   Constituent type of the array
      * @param matcher A <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
@@ -472,7 +484,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
+     * <p>
      * Matches any non-<code>null</code> parameter.
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
      *
      * @return <code>null</code>
      */
@@ -491,7 +509,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
+     * <p>
      * Matches only when the parameter is <code>null</code>.
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
      *
      * @return <code>null</code>
      */
@@ -510,7 +534,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
+     * <p>
      * Synonym for {@link #isNotNull(Class) isNotNull}.
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
      *
      * @return <code>null</code>
      */
@@ -865,7 +894,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
+     * <p>
      * Matches a parameter whose {@link String} representation matches the given regular expression pattern.
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
      *
      * @param clazz   Type of the object to be matched
      * @param pattern Regular expression to match against object's string representation
@@ -885,7 +920,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
+     * <p>
      * Matches a parameter whose {@link String} representation matches the given {@link Pattern}.
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
      *
      * @param clazz   Type of the object to be matched
      * @param pattern Regular expression to match against object's string representation
@@ -1865,7 +1906,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
+     * <p>
      * Matches an object having a JavaBeans-style getter method exposing a property with the given name, which returns the given value (which may be a {@link MoxieMatchers} invocation).
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
      *
      * @param clazz         Type of the object on which to look for the property
      * @param propertyName  Name of the property to match - for example, a property name of "count" implies a getter named <code>getCount()</code>
@@ -2029,7 +2076,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
+     * <p>
      * Matches a non-primitive array of the specified length.  (The length may be a {@link MoxieMatchers} invocation.)
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
      *
      * @param clazz  Constituent type of the array
      * @param size   Desired size of the array (raw value or {@link MoxieMatchers} invocation)
