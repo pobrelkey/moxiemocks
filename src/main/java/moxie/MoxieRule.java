@@ -67,6 +67,9 @@ public class MoxieRule implements MethodRule {
         this.control = control;
     }
 
+    /**
+     * Internal method - called by JUnit.
+     */
     public Statement apply(final Statement statement, FrameworkMethod method, final Object testInstance) {
         return new Statement(){
             @Override

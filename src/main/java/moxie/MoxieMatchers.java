@@ -244,8 +244,8 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    static public <T> T argThat(Matcher<? super T> matcher) {
-        return argThat(null, matcher);
+    static public <T> T argThat(Matcher matcher) {
+        return (T) argThat(null, matcher);
     }
 
     /**

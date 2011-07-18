@@ -7583,7 +7583,7 @@ public class MoxieMatchersTest {
     public void anyVarargs_varargsObjectCall_happyPath1() {
         TestInterface mock = Moxie.mock(TestInterface.class);
         Moxie.expect(mock).will().varargsObjectCall(Moxie.anyVarargs());
-        mock.varargsObjectCall(null);
+        mock.varargsObjectCall((Object) null);
         Moxie.verify(mock);
     }
 
