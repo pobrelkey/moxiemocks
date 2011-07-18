@@ -47,4 +47,15 @@ public class PartiallyMocked {
         return "sixieme(" + arg + ")";
     }
 
+    public String partsDEandF(String arg) {
+        return partD(arg) + " " + partE("_" + arg + "_") + " " + partF("*" + arg + "*");
+    }
+
+    private String partE(String s) {
+        return "EIGHT("+s+")";
+    }
+
+    public final String partF(String s) {
+        return "NINE("+s+")";
+    }
 }
