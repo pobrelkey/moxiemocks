@@ -28,6 +28,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -215,7 +216,7 @@ abstract class MoxieUtils {
     }
 
     @SuppressWarnings("unchecked")
-    static Method guessMethod(Class interceptedClass, String methodName, Class[] paramSignature, Object[] params) {
+    static Method guessMethod(Class interceptedClass, String methodName, boolean isStatic, Class[] paramSignature, Object[] params) {
         if (paramSignature == null) {
             paramSignature = new Class[params.length];
             for (int i = 0; i < params.length; i++) {
@@ -226,7 +227,7 @@ abstract class MoxieUtils {
             Method likelyMatch = null;
 methods:
             for (Method m : clazz.getDeclaredMethods()) {
-                if (!m.getName().equals(methodName)) {
+                if (!m.getName().equals(methodName) || Modifier.isStatic(m.getModifiers()) != isStatic) {
                     continue;
                 }
                 Class[] mSignature = m.getParameterTypes();

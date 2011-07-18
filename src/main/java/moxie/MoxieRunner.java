@@ -47,6 +47,9 @@ public class MoxieRunner extends BlockJUnit4ClassRunner {
         super(testClass);
     }
 
+    /**
+     * Internal JUnit method - overridden to add a {@link MoxieRule} to all tests.
+     */
     @Override
     protected List<MethodRule> rules(Object test) {
         ArrayList<MethodRule> result = new ArrayList<MethodRule>(super.rules(test));

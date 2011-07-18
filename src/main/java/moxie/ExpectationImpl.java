@@ -28,6 +28,7 @@ import org.hamcrest.SelfDescribing;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -175,6 +176,10 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
         if (this.method != null) {
             throw new IllegalStateException("method to match already specified");
         }
+        if (Modifier.isPrivate(method.getModifiers()) || Modifier.isFinal(method.getModifiers())) {
+
+            CGLIBProxyFactory.zombify(method);
+        }
 
         if (handler instanceof ReturnHandler) {
             Class returnType = MoxieUtils.toNonPrimitive(method.getReturnType());
@@ -212,7 +217,7 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
     }
 
     public void on(String methodName, Object... params) {
-        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, null, params), params);
+        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, false, (Class[]) null, params), params);
     }
 
     public void when(String methodName, Object... params) {
@@ -224,7 +229,7 @@ class ExpectationImpl<T> implements Expectation<T>, SelfDescribing {
     }
 
     public void on(String methodName, Class[] paramSignature, Object... params) {
-        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, paramSignature, params), params);
+        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, false, paramSignature, params), params);
     }
 
     public void when(String methodName, Class[] paramSignature, Object... params) {
