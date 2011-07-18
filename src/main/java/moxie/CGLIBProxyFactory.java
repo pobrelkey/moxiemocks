@@ -28,14 +28,19 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import org.objenesis.ObjenesisStd;
 import org.objenesis.instantiator.ObjectInstantiator;
+import org.powermock.api.support.membermodification.MemberModifier;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Collections;
+import java.util.Map;
 
 class CGLIBProxyFactory<T> extends ProxyFactory<T> {
 
     static private boolean haveObjenesis = false;
+    static private boolean havePowermock = false;
     private static ObjenesisStd objenesis;
     static {
         try {
@@ -44,7 +49,15 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
         } catch (NoClassDefFoundError e) {
             // oh well, no objenesis then.
         }
+        try {
+            new MemberModifier();
+            havePowermock = true;
+        } catch (NoClassDefFoundError e) {
+            // oh well, no powermock then.
+        }
     }
+
+    private static Map<Object, MethodIntercept> proxyIntercepts = Collections.synchronizedMap(new WeakIdentityMap<Object, MethodIntercept>());
 
     private static class TrivialSubclassOfObjectToWorkAroundCGLIBBug {
         public TrivialSubclassOfObjectToWorkAroundCGLIBBug() {}
@@ -112,6 +125,33 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
             factory.setCallback(i, methodInterceptor);
         }
 
+        proxyIntercepts.put(result, methodIntercept);
         return result;
     }
+
+    static InvocationHandler POWERMOCK_INVOCATION_HANDLER = new InvocationHandler() {
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            if (Modifier.isStatic(method.getModifiers())) {
+                proxy = method.getDeclaringClass();
+            }
+            MethodIntercept methodIntercept = proxyIntercepts.get(proxy);
+            if (methodIntercept == null) {
+                throw new MoxieZombieMethodInvocationError();
+            }
+            MethodIntercept.SuperInvoker superInvoker = new MethodIntercept.SuperInvoker() {
+                public Object invokeSuper(Object[] args) throws Throwable {
+                    throw new MoxieZombieMethodInvocationError();
+                }
+            };
+            return methodIntercept.intercept(proxy, method, args, superInvoker);
+        }
+    };
+
+    private static class MoxieZombieMethodInvocationError extends Error { }
+
+
+    public static void zombify(Method method) {
+        org.powermock.api.support.membermodification.MemberModifier.replace(method).with(POWERMOCK_INVOCATION_HANDLER);
+    }
+
 }

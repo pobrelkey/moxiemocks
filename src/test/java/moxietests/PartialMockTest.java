@@ -27,7 +27,6 @@ import moxie.MoxieMatchers;
 import moxie.MoxieOptions;
 import moxie.MoxieRule;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -135,13 +134,5 @@ public class PartialMockTest {
         Moxie.check(mock).when("partC", new Class[]{String.class}, "<baz>");
         Moxie.check(mock).get("partD", new Class[]{String.class}, Moxie.not(Moxie.eq("chuck")));
         Moxie.checkNothingElseHappened(mock);
-    }
-
-    @Test
-    @Ignore("PowerMock integration not ready yet")
-    public void powerMock_happyPath() {
-        PartiallyMocked mock = Moxie.mock(PartiallyMocked.class, MoxieOptions.PARTIAL, MoxieOptions.PERMISSIVE);
-        Moxie.expect(mock).andReturn("orange").on("partF", MoxieMatchers.hasSubstring("x"));
-        Assert.assertEquals("sixieme(xxx) EIGHT(_xxx_) orange", mock.partsDEandF("xxx"));
     }
 }

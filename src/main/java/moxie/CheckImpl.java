@@ -161,7 +161,7 @@ class CheckImpl<T> implements Check<T> {
     }
 
     public void on(String methodName, Object... params) {
-        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, null, params), params);
+        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, false, null, params), params);
     }
 
     public void when(String methodName, Object... params) {
@@ -177,7 +177,7 @@ class CheckImpl<T> implements Check<T> {
     }
 
     public void on(String methodName, Class[] paramSignature, Object... params) {
-        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, paramSignature, params), params);
+        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, false, paramSignature, params), params);
     }
 
     public void when(String methodName, Class[] paramSignature, Object... params) {
