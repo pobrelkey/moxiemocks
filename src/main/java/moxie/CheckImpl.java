@@ -27,75 +27,43 @@ import org.hamcrest.Matcher;
 import java.lang.reflect.Method;
 import java.util.List;
 
-class CheckImpl<T> implements Check<T> {
+abstract class CheckImpl<C extends CheckImpl<C,I>, I extends Interception> {
 
-    private final Interception<T> interception;
+    protected final I interception;
     private final List<Invocation> invocations;
     private boolean negated = false;
     private boolean unexpectedly = false;
-    private Matcher resultMatcher;
-    private Matcher throwableMatcher;
     private CardinalityImpl cardinality = new CardinalityImpl<CardinalityImpl>().once();
     private boolean defaultCardinality = true;
     private List<GroupImpl> groups;
+    protected Matcher resultMatcher;
+    protected Matcher throwableMatcher;
 
-    CheckImpl(Interception<T> interception, List<Invocation> invocations) {
+
+    CheckImpl(I interception, List<Invocation> invocations) {
         this.interception = interception;
         this.invocations = invocations;
     }
 
-    public Check<T> didNot() {
+    @SuppressWarnings("unchecked")
+    public C didNot() {
         if (negated) {
             throw new IllegalStateException("no double negatives!");
         }
         negated = true;
-        return this;
+        return (C) this;
     }
 
-    public Check<T> unexpectedly() {
+    @SuppressWarnings("unchecked")
+    public C unexpectedly() {
         if (unexpectedly) {
             throw new IllegalStateException("you already called unexpectedly()!");
         }
         unexpectedly = true;
-        return this;
+        return (C) this;
     }
 
-    public Check<T> throwException(Throwable throwable) {
-        Matcher matcher = MatcherSyntax.singleMatcherExpression(Throwable.class, throwable);
-        if (this.throwableMatcher != null) {
-            throw new IllegalStateException("already specified a Throwable for this check");
-        }
-        this.throwableMatcher = matcher;
-        return this;
-    }
-
-    public Check<T> threw(Throwable throwable) {
-        return throwException(throwable);
-    }
-
-    public Check<T> returnValue(Object returnValue) {
-        Matcher matcher = MatcherSyntax.singleMatcherExpression(null, returnValue);
-        if (this.resultMatcher != null) {
-            throw new IllegalStateException("cannot specify a return value twice");
-        }
-        this.resultMatcher = matcher;
-        return this;
-    }
-
-    public Check<T> returned(Object returnValue) {
-        return returnValue(returnValue);
-    }
-
-    public T on() {
-        return interception.getProxyFactory().createProxy(new MethodIntercept() {
-            public Object intercept(Object proxy, Method method, Object[] params, SuperInvoker superInvoker) throws Throwable {
-                handleInvocation(method, params);
-                return MoxieUtils.defaultValue(method.getReturnType());
-            }
-        }, interception.getConstructorArgTypes(),  interception.getConstructorArgs());
-    }
-
-    private void handleInvocation(Method method, Object[] params) {
+    protected void handleInvocation(Method method, Object[] params) {
         List<Matcher> argMatchers = MatcherSyntax.methodCall(method, params);
         Matcher argsMatcher = MoxieMatchers.isArrayMatcher(argMatchers);
 
@@ -148,18 +116,6 @@ class CheckImpl<T> implements Check<T> {
         }
     }
 
-    public T when() {
-        return on();
-    }
-
-    public T get() {
-        return on();
-    }
-
-    public T got() {
-        return on();
-    }
-
     public void on(String methodName, Object... params) {
         handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, false, null, params), params);
     }
@@ -192,7 +148,8 @@ class CheckImpl<T> implements Check<T> {
         on(methodName, paramSignature, params);
     }
 
-    public Check<T> inGroup(Group... groups) {
+    @SuppressWarnings("unchecked")
+    public C inGroup(Group... groups) {
         if (this.groups != null) {
             throw new IllegalStateException("group(s) already specified for this check");
         }
@@ -202,53 +159,54 @@ class CheckImpl<T> implements Check<T> {
             }
         }
         this.groups = MoxieUtils.listFromArray(groups);
-        return this;
+        return (C) this;
     }
 
-    private CardinalityImpl<CheckImpl<T>> newCardinality() {
+    private CardinalityImpl<C> newCardinality() {
         if (!defaultCardinality) {
             throw new IllegalStateException("already specified number of times");
         }
         defaultCardinality = false;
-        CardinalityImpl<CheckImpl<T>> result = new CardinalityImpl<CheckImpl<T>>(this);
+        @SuppressWarnings("unchecked")
+        CardinalityImpl<C> result = new CardinalityImpl<C>((C) this);
         cardinality = result;
         return result;
     }
 
 
-    public Check<T> never() {
+    public C never() {
         return newCardinality().never();
     }
 
-    public Check<T> once() {
+    public C once() {
         return newCardinality().once();
     }
 
-    public Check<T> atLeastOnce() {
+    public C atLeastOnce() {
         return newCardinality().atLeastOnce();
     }
 
-    public Check<T> atMostOnce() {
+    public C atMostOnce() {
         return newCardinality().atMostOnce();
     }
 
-    public Check<T> anyTimes() {
+    public C anyTimes() {
         return newCardinality().anyTimes();
     }
 
-    public Check<T> times(int times) {
+    public C times(int times) {
         return newCardinality().times(times);
     }
 
-    public Check<T> times(int minTimes, int maxTimes) {
+    public C times(int minTimes, int maxTimes) {
         return newCardinality().times(minTimes, maxTimes);
     }
 
-    public Check<T> atLeast(int times) {
+    public C atLeast(int times) {
         return newCardinality().atLeast(times);
     }
 
-    public Check<T> atMost(int times) {
+    public C atMost(int times) {
         return newCardinality().atMost(times);
     }
 

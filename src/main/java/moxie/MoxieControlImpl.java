@@ -112,16 +112,30 @@ class MoxieControlImpl implements MoxieControl {
         return group;
     }
 
-    public <T> Expectation<T> expect(T mockObject) {
-        return getInterceptionFromProxy(mockObject).expect();
+    public <T> ObjectExpectation<T> expect(T mockObject) {
+        // TODO
+        return ((ObjectInterception<T>) getInterceptionFromProxy(mockObject)).expect();
     }
 
-    public <T> Expectation<T> stub(T mockObject) {
+    public ClassExpectation expect(Class clazz) {
+        throw new UnsupportedOperationException("WRITE ME");
+    }
+
+    public <T> ObjectExpectation<T> stub(T mockObject) {
         return expect(mockObject).anyTimes().atAnyTime();
     }
 
-    public <T> Check<T> check(T mockObject) {
-        return getInterceptionFromProxy(mockObject).check();
+    public ClassExpectation stub(Class clazz) {
+        return expect(clazz).anyTimes().atAnyTime();
+    }
+
+    public <T> ObjectCheck<T> check(T mockObject) {
+        // TODO
+        return ((ObjectInterception<T>) getInterceptionFromProxy(mockObject)).check();
+    }
+
+    public ClassCheck check(Class clazz) {
+        throw new UnsupportedOperationException("WRITE ME");
     }
 
     public void checkNothingElseHappened(Object... mockObjects) {

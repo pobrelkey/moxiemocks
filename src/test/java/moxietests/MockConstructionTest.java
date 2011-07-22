@@ -23,9 +23,15 @@
 package moxietests;
 
 import moxie.Moxie;
+import moxie.MoxieRule;
+import org.junit.Rule;
 import org.junit.Test;
 
-public class ObjenesisTest {
+import java.util.List;
+
+@SuppressWarnings("unchecked")
+public class MockConstructionTest {
+
     public static class ProblematicNoArgConstructorClass {
         public ProblematicNoArgConstructorClass() {
             throw new Error("Constructor throws mad crazy errors!  You need Objenesis to construct me!");
@@ -53,6 +59,18 @@ public class ObjenesisTest {
             throw new UnsupportedOperationException("this code shouldn't be reached");
         }
     }
+    public static class HasConstructorWithSideEffects {
+        public HasConstructorWithSideEffects(String a, List<String> b) {
+            b.add(a);
+        }
+        public void someMethod() {
+        }
+        public void someOtherMethod() {
+        }
+    }
+
+    @Rule
+    public MoxieRule moxie = new MoxieRule();
 
     @Test
     public void problematicNoArgConstructor() {
@@ -75,4 +93,13 @@ public class ObjenesisTest {
         mock.hello("Andrew");
     }
 
+    // TODO: several more copies of this method to exercise all the variant signatures of mock()
+    @Test
+    public void mockInstantiationCallingConcreteConstructor() {
+        List<String> list = Moxie.mock(List.class);
+        Moxie.expect(list).on().add("blah");
+        HasConstructorWithSideEffects mock = Moxie.mock(HasConstructorWithSideEffects.class, new Class[]{String.class, List.class}, new Object[]{"blah", list});
+        Moxie.expect(mock).on().someMethod();
+        mock.someMethod();
+    }
 }

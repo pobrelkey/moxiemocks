@@ -23,26 +23,14 @@
 package moxie;
 
 import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.SelfDescribing;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interception> implements SelfDescribing {
-
-    protected final I interception;
-
-    @SuppressWarnings("unchecked")
-    private CardinalityImpl<E> cardinality = new CardinalityImpl<CardinalityImpl>().once();
+class ClassExpectationImpl extends ExpectationImpl<ClassExpectationImpl, ClassInterception> implements ClassExpectation {
+    protected ClassExpectationImpl(ClassInterception interception) {
+        super(interception);
+    }
+/*
+    private final Interception<T> interception;
+    private CardinalityImpl cardinality = new CardinalityImpl<CardinalityImpl>().once();
 
     private Set<GroupImpl> groups = null;
     private MethodIntercept handler = null;
@@ -50,96 +38,91 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
     private List<Matcher> argMatchers = new ArrayList<Matcher>();
     private boolean defaultCardinality = true;
     private boolean unordered = false;
-    protected Matcher returnValueMatcher;
-    protected Matcher exceptionMatcher;
+    private Matcher returnValueMatcher;
+    private Matcher exceptionMatcher;
 
-    @SuppressWarnings("unchecked")
-    protected ExpectationImpl(I interception) {
+    ClassExpectationImpl(Interception<T> interception) {
         this.interception = interception;
-        cardinality = new CardinalityImpl<E>((E) this);
+        cardinality = new CardinalityImpl<Expectation<T>>(this);
         cardinality.atLeastOnce();
     }
 
-    private CardinalityImpl<E> newCardinality() {
+    private CardinalityImpl<Expectation<T>> newCardinality() {
         if (!defaultCardinality) {
             throw new IllegalStateException("already specified number of times");
         }
         defaultCardinality = false;
-        @SuppressWarnings("unchecked")
-        CardinalityImpl<E> result = new CardinalityImpl<E>((E) this);
+        CardinalityImpl<Expectation<T>> result = new CardinalityImpl<Expectation<T>>(this);
         cardinality = result;
         return result;
     }
 
-    public E times(int minTimes, int maxTimes) {
+    public Expectation<T> times(int minTimes, int maxTimes) {
         return newCardinality().times(minTimes, maxTimes);
     }
 
-    public E times(int times) {
+    public Expectation<T> times(int times) {
         return newCardinality().times(times);
     }
 
-    public E once() {
+    public Expectation<T> once() {
         return newCardinality().once();
     }
 
-    public E never() {
+    public Expectation<T> never() {
         return newCardinality().never();
     }
 
-    public E atMostOnce() {
+    public Expectation<T> atMostOnce() {
         return newCardinality().atMostOnce();
     }
 
-    public E atMost(int times) {
+    public Expectation<T> atMost(int times) {
         return newCardinality().atMost(times);
     }
 
-    public E atLeastOnce() {
+    public Expectation<T> atLeastOnce() {
         return newCardinality().atLeastOnce();
     }
 
-    public E atLeast(int times) {
+    public Expectation<T> atLeast(int times) {
         return newCardinality().atLeast(times);
     }
 
-    public E anyTimes() {
+    public Expectation<T> anyTimes() {
         return newCardinality().anyTimes();
     }
 
-    @SuppressWarnings("unchecked")
-    public E inGroup(Group... groups) {
+    public Expectation<T> inGroup(Group... groups) {
         if (this.groups == null) {
             this.groups = new HashSet<GroupImpl>();
         }
         for (Group group : groups) {
             GroupImpl groupImpl = (GroupImpl) group;
             this.groups.add(groupImpl);
-            groupImpl.add((E) this);
+            groupImpl.add(this);
         }
-        return (E) this;
+        return this;
     }
 
-    @SuppressWarnings("unchecked")
-    public E atAnyTime() {
+    public Expectation<T> atAnyTime() {
         this.unordered = true;
-        return (E) this;
+        return this;
     }
 
-    public E willReturn(Object result) {
+    public Expectation<T> willReturn(Object result) {
         return doWillHandleWith(new ReturnHandler(result));
     }
 
-    public E willThrow(Throwable throwable) {
+    public Expectation<T> willThrow(Throwable throwable) {
         return doWillHandleWith(new ThrowHandler(throwable));
     }
 
-    public E willDelegateTo(Object delegate) {
+    public Expectation<T> willDelegateTo(T delegate) {
         return doWillHandleWith(new DelegateHandler(delegate));
     }
 
-    @SuppressWarnings("unchecked")
-    protected E doWillHandleWith(MethodIntercept handler) {
+    private Expectation<T> doWillHandleWith(MethodIntercept handler) {
         if (this.handler instanceof ConsecutiveHandler) {
             ((ConsecutiveHandler) this.handler).add(handler);
         } else if (this.handler != null) {
@@ -147,10 +130,10 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         } else {
             this.handler = handler;
         }
-        return (E) this;
+        return this;
     }
 
-    public E willHandleWith(final InvocationHandler handler) {
+    public Expectation<T> willHandleWith(final InvocationHandler handler) {
         return doWillHandleWith(new MethodIntercept() {
             public Object intercept(Object proxy, Method method, Object[] args, SuperInvoker superInvoker) throws Throwable {
                 return handler.invoke(proxy, method, args);
@@ -158,7 +141,7 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         });
     }
 
-    protected void checkMethodAndCardinality() {
+    public T on() {
         if (this.method != null) {
             throw new IllegalStateException("method to match already specified");
         }
@@ -171,13 +154,20 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
                 throw new IllegalStateException("more consecutive-call handlers ("+consecutiveHandler.size()+") defined than can handle maximum number of calls (" + this.cardinality.getMaxTimes() + ")");
             }
         }
+        return interception.getProxyFactory().createProxy(new MethodIntercept() {
+            public Object intercept(Object proxy, Method method, Object[] params, SuperInvoker superInvoker) throws Throwable {
+                handleInvocation(method, params);
+                return MoxieUtils.defaultValue(method.getReturnType());
+            }
+        }, interception.getConstructorArgTypes(), interception.getConstructorArgs());
     }
 
-    protected void handleInvocation(Method method, Object[] params) {
+    private void handleInvocation(Method method, Object[] params) {
         if (this.method != null) {
             throw new IllegalStateException("method to match already specified");
         }
         if (Modifier.isPrivate(method.getModifiers()) || Modifier.isFinal(method.getModifiers())) {
+
             CGLIBProxyFactory.zombify(method);
         }
 
@@ -212,12 +202,13 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         interception.addExpectation(this);
     }
 
-    public void on(String methodName, Object... params) {
-        checkMethodAndCardinality();
-        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, isStatic(), (Class[]) null, params), params);
+    public T will() {
+        return on();
     }
 
-    abstract protected boolean isStatic();
+    public void on(String methodName, Object... params) {
+        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, false, (Class[]) null, params), params);
+    }
 
     public void when(String methodName, Object... params) {
         on(methodName, params);
@@ -228,8 +219,7 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
     }
 
     public void on(String methodName, Class[] paramSignature, Object... params) {
-        checkMethodAndCardinality();
-        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, isStatic(), paramSignature, params), params);
+        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, false, paramSignature, params), params);
     }
 
     public void when(String methodName, Class[] paramSignature, Object... params) {
@@ -240,52 +230,88 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         on(methodName, paramSignature, params);
     }
 
-    public E andReturn(Object result) {
+    public T when() {
+        return on();
+    }
+
+    public Expectation<T> andReturn(Object result) {
         return willReturn(result);
     }
 
-    public E willConsecutivelyReturn(Object... results) {
+    public Expectation<T> willConsecutivelyReturn(Object... results) {
         return willConsecutivelyReturn(Arrays.asList(results));
     }
 
-    public E andConsecutivelyReturn(Object... results) {
+    public Expectation<T> andConsecutivelyReturn(Object... results) {
         return willConsecutivelyReturn(results);
     }
 
-    @SuppressWarnings("unchecked")
-    public E willConsecutivelyReturn(Iterable results) {
+    public Expectation<T> willConsecutivelyReturn(Iterable results) {
         for (Object result : results) {
             willReturn(result);
         }
-        return (E) this;
+        return this;
     }
 
-    public E andConsecutivelyReturn(Iterable results) {
+    public Expectation<T> andConsecutivelyReturn(Iterable results) {
         return willConsecutivelyReturn(results);
     }
 
-    public E andThrow(Throwable throwable) {
+    public Expectation<T> willReturnVerified(Object result) {
+        Matcher matcher = MatcherSyntax.singleMatcherExpression(null, result);
+        if (!(interception instanceof SpyImpl)) {
+            throw new IllegalStateException("this method is only for expectations on spy objects");
+        }
+        returnValueMatcher = matcher;
+        return this;
+    }
+
+    public Expectation<T> andVerifyReturn(Object result) {
+        return willReturnVerified(result);
+    }
+
+    public Expectation<T> andThrow(Throwable throwable) {
         return willThrow(throwable);
     }
 
-    @SuppressWarnings("unchecked")
-    public E willConsecutivelyThrow(Throwable... throwables) {
+    public Expectation<T> willConsecutivelyThrow(Throwable... throwables) {
         for (Throwable throwable : throwables) {
             willThrow(throwable);
         }
-        return (E) this;
+        return this;
     }
 
-    public E andConsecutivelyThrow(Throwable... throwables) {
+    public Expectation<T> andConsecutivelyThrow(Throwable... throwables) {
         return willConsecutivelyThrow(throwables);
     }
 
-    public E andDelegateTo(Object delegate) {
+    public Expectation<T> willThrowVerified(Throwable throwable) {
+        Matcher matcher = MatcherSyntax.singleMatcherExpression(Throwable.class, throwable);
+        if (!(interception instanceof SpyImpl)) {
+            throw new IllegalStateException("this method is only for expectations on spy objects");
+        }
+        exceptionMatcher = matcher;
+        return this;
+    }
+
+    public Expectation<T> andVerifyThrow(Throwable throwable) {
+        return willThrowVerified(throwable);
+    }
+
+    public Expectation<T> andDelegateTo(T delegate) {
         return willDelegateTo(delegate);
     }
 
-    public E andHandleWith(InvocationHandler handler) {
+    public Expectation<T> andHandleWith(InvocationHandler handler) {
         return willHandleWith(handler);
+    }
+
+    public Expectation<T> andCallOriginal() {
+        return willCallOriginal();
+    }
+
+    public Expectation<T> willCallOriginal() {
+        return doWillHandleWith(new OriginalHandler());
     }
 
     boolean match(Method method, Object[] args, MethodBehavior behavior, GroupImpl group) {
@@ -328,7 +354,6 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         return handler;
     }
 
-    @SuppressWarnings("unchecked")
     Set<GroupImpl> getGroups() {
         return (groups != null) ? groups : Collections.EMPTY_SET;
     }
@@ -437,7 +462,7 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         }
     }
 
-    protected static class ConsecutiveHandler implements MethodIntercept, SelfDescribing {
+    static private class ConsecutiveHandler implements MethodIntercept, SelfDescribing {
         private final List<MethodIntercept> handlers = new ArrayList<MethodIntercept>();
         private Iterator<MethodIntercept> iterator = null;
 
@@ -479,6 +504,46 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         public int size() {
             return handlers.size();
         }
+    }
+
+    static private class OriginalHandler implements MethodIntercept, SelfDescribing {
+        public Object intercept(Object mockObject, Method method, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
+            return superInvoker.invokeSuper(parameters);
+        }
+
+        public void describeTo(Description description) {
+            description.appendText("call original method implementation");
+        }
+    }
+*/
+
+    public void onNew(Object... params) {
+        throw new UnsupportedOperationException("WRITE ME");
+    }
+
+    public void whenNew(Object... params) {
+        onNew(params);
+    }
+
+    public void willNew(Object... params) {
+        onNew(params);
+    }
+
+    public void onNew(Class[] paramSignature, Object... params) {
+        throw new UnsupportedOperationException("WRITE ME");
+    }
+
+    public void whenNew(Class[] paramSignature, Object... params) {
+        onNew(paramSignature, params);
+    }
+
+    public void willNew(Class[] paramSignature, Object... params) {
+        onNew(paramSignature, params);
+    }
+
+    @Override
+    protected boolean isStatic() {
+        return true;
     }
 
 }

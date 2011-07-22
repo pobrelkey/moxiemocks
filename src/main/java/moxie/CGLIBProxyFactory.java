@@ -29,7 +29,10 @@ import net.sf.cglib.proxy.MethodProxy;
 import org.objenesis.ObjenesisStd;
 import org.objenesis.instantiator.ObjectInstantiator;
 import org.powermock.api.support.membermodification.MemberModifier;
+import org.powermock.core.MockRepository;
+import org.powermock.core.spi.NewInvocationControl;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -129,28 +132,76 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
         return result;
     }
 
-    static InvocationHandler POWERMOCK_INVOCATION_HANDLER = new InvocationHandler() {
+    private static final InvocationHandler POWERMOCK_INVOCATION_HANDLER = new InvocationHandler() {
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             if (Modifier.isStatic(method.getModifiers())) {
                 proxy = method.getDeclaringClass();
             }
             MethodIntercept methodIntercept = proxyIntercepts.get(proxy);
             if (methodIntercept == null) {
-                throw new MoxieZombieMethodInvocationError();
+                throw new MoxieZombieMethodInvocationError("cannot partially mock a static or final method");
             }
-            MethodIntercept.SuperInvoker superInvoker = new MethodIntercept.SuperInvoker() {
-                public Object invokeSuper(Object[] args) throws Throwable {
-                    throw new MoxieZombieMethodInvocationError();
-                }
-            };
-            return methodIntercept.intercept(proxy, method, args, superInvoker);
+            return methodIntercept.intercept(proxy, method, args, ZOMBIE_METHOD_SUPER_INVOKER);
         }
     };
 
-    private static class MoxieZombieMethodInvocationError extends Error { }
+    private static final MethodIntercept.SuperInvoker ZOMBIE_METHOD_SUPER_INVOKER = new ZombieSuperInvoker("cannot partially mock a static or final method");
+    private static final MethodIntercept.SuperInvoker ZOMBIE_CONSTRUCTOR_SUPER_INVOKER = new ZombieSuperInvoker("cannot partially mock a constructor");
+
+    private static class ZombieSuperInvoker implements MethodIntercept.SuperInvoker {
+        private final String errorMessage;
+
+        public ZombieSuperInvoker(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
+
+        public Object invokeSuper(Object[] args) throws Throwable {
+            throw new MoxieZombieMethodInvocationError(errorMessage);
+        }
+    }
+
+    private static final NewInvocationControl POWERMOCK_CONSTRUCTOR_HANDLER = new NewInvocationControl() {
+        public Object invoke(Class type, Object[] args, Class[] sig) throws Exception {
+            try {
+                return proxyIntercepts.get(type).intercept(type, null, args, ZOMBIE_CONSTRUCTOR_SUPER_INVOKER);
+            } catch (Exception e) {
+                throw e;
+            } catch (Error e) {
+                throw e;
+            } catch (Throwable e) {
+                throw new MoxieUnexpectedError(e);
+            }
+        }
+
+        public Object expectSubstitutionLogic(Object... arguments) throws Exception {
+            throw new UnsupportedOperationException();
+        }
+
+        public Object replay(Object... mocks) {
+            throw new UnsupportedOperationException();
+        }
+
+        public Object verify(Object... mocks) {
+            throw new UnsupportedOperationException();
+        }
+
+        public Object reset(Object... mocks) {
+            throw new UnsupportedOperationException();
+        }
+    };
 
 
-    public static void zombify(Method method) {
+    static void zombify(Constructor constructor) {
+        if (!havePowermock) {
+            throw new UnsupportedOperationException("add powermock-api-support to the classpath to enable mocking of constructors");
+        }
+        MockRepository.putNewInstanceControl(constructor.getDeclaringClass(), POWERMOCK_CONSTRUCTOR_HANDLER);
+    }
+
+    static void zombify(Method method) {
+        if (!havePowermock) {
+            throw new UnsupportedOperationException("add powermock-api-support to the classpath to enable mocking of static/final methods");
+        }
         org.powermock.api.support.membermodification.MemberModifier.replace(method).with(POWERMOCK_INVOCATION_HANDLER);
     }
 

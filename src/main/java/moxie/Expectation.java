@@ -154,10 +154,8 @@ import java.lang.reflect.InvocationHandler;
  * </p></dd>
  * </dl>
  * <p/>
- *
- * @param <T> Type of the mock object for which expectations are being set.
  */
-public interface Expectation<T> extends Cardinality<Expectation<T>> {
+public interface Expectation<E extends Expectation<E>> extends Cardinality<E> {
 
     /**
      * Specifies that this expectation should comprise part of the given group(s).
@@ -165,7 +163,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @param groups one or more {@link Group}s created by {@link MoxieControl#group(MoxieOptions...) MoxieControl.group()}
      * @return this object, for call chaining
      */
-    Expectation<T> inGroup(Group... groups);
+    E inGroup(Group... groups);
 
     /**
      * <p>
@@ -178,7 +176,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      *
      * @return this object, for call chaining
      */
-    Expectation<T> atAnyTime();
+    E atAnyTime();
 
     /**
      * <p>
@@ -192,7 +190,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @param result the value to be returned
      * @return this object, for call chaining
      */
-    Expectation<T> willReturn(Object result);
+    E willReturn(Object result);
 
     /**
      * <p>
@@ -206,7 +204,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @param result the value to be returned
      * @return this object, for call chaining
      */
-    Expectation<T> andReturn(Object result);
+    E andReturn(Object result);
 
     /**
      * <p>
@@ -220,7 +218,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @param results the values to be returned
      * @return this object, for call chaining
      */
-    Expectation<T> willConsecutivelyReturn(Object... results);
+    E willConsecutivelyReturn(Object... results);
 
     /**
      * <p>
@@ -234,7 +232,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @param results the values to be returned
      * @return this object, for call chaining
      */
-    Expectation<T> andConsecutivelyReturn(Object... results);
+    E andConsecutivelyReturn(Object... results);
 
     /**
      * <p>
@@ -248,7 +246,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @param results the values to be returned
      * @return this object, for call chaining
      */
-    Expectation<T> willConsecutivelyReturn(Iterable results);
+    E willConsecutivelyReturn(Iterable results);
 
     /**
      * <p>
@@ -262,49 +260,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @param results the values to be returned
      * @return this object, for call chaining
      */
-    Expectation<T> andConsecutivelyReturn(Iterable results);
-    
-    /**
-     * <p>
-     * On a spy object, when a call otherwise fulfilling this expectation is received, delegate to the object being spied upon,
-     * then only fulfill this expectation if the value returned matches the given parameter.
-     * </p>
-     * <p>
-     * Note that you can use the {@link MoxieMatchers matcher methods} to match on the return value.
-     * </p>
-     * <p>
-     * This method only makes sense for spy objects; calling this method on an expectation being set on a mock object raises an error.
-     * </p>
-     * <p>
-     * Note that {@link #willReturnVerified(Object) willReturnVerified()} and {@link #andVerifyReturn(Object) andVerifyReturn()} do exactly the same thing -
-     * use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @param result a value or matcher invocation to be compared with the value returned by the underlying method
-     * @return this object, for call chaining
-     */
-    Expectation<T> willReturnVerified(Object result);
-
-    /**
-     * <p>
-     * On a spy object, when a call otherwise fulfilling this expectation is received, delegate to the object being spied upon,
-     * then only fulfill this expectation if the value returned matches the given parameter.
-     * </p>
-     * <p>
-     * Note that you can use the {@link MoxieMatchers matcher methods} to match on the return value.
-     * </p>
-     * <p>
-     * This method only makes sense for spy objects; calling this method on an expectation being set on a mock object raises an error.
-     * </p>
-     * <p>
-     * Note that {@link #willReturnVerified(Object) willReturnVerified()} and {@link #andVerifyReturn(Object) andVerifyReturn()} do exactly the same thing -
-     * use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @param result a value or matcher invocation to be compared with the value returned by the underlying method
-     * @return this object, for call chaining
-     */
-    Expectation<T> andVerifyReturn(Object result);
+    E andConsecutivelyReturn(Iterable results);
 
     /**
      * <p>
@@ -318,7 +274,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @param throwable the {@link Throwable} to be thrown
      * @return this object, for call chaining
      */
-    Expectation<T> willThrow(Throwable throwable);
+    E willThrow(Throwable throwable);
 
     /**
      * <p>
@@ -332,7 +288,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @param throwable the {@link Throwable} to be thrown
      * @return this object, for call chaining
      */
-    Expectation<T> andThrow(Throwable throwable);
+    E andThrow(Throwable throwable);
 
     /**
      * <p>
@@ -346,7 +302,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @param throwables the {@link Throwable}s to be thrown
      * @return this object, for call chaining
      */
-    Expectation<T> willConsecutivelyThrow(Throwable... throwables);
+    E willConsecutivelyThrow(Throwable... throwables);
 
 
     /**
@@ -361,49 +317,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @param throwables the {@link Throwable}s to be thrown
      * @return this object, for call chaining
      */
-    Expectation<T> andConsecutivelyThrow(Throwable... throwables);
-
-    /**
-     * <p>
-     * On a spy object, when a call otherwise fulfilling this expectation is received, delegate to the object being spied upon,
-     * then only fulfill this expectation if an exception is thrown matching the given parameter.
-     * </p>
-     * <p>
-     * Note that you can use the {@link MoxieMatchers matcher methods} to match on the exception object.
-     * </p>
-     * <p>
-     * This method only makes sense for spy objects; calling this method on an expectation being set on a mock object raises an error.
-     * </p>
-     * <p>
-     * Note that {@link #willThrowVerified(Throwable) willThrowVerified()} and {@link #andVerifyThrow(Throwable) andVerifyThrow()} do exactly the same thing -
-     * use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @param throwable a {@link Throwable} or matcher invocation to be compared with the exception thrown by the underlying method
-     * @return this object, for call chaining
-     */
-    Expectation<T> willThrowVerified(Throwable throwable);
-
-    /**
-     * <p>
-     * On a spy object, when a call otherwise fulfilling this expectation is received, delegate to the object being spied upon,
-     * then only fulfill this expectation if an exception is thrown matching the given parameter.
-     * </p>
-     * <p>
-     * Note that you can use the {@link MoxieMatchers matcher methods} to match on the exception object.
-     * </p>
-     * <p>
-     * This method only makes sense for spy objects; calling this method on an expectation being set on a mock object raises an error.
-     * </p>
-     * <p>
-     * Note that {@link #willThrowVerified(Throwable) willThrowVerified()} and {@link #andVerifyThrow(Throwable) andVerifyThrow()} do exactly the same thing -
-     * use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @param throwable a {@link Throwable} or matcher invocation to be compared with the exception thrown by the underlying method
-     * @return this object, for call chaining
-     */
-    Expectation<T> andVerifyThrow(Throwable throwable);
+    E andConsecutivelyThrow(Throwable... throwables);
 
     /**
      * <p>
@@ -417,7 +331,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @param delegate the object to which the call should be delegated
      * @return this object, for call chaining
      */
-    Expectation<T> willDelegateTo(T delegate);
+    E willDelegateTo(Object delegate);
 
     /**
      * <p>
@@ -431,7 +345,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @param delegate the object to which the call should be delegated
      * @return this object, for call chaining
      */
-    Expectation<T> andDelegateTo(T delegate);
+    E andDelegateTo(Object delegate);
 
     /**
      * <p>
@@ -445,7 +359,7 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @param handler the {@link java.lang.reflect.InvocationHandler} that should handle this call
      * @return this object, for call chaining
      */
-    Expectation<T> willHandleWith(InvocationHandler handler);
+    E willHandleWith(InvocationHandler handler);
 
     /**
      * <p>
@@ -459,192 +373,6 @@ public interface Expectation<T> extends Cardinality<Expectation<T>> {
      * @param handler the {@link java.lang.reflect.InvocationHandler} that should handle this call
      * @return this object, for call chaining
      */
-    Expectation<T> andHandleWith(InvocationHandler handler);
-
-    /**
-     * <p>
-     * When a call fulfilling this expectation is received, pass control to the original implementation
-     * of the method on the concrete class being mocked.
-     * </p>
-     * <p>
-     * This option only makes sense for mocks of concrete classes; specifying it for an interface mock
-     * or a spy will raise an {@link IllegalStateException}.
-     * </p>
-     * <p>
-     * Note that {@link #willCallOriginal()} and {@link #andCallOriginal()} do exactly the same thing -
-     * use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @return this object, for call chaining
-     */
-    Expectation<T> willCallOriginal();
-
-    /**
-     * <p>
-     * When a call fulfilling this expectation is received, pass control to the original implementation
-     * of the method on the concrete class being mocked.
-     * </p>
-     * <p>
-     * This option only makes sense for mocks of concrete classes; specifying it for an interface mock
-     * or a spy will raise an {@link IllegalStateException}.
-     * </p>
-     * <p>
-     * Note that {@link #willCallOriginal()} and {@link #andCallOriginal()} do exactly the same thing -
-     * use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @return this object, for call chaining
-     */
-    Expectation<T> andCallOriginal();
-
-    /**
-     * <p>
-     * The method that this expectation should match follows this call.
-     * </p>
-     * <p>
-     * Note that {@link #on()}, {@link #when()} and {@link #will()} do exactly the same thing -
-     * use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @return a magic proxy object, on which you should call the method to be expected
-     */
-    T on();
-
-    /**
-     * <p>
-     * The method that this expectation should match follows this call.
-     * </p>
-     * <p>
-     * Note that {@link #on()}, {@link #when()} and {@link #will()} do exactly the same thing -
-     * use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @return a magic proxy object, on which you should call the method to be expected
-     */
-    T when();
-
-    /**
-     * <p>
-     * The method that this expectation should match follows this call.
-     * </p>
-     * <p>
-     * Note that {@link #on()}, {@link #when()} and {@link #will()} do exactly the same thing -
-     * use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @return a magic proxy object, on which you should call the method to be expected
-     */
-    T will();
-
-    /**
-     * <p>
-     * Reflectively specify the method on which this expectation is to be set.
-     * </p>
-     * <p>
-     * Use this method to set expectations on protected or package-private methods which cannot be specified using the
-     * no-parameters version of this method because they are inaccessible from your test class.
-     * </p>
-     * <p>
-     * Note that {@link #on(String, Object...) on()}, {@link #when(String, Object...) when()} and {@link #will(String, Object...) will()}
-     * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @param methodName  The name of the method on which to set the expectation
-     * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
-     */
-    void on(String methodName, Object... params);
-
-    /**
-     * <p>
-     * Reflectively specify the method on which this expectation is to be set.
-     * </p>
-     * <p>
-     * Use this method to set expectations on protected or package-private methods which cannot be specified using the
-     * no-parameters version of this method because they are inaccessible from your test class.
-     * </p>
-     * <p>
-     * Note that {@link #on(String, Object...) on()}, {@link #when(String, Object...) when()} and {@link #will(String, Object...) will()}
-     * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @param methodName  The name of the method on which to set the expectation
-     * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
-     */
-    void when(String methodName, Object... params);
-
-    /**
-     * <p>
-     * Reflectively specify the method on which this expectation is to be set.
-     * </p>
-     * <p>
-     * Use this method to set expectations on protected or package-private methods which cannot be specified using the
-     * no-parameters version of this method because they are inaccessible from your test class.
-     * </p>
-     * <p>
-     * Note that {@link #on(String, Object...) on()}, {@link #when(String, Object...) when()} and {@link #will(String, Object...) will()}
-     * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @param methodName  The name of the method on which to set the expectation
-     * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
-     */
-    void will(String methodName, Object... params);
-
-    /**
-     * <p>
-     * Reflectively specify the method on which this expectation is to be set.
-     * </p>
-     * <p>
-     * Use this method to set expectations on protected or package-private methods which cannot be specified using the
-     * no-parameters version of this method because they are inaccessible from your test class.
-     * </p>
-     * <p>
-     * Note that {@link #on(String, Class[], Object...) on()}, {@link #when(String, Class[], Object...) when()} and {@link #will(String, Class[], Object...) will()}
-     * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @param methodName      The name of the method on which to set the expectation
-     * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
-     * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
-     */
-    void on(String methodName, Class[] paramSignature, Object... params);
-
-    /**
-     * <p>
-     * Reflectively specify the method on which this expectation is to be set.
-     * </p>
-     * <p>
-     * Use this method to set expectations on protected or package-private methods which cannot be specified using the
-     * no-parameters version of this method because they are inaccessible from your test class.
-     * </p>
-     * <p>
-     * Note that {@link #on(String, Class[], Object...) on()}, {@link #when(String, Class[], Object...) when()} and {@link #will(String, Class[], Object...) will()}
-     * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @param methodName      The name of the method on which to set the expectation
-     * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
-     * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
-     */
-    void when(String methodName, Class[] paramSignature, Object... params);
-
-    /**
-     * <p>
-     * Reflectively specify the method on which this expectation is to be set.
-     * </p>
-     * <p>
-     * Use this method to set expectations on protected or package-private methods which cannot be specified using the
-     * no-parameters version of this method because they are inaccessible from your test class.
-     * </p>
-     * <p>
-     * Note that {@link #on(String, Class[], Object...) on()}, {@link #when(String, Class[], Object...) when()} and {@link #will(String, Class[], Object...) will()}
-     * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @param methodName      The name of the method on which to set the expectation
-     * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
-     * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
-     */
-    void will(String methodName, Class[] paramSignature, Object... params);
+    E andHandleWith(InvocationHandler handler);
 
 }

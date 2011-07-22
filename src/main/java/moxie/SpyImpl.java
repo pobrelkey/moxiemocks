@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2011 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-class SpyImpl<T> extends Interception<T> {
+class SpyImpl<T> extends ObjectInterception<T> {
     private final T realObject;
 
     SpyImpl(T realObject, String name, MoxieFlags flags, List<Invocation> invocations) {
@@ -35,31 +35,21 @@ class SpyImpl<T> extends Interception<T> {
     }
 
     protected MethodBehavior defaultBehavior(final Method method, final Object[] args, SuperInvoker superInvoker) {
-        // return an idempotent method invoker
-        return new MethodBehavior() {
-            private Object result;
-            private Throwable thrown;
-            private boolean called = false;
-
-            public Object invoke() throws Throwable {
-                if (!called) {
-                    try {
-                        method.setAccessible(true);
-                        result = method.invoke(realObject, args);
-                    } catch (IllegalAccessException e) {
-                        thrown = new MoxieUnexpectedError("error calling target of spy object", e);
-                    } catch (InvocationTargetException e) {
-                        thrown = e.getTargetException();
-                    } catch (Throwable t) {
-                        thrown = t;
-                    }
-                    called = true;
+        return new IdempotentMethodBehavior() {
+            @Override
+            protected void doInvoke() {
+                try {
+                    method.setAccessible(true);
+                    result = method.invoke(realObject, args);
+                } catch (IllegalAccessException e) {
+                    thrown = new MoxieUnexpectedError("error calling target of spy object", e);
+                } catch (InvocationTargetException e) {
+                    thrown = e.getTargetException();
+                } catch (Throwable t) {
+                    thrown = t;
                 }
-                if (thrown != null) {
-                    throw thrown;
-                }
-                return result;
             }
         };
     }
+
 }
