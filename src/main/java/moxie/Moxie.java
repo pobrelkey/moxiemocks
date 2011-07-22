@@ -317,11 +317,27 @@ public abstract class Moxie extends MoxieMatchers {
      *
      * @param mockObject the mock or spy object on which the expectation is to be set
      * @param <T>        type of the mock or spy object
-     * @return an {@link Expectation} whose methods can be used to give details of what behavior to expect
+     * @return an {@link ObjectExpectation} whose methods can be used to give details of what behavior to expect
      * @see MoxieControl#expect(Object)
      */
-    static public <T> Expectation<T> expect(T mockObject) {
+    static public <T> ObjectExpectation<T> expect(T mockObject) {
         return instance.expect(mockObject);
+    }
+
+    /**
+     * <p>
+     * Domain-specific language method - starts a clause in which an expectation is set on static or constructor methods of a class.
+     * </p>
+     * <p>
+     * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
+     * </p>
+     *
+     * @param clazz the class on which the expectation is to be set
+     * @return a {@link ClassExpectation} whose methods can be used to give details of what behavior to expect
+     * @see MoxieControl#expect(Class)
+     */
+    static public ClassExpectation expect(Class clazz) {
+        return instance.expect(clazz);
     }
 
     /**
@@ -334,11 +350,27 @@ public abstract class Moxie extends MoxieMatchers {
      *
      * @param mockObject the mock or spy object on which the expectation is to be set
      * @param <T>        type of the mock or spy object
-     * @return an {@link Expectation} whose methods can be used to give details of what behavior to expect
+     * @return an {@link ObjectExpectation} whose methods can be used to give details of what behavior to expect
      * @see MoxieControl#stub(Object)
      */
-    static public <T> Expectation<T> stub(T mockObject) {
+    static public <T> ObjectExpectation<T> stub(T mockObject) {
         return instance.stub(mockObject);
+    }
+
+    /**
+     * <p>
+     * Domain-specific language method - starts a clause in which an expectation is set on static or constructor methods of a class.
+     * </p>
+     * <p>
+     * Synonym for <code>expect(clazz).anyTimes().atAnyTime()</code>.
+     * </p>
+     *
+     * @param clazz the class on which the expectation is to be set
+     * @return a {@link ClassExpectation} whose methods can be used to give details of what behavior to expect
+     * @see MoxieControl#stub(Class)
+          */
+    static public ClassExpectation stub(Class clazz) {
+        return instance.stub(clazz);
     }
 
     /**
@@ -351,11 +383,27 @@ public abstract class Moxie extends MoxieMatchers {
      *
      * @param mockObject the mock or spy object on which the check is to be performed
      * @param <T>        type of the mock or spy object
-     * @return a {@link Check} whose methods can be used to give details of what should have occurred
+     * @return an {@link ObjectCheck} whose methods can be used to give details of what should have occurred
      * @see MoxieControl#check(Object)
      */
-    static public <T> Check<T> check(T mockObject) {
+    static public <T> ObjectCheck<T> check(T mockObject) {
         return instance.check(mockObject);
+    }
+
+    /**
+     * <p>
+     * Domain-specific language method - starts a clause in which a check is performed a static method or constructor of a class after use.
+     * </p>
+     * <p>
+     * See the discussion in the summary javadoc for the {@link Check} interface for more details.
+     * </p>
+     *
+     * @param clazz the class on which the check is to be performed
+     * @return a {@link ClassCheck} whose methods can be used to give details of what should have occurred
+     * @see MoxieControl#check(Class)
+     */
+    static public ClassCheck check(Class clazz) {
+        return instance.check(clazz);
     }
 
     /**

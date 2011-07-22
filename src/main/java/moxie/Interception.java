@@ -23,11 +23,12 @@
 package moxie;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-abstract class Interception<T> implements MethodIntercept, Verifiable {
+abstract class Interception implements MethodIntercept, Verifiable {
 
     static class MethodMatcher {
         private final String methodName;
@@ -41,7 +42,7 @@ abstract class Interception<T> implements MethodIntercept, Verifiable {
         }
 
         boolean matches(Method m) {
-            return m != null && methodName.equals(m.getName()) && returnType.equals(m.getReturnType()) && paramTypes.equals(Arrays.asList(m.getParameterTypes()));
+            return m != null && !Modifier.isStatic(m.getModifiers()) && methodName.equals(m.getName()) && returnType.equals(m.getReturnType()) && paramTypes.equals(Arrays.asList(m.getParameterTypes()));
         }
     }
     protected static MethodMatcher TO_STRING = new MethodMatcher("toString", String.class);
@@ -49,22 +50,16 @@ abstract class Interception<T> implements MethodIntercept, Verifiable {
     protected static MethodMatcher HASH_CODE = new MethodMatcher("hashCode", Integer.TYPE);
     protected static MethodMatcher FINALIZE = new MethodMatcher("finalize", Void.TYPE);
 
-    private final Class<T> clazz;
+    protected final Class clazz;
     protected final String name;
-    private final Class[] constructorArgTypes;
-    private final Object[] constructorArgs;
     private final Throwable whereInstantiated;
-    private final List<Invocation> invocations = new ArrayList<Invocation>();
+    protected final List<Invocation> invocations = new ArrayList<Invocation>();
     protected MoxieFlags flags;
     private GroupImpl methods;
-    protected T proxy;
-    private ProxyFactory<T> proxyFactory;
 
-    protected Interception(Class<T> clazz, String name, MoxieFlags flags, InstantiationStackTrace instantiationStackTrace, Class[] constructorArgTypes, Object[] constructorArgs) {
+    protected Interception(Class clazz, String name, MoxieFlags flags, InstantiationStackTrace instantiationStackTrace) {
         this.clazz = clazz;
         this.name = name;
-        this.constructorArgTypes = constructorArgTypes;
-        this.constructorArgs = constructorArgs;
         this.flags = MoxieOptions.MOCK_DEFAULTS;
         this.whereInstantiated = instantiationStackTrace;
         this.methods = new GroupImpl(name, flags);
@@ -76,20 +71,6 @@ abstract class Interception<T> implements MethodIntercept, Verifiable {
             this.flags = flags;
         }
         this.methods.reset(flags);
-    }
-
-    T getProxy() {
-        if (proxy == null) {
-            proxy = getProxyFactory().createProxy(this, constructorArgTypes, constructorArgs);
-        }
-        return proxy;
-    }
-
-    ProxyFactory<T> getProxyFactory() {
-        if (proxyFactory == null) {
-            proxyFactory = ProxyFactory.create(clazz);
-        }
-        return proxyFactory;
     }
 
     public Object intercept(Object unusedProxy, Method method, Object[] args, SuperInvoker superInvoker) throws Throwable {
@@ -134,12 +115,8 @@ abstract class Interception<T> implements MethodIntercept, Verifiable {
 
     abstract protected MethodBehavior defaultBehavior(Method method, Object[] args, SuperInvoker superInvoker);
 
-    Class<T> getInterceptedClass() {
+    Class getInterceptedClass() {
         return clazz;
-    }
-
-    Expectation<T> expect() {
-        return new ExpectationImpl(this);
     }
 
     public void verify() {
@@ -150,10 +127,6 @@ abstract class Interception<T> implements MethodIntercept, Verifiable {
         return whereInstantiated;
     }
 
-    Check<T> check() {
-        return new CheckImpl(this, invocations);
-    }
-
     String getName() {
         return name;
     }
@@ -162,15 +135,8 @@ abstract class Interception<T> implements MethodIntercept, Verifiable {
         return invocations;
     }
 
-    void addExpectation(ExpectationImpl<T> expectation) {
+    void addExpectation(ExpectationImpl expectation) {
         methods.add(expectation);
     }
 
-    Class[] getConstructorArgTypes() {
-        return constructorArgTypes;
-    }
-
-    Object[] getConstructorArgs() {
-        return constructorArgs;
-    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2011 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,45 +25,43 @@ package moxie;
 import java.lang.reflect.Method;
 import java.util.List;
 
-class MockImpl<T> extends Interception<T> {
+class MockImpl<T> extends ObjectInterception<T> {
 
     MockImpl(Class<T> clazz, String name, MoxieFlags flags, List<Invocation> invocations, Class[] constructorArgTypes, Object[] constructorArgs) {
         super(clazz, name, flags, new InstantiationStackTrace("mock object \"" + name + "\" was instantiated here"), constructorArgTypes, constructorArgs);
     }
 
-    protected MethodBehavior defaultBehavior(Method method, final Object[] args, final SuperInvoker superInvoker) {
+    protected MethodBehavior defaultBehavior(Method method, final Object[] args, final MethodIntercept.SuperInvoker superInvoker) {
         if (superInvoker != null && Boolean.TRUE.equals(flags.isPartial())) {
-            return new MethodBehavior() {
-                public Object invoke() throws Throwable {
-                    return superInvoker.invokeSuper(args);
+            return new IdempotentMethodBehavior() {
+                public void doInvoke() {
+                    try {
+                        result = superInvoker.invokeSuper(args);
+                    } catch (Throwable t) {
+                        thrown = t;
+                    }
                 }
             };
         } else if (TO_STRING.matches(method)) {
-            return new MethodBehavior() {
-                public Object invoke() throws Throwable {
-                    return "[mock object \"" + name + "\"]";
-                }
-            };
+            return new ReturnValueMethodBehavior("[mock object \"" + name + "\"]");
         } else if (EQUALS.matches(method)) {
-            return new MethodBehavior() {
-                public Object invoke() throws Throwable {
-                    return args[0] == proxy;
-                }
-            };
+            return new ReturnValueMethodBehavior(args[0] == proxy);
         } else if (HASH_CODE.matches(method)) {
-            return new MethodBehavior() {
-                public Object invoke() throws Throwable {
-                    return System.identityHashCode(proxy);
-                }
-            };
+            return new ReturnValueMethodBehavior(System.identityHashCode(proxy));
         } else {
-            final Object defaultValue = MoxieUtils.defaultValue(method.getReturnType());
-            return new MethodBehavior() {
-                public Object invoke() {
-                    return defaultValue;
-                }
-            };
+            return new ReturnValueMethodBehavior(MoxieUtils.defaultValue(method.getReturnType()));
         }
     }
 
+    private static class ReturnValueMethodBehavior implements MethodBehavior {
+        private final Object toBeReturned;
+
+        public ReturnValueMethodBehavior(Object toBeReturned) {
+            this.toBeReturned = toBeReturned;
+        }
+
+        public Object invoke() {
+            return toBeReturned;
+        }
+    }
 }

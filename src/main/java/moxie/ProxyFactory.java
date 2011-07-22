@@ -58,7 +58,7 @@ abstract class ProxyFactory<T> {
         if (clazz == null || clazz.isInterface()) {
             factory = new JDKProxyFactory<T>(clazz, ancillaryTypes);
         } else if (!haveCglib) {
-            throw new IllegalArgumentException("You must have CGLIB on the classpath to mock concrete classes");
+            throw new UnsupportedOperationException("You must have CGLIB on the classpath to mock concrete classes");
         } else {
             factory = new CGLIBProxyFactory<T>(clazz, ancillaryTypes);
         }

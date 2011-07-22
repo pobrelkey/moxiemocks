@@ -226,9 +226,22 @@ public interface MoxieControl {
      *
      * @param mockObject the mock or spy object on which the expectation is to be set
      * @param <T>        type of the mock or spy object
-     * @return an {@link Expectation} whose methods can be used to give details of what behavior to expect
+     * @return an {@link ObjectExpectation} whose methods can be used to give details of what behavior to expect
      */
-    <T> Expectation<T> expect(T mockObject);
+    <T> ObjectExpectation<T> expect(T mockObject);
+
+    /**
+     * <p>
+     * Domain-specific language method - starts a clause in which an expectation is set on static or constructor methods of a class.
+     * </p>
+     * <p>
+     * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
+     * </p>
+     *
+     * @param clazz the class on which the expectation is to be set
+     * @return a {@link ClassExpectation} whose methods can be used to give details of what behavior to expect
+     */
+    ClassExpectation expect(Class clazz);
 
     /**
      * <p>
@@ -240,9 +253,22 @@ public interface MoxieControl {
      *
      * @param mockObject the mock or spy object on which the expectation is to be set
      * @param <T>        type of the mock or spy object
-     * @return an {@link Expectation} whose methods can be used to give details of what behavior to expect
+     * @return an {@link ObjectExpectation} whose methods can be used to give details of what behavior to expect
      */
-    <T> Expectation<T> stub(T mockObject);
+    <T> ObjectExpectation<T> stub(T mockObject);
+
+    /**
+     * <p>
+     * Domain-specific language method - starts a clause in which an expectation is set on static or constructor methods of a class.
+     * </p>
+     * <p>
+     * Synonym for <code>expect(clazz).anyTimes().atAnyTime()</code>.
+     * </p>
+     *
+     * @param clazz the class on which the expectation is to be set
+     * @return a {@link ClassExpectation} whose methods can be used to give details of what behavior to expect
+     */
+    ClassExpectation stub(Class clazz);
 
     /**
      * <p>
@@ -254,9 +280,22 @@ public interface MoxieControl {
      *
      * @param mockObject the mock or spy object on which the check is to be performed
      * @param <T>        type of the mock or spy object
-     * @return a {@link Check} whose methods can be used to give details of what should have occurred
+     * @return an {@link ObjectCheck} whose methods can be used to give details of what should have occurred
      */
-    <T> Check<T> check(T mockObject);
+    <T> ObjectCheck<T> check(T mockObject);
+
+    /**
+     * <p>
+     * Domain-specific language method - starts a clause in which a check is performed a static method or constructor of a class after use.
+     * </p>
+     * <p>
+     * See the discussion in the summary javadoc for the {@link Check} interface for more details.
+     * </p>
+     *
+     * @param clazz the class on which the check is to be performed
+     * @return a {@link ClassCheck} whose methods can be used to give details of what should have occurred
+     */
+    ClassCheck check(Class clazz);
 
     /**
      * <p>
