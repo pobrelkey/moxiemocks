@@ -38,7 +38,38 @@ class ConstructorAdapter implements InvocableAdapter {
         return constructor.isVarArgs();
     }
 
+    public void zombify() {
+        CGLIBProxyFactory.zombify(constructor);
+    }
+
+    public Class getReturnType() {
+        return constructor.getDeclaringClass();
+    }
+
+    public Class[] getExceptionTypes() {
+        return constructor.getExceptionTypes();
+    }
+
+    public String getName() {
+        return constructor.getName();
+    }
+
     public Constructor getConstructor() {
         return constructor;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof ConstructorAdapter && constructor.equals(((ConstructorAdapter) o).constructor);
+    }
+
+    @Override
+    public int hashCode() {
+        return constructor.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return constructor.toString();
     }
 }

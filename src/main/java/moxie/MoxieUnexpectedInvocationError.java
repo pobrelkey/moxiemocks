@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,11 +29,11 @@ import java.util.Collection;
  *  {@link Error} thrown by Moxie when a method that has not been {@link Expectation expected} has been invoked on a {@link MoxieOptions#PRESCRIPTIVE PRESCRIPTIVE} mock.
  */
 public class MoxieUnexpectedInvocationError extends Error {
-    MoxieUnexpectedInvocationError(String message, String name, Method invokedMethod, Object[] invocationArgs, Collection<ExpectationImpl> unorderedExpectations, Collection<ExpectationImpl> orderedExpectations) {
-        super(createExceptionMessage(message, name, invokedMethod, invocationArgs, unorderedExpectations, orderedExpectations));
+    MoxieUnexpectedInvocationError(String message, String name, InvocableAdapter invoked, Object[] invocationArgs, Collection<ExpectationImpl> unorderedExpectations, Collection<ExpectationImpl> orderedExpectations) {
+        super(createExceptionMessage(message, name, invoked, invocationArgs, unorderedExpectations, orderedExpectations));
     }
 
-    private static String createExceptionMessage(String message, String name, Method invokedMethod, Object[] invocationArgs, Collection<ExpectationImpl> unorderedExpectations, Collection<ExpectationImpl> orderedExpectations) {
+    private static String createExceptionMessage(String message, String name, InvocableAdapter invokedMethod, Object[] invocationArgs, Collection<ExpectationImpl> unorderedExpectations, Collection<ExpectationImpl> orderedExpectations) {
         SimpleDescription desc = new SimpleDescription();
         desc.appendText("On \"" + name + "\": " + message + "\n");
         if (invokedMethod != null) {

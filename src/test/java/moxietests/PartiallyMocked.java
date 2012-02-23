@@ -23,6 +23,10 @@
 package moxietests;
 
 public class PartiallyMocked {
+    public PartiallyMocked(String blah) {
+        // constructor that we can mock with PowerMock
+    }
+
     public static String aStaticMethod(String arg) {
         return "hi there, " + arg;
     }

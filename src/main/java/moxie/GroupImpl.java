@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -105,17 +105,17 @@ class GroupImpl implements Group, Verifiable {
         }
     }
 
-    public ExpectationImpl match(Method method, Object[] args, MethodBehavior behavior) {
+    public ExpectationImpl match(InvocableAdapter invocable, Object[] args, MethodBehavior behavior) {
         ExpectationImpl result = null;
         for (ExpectationImpl expectation : unorderedExpectations) {
-            if (expectation.match(method, args, behavior, this)) {
+            if (expectation.match(invocable, args, behavior, this)) {
                 result = expectation;
                 break;
             }
         }
         if (result == null && !orderedExpectations.isEmpty()) {
             if (cardinality.isViable()) {
-                if (orderedExpectations.get(cursor).match(method, args, behavior, this)) {
+                if (orderedExpectations.get(cursor).match(invocable, args, behavior, this)) {
                     result = orderedExpectations.get(cursor);
                 } else {
                     cursor++;
@@ -123,7 +123,7 @@ class GroupImpl implements Group, Verifiable {
                         cursor = 0;
                         cardinality.incrementCount();
                     }
-                    if (cardinality.isViable() && orderedExpectations.get(cursor).match(method, args, behavior, this)) {
+                    if (cardinality.isViable() && orderedExpectations.get(cursor).match(invocable, args, behavior, this)) {
                         result = orderedExpectations.get(cursor);
                     }
                 }
@@ -131,13 +131,13 @@ class GroupImpl implements Group, Verifiable {
         }
         if (result != null) {
             for (GroupImpl group : (Set<GroupImpl>) result.getGroups()) {
-                group.match(result, method, args);
+                group.match(result, invocable, args);
             }
         }
         return result;
     }
 
-    public void match(ExpectationImpl expectation, Method method, Object[] args) {
+    public void match(ExpectationImpl expectation, InvocableAdapter invocable, Object[] args) {
         if (!orderedExpectations.isEmpty()) {
             if (cardinality.isViable()) {
                 if (orderedExpectations.get(cursor) == expectation) {
@@ -152,7 +152,7 @@ class GroupImpl implements Group, Verifiable {
                     return;
                 }
             }
-            throwUnexpectedInvocationError("out of sequence expectation or too many times through sequence", method, args);
+            throwUnexpectedInvocationError("out of sequence expectation or too many times through sequence", invocable, args);
         }
     }
 
@@ -168,8 +168,8 @@ class GroupImpl implements Group, Verifiable {
         return flags.isStrictlyOrdered();
     }
 
-    void throwUnexpectedInvocationError(String message, Method invokedMethod, Object[] invocationArgs) {
-        throw new MoxieUnexpectedInvocationError(message, name, invokedMethod, invocationArgs, unorderedExpectations, orderedExpectations);
+    void throwUnexpectedInvocationError(String message, InvocableAdapter invoked, Object[] invocationArgs) {
+        throw new MoxieUnexpectedInvocationError(message, name, invoked, invocationArgs, unorderedExpectations, orderedExpectations);
     }
 
     private void throwFailedVerificationError(String message, List<Invocation> invocations) {

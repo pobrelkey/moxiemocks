@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -116,12 +116,12 @@ class MatcherSyntax {
         return matchers;
     }
 
-    static List<Matcher> methodCall(Method method, Object[] params) throws IllegalArgumentException {
+    static List<Matcher> methodCall(InvocableAdapter invocable, Object[] params) throws IllegalArgumentException {
         LinkedList<MatcherReport> matcherReports = MoxieMatchers.getMatcherReports();
-        List<Class<?>> paramTypes = new ArrayList<Class<?>>(Arrays.asList(method.getParameterTypes()));
+        List<Class<?>> paramTypes = new ArrayList<Class<?>>(Arrays.asList(invocable.getParameterTypes()));
         List paramsList = params == null ? Collections.EMPTY_LIST : new ArrayList(Arrays.asList(params));
         Matcher varargMatcher = null;
-        if (method.isVarArgs()) {
+        if (invocable.isVarArgs()) {
             Class<?> paramType = paramTypes.remove(paramTypes.size() - 1);
             Object varParamsArray = paramsList.remove(paramsList.size() - 1);
             if (varParamsArray == null && !matcherReports.isEmpty() && matcherReports.getLast().getExpectedType() != null && matcherReports.getLast().getExpectedType().isArray()) {

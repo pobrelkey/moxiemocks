@@ -22,6 +22,16 @@
 package moxie;
 
 interface InvocableAdapter {
-    Class[] getParameterTypes();
+
+    Class<?>[] getParameterTypes();
+
     boolean isVarArgs();
+
+    void zombify();
+
+    Class<?> getReturnType();
+
+    Class<?>[] getExceptionTypes();
+
+    String getName();
 }

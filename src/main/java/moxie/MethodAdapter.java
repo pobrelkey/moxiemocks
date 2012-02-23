@@ -22,6 +22,7 @@
 package moxie;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 class MethodAdapter implements InvocableAdapter {
     private final Method method;
@@ -34,11 +35,44 @@ class MethodAdapter implements InvocableAdapter {
         return method.isVarArgs();
     }
 
+    public void zombify() {
+        if (Modifier.isPrivate(method.getModifiers()) || Modifier.isFinal(method.getModifiers()) || Modifier.isStatic(method.getModifiers())) {
+            CGLIBProxyFactory.zombify(method);
+        }
+    }
+
+    public Class getReturnType() {
+        return method.getReturnType();
+    }
+
+    public Class[] getExceptionTypes() {
+        return method.getExceptionTypes();
+    }
+
+    public String getName() {
+        return method.getName();
+    }
+
     public Class<?>[] getParameterTypes() {
         return method.getParameterTypes();
     }
 
     public Method getMethod() {
         return method;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof MethodAdapter) &&  method.equals(((MethodAdapter) o).method);
+    }
+
+    @Override
+    public int hashCode() {
+        return method.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return method.toString();
     }
 }

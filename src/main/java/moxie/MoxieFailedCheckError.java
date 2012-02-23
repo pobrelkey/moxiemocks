@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,11 +31,11 @@ import java.util.List;
  *  {@link Error} thrown by Moxie when a {@link Check} fails.
  */
 public class MoxieFailedCheckError extends Error {
-    MoxieFailedCheckError(String message, Method checkedMethod, List<Matcher> argMatchers, CardinalityImpl cardinality, Matcher throwableMatcher, Matcher resultMatcher, List<Invocation> invocations) {
-        super(createExceptionMessage(message, checkedMethod, argMatchers, cardinality, throwableMatcher, resultMatcher, invocations));
+    MoxieFailedCheckError(String message, InvocableAdapter checkedInvocable, List<Matcher> argMatchers, CardinalityImpl cardinality, Matcher throwableMatcher, Matcher resultMatcher, List<Invocation> invocations) {
+        super(createExceptionMessage(message, checkedInvocable, argMatchers, cardinality, throwableMatcher, resultMatcher, invocations));
     }
 
-    private static String createExceptionMessage(String message, Method checkedMethod, List<Matcher> argMatchers, CardinalityImpl cardinality, Matcher throwableMatcher, Matcher resultMatcher, List<Invocation> invocations) {
+    private static String createExceptionMessage(String message, InvocableAdapter checkedInvocable, List<Matcher> argMatchers, CardinalityImpl cardinality, Matcher throwableMatcher, Matcher resultMatcher, List<Invocation> invocations) {
         SimpleDescription desc = new SimpleDescription();
         desc.appendText(message + "\n");
 
@@ -43,7 +43,7 @@ public class MoxieFailedCheckError extends Error {
         desc.appendText("    expected ");
         cardinality.describeExpected(desc);
         desc.appendText(": ");
-        desc.appendText(checkedMethod.getName());
+        desc.appendText(checkedInvocable.getName());
         desc.appendList("(", ", ", ")", argMatchers);
         if (throwableMatcher != null) {
             desc.appendText(", throws ");

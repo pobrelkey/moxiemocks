@@ -26,8 +26,6 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.SelfDescribing;
 
-import java.lang.reflect.Method;
-
 class ObjectExpectationImpl<T> extends ExpectationImpl<ObjectExpectationImpl<T>, ObjectInterception<T>> implements ObjectExpectation<T> {
 
     protected ObjectExpectationImpl(ObjectInterception<T> interception) {
@@ -37,8 +35,8 @@ class ObjectExpectationImpl<T> extends ExpectationImpl<ObjectExpectationImpl<T>,
     public T on() {
         checkMethodAndCardinality();
         return interception.getProxyFactory().createProxy(new MethodIntercept() {
-            public Object intercept(Object proxy, Method method, Object[] params, SuperInvoker superInvoker) throws Throwable {
-                return handleInvocation(method, params);
+            public Object intercept(Object proxy, InvocableAdapter invocable, Object[] params, SuperInvoker superInvoker) throws Throwable {
+                return handleInvocation(invocable, params);
             }
         }, interception.getConstructorArgTypes(), interception.getConstructorArgs());
     }
@@ -91,7 +89,7 @@ class ObjectExpectationImpl<T> extends ExpectationImpl<ObjectExpectationImpl<T>,
     }
 
     static private class OriginalHandler implements MethodIntercept, SelfDescribing {
-        public Object intercept(Object mockObject, Method method, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
+        public Object intercept(Object mockObject, InvocableAdapter invocable, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
             return superInvoker.invokeSuper(parameters);
         }
 

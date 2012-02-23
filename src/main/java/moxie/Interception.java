@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,8 +41,13 @@ abstract class Interception implements MethodIntercept, Verifiable {
             this.paramTypes = Arrays.asList(paramTypes);
         }
 
-        boolean matches(Method m) {
-            return m != null && !Modifier.isStatic(m.getModifiers()) && methodName.equals(m.getName()) && returnType.equals(m.getReturnType()) && paramTypes.equals(Arrays.asList(m.getParameterTypes()));
+        boolean matches(InvocableAdapter m) {
+            return m != null &&
+                m instanceof MethodAdapter &&
+                !Modifier.isStatic(((MethodAdapter) m).getMethod().getModifiers()) &&
+                methodName.equals(m.getName()) &&
+                returnType.equals(m.getReturnType()) &&
+                paramTypes.equals(Arrays.asList(m.getParameterTypes()));
         }
     }
     protected static MethodMatcher TO_STRING = new MethodMatcher("toString", String.class);
@@ -73,12 +78,12 @@ abstract class Interception implements MethodIntercept, Verifiable {
         this.methods.reset(flags);
     }
 
-    public Object intercept(Object unusedProxy, Method method, Object[] args, SuperInvoker superInvoker) throws Throwable {
-        final Invocation invocation = new Invocation(this, method, args);
+    public Object intercept(Object unusedProxy, InvocableAdapter invocable, Object[] args, SuperInvoker superInvoker) throws Throwable {
+        final Invocation invocation = new Invocation(this, invocable, args);
         invocations.add(invocation);
 
-        MethodBehavior methodBehavior = defaultBehavior(method, args, superInvoker);
-        final ExpectationImpl expectation = methods.match(method, args, methodBehavior);
+        MethodBehavior methodBehavior = defaultBehavior(invocable, args, superInvoker);
+        final ExpectationImpl expectation = methods.match(invocable, args, methodBehavior);
         if (expectation != null) {
             expectation.whenCardinalitySatisfied(new Runnable() {
                 public void run() {
@@ -87,7 +92,7 @@ abstract class Interception implements MethodIntercept, Verifiable {
             });
             if (expectation.getHandler() != null) {
                 try {
-                    Object result = expectation.getHandler().intercept(unusedProxy, method, args, superInvoker);
+                    Object result = expectation.getHandler().intercept(unusedProxy, invocable, args, superInvoker);
                     invocation.setValueReturned(result);
                     return result;
                 } catch (Throwable t) {
@@ -96,11 +101,11 @@ abstract class Interception implements MethodIntercept, Verifiable {
                 }
             }
         } else if (!flags.isAutoStubbing()
-                && !EQUALS.matches(method)
-                && !HASH_CODE.matches(method)
-                && !TO_STRING.matches(method)
-                && !FINALIZE.matches(method)) {
-            methods.throwUnexpectedInvocationError("unexpected method invocation", method, args);
+                && !EQUALS.matches(invocable)
+                && !HASH_CODE.matches(invocable)
+                && !TO_STRING.matches(invocable)
+                && !FINALIZE.matches(invocable)) {
+            methods.throwUnexpectedInvocationError("unexpected method invocation", invocable, args);
         }
 
         try {
@@ -113,7 +118,7 @@ abstract class Interception implements MethodIntercept, Verifiable {
         }
     }
 
-    abstract protected MethodBehavior defaultBehavior(Method method, Object[] args, SuperInvoker superInvoker);
+    abstract protected MethodBehavior defaultBehavior(InvocableAdapter invocable, Object[] args, SuperInvoker superInvoker);
 
     Class getInterceptedClass() {
         return clazz;

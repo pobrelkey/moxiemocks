@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Moxie contributors
+ * Copyright (c) 2011-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@ class JDKProxyFactory<T> extends ProxyFactory<T> {
         try {
             return constructor.newInstance(new InvocationHandler() {
                 public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                    return methodIntercept.intercept(proxy, method, args, null);
+                    return methodIntercept.intercept(proxy, new MethodAdapter(method), args, null);
                 }
             });
         } catch (InstantiationException e) {

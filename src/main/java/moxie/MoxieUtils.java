@@ -217,7 +217,7 @@ abstract class MoxieUtils {
     }
 
     @SuppressWarnings("unchecked")
-    static Method guessMethod(Class interceptedClass, String methodName, boolean isStatic, Class[] paramSignature, Object[] params) {
+    static MethodAdapter guessMethod(Class interceptedClass, String methodName, boolean isStatic, Class[] paramSignature, Object[] params) {
         ArrayList<MethodAdapter> candidates = new ArrayList<MethodAdapter>();
         for (Class clazz = interceptedClass; clazz != null; clazz = clazz.getSuperclass()) {
             for (Method m : clazz.getDeclaredMethods()) {
@@ -235,7 +235,7 @@ abstract class MoxieUtils {
             throw new IllegalArgumentException("No method \"" + methodName + "\" found on class " + interceptedClass.getName() + " matching specified parameters/signature");
         }
 
-        return likelyMatches.get(0).getMethod();
+        return likelyMatches.get(0);
     }
 
     private static <T extends InvocableAdapter> List<T> guessInvocable(Class[] paramSignature, Object[] params, Iterable<T> candidates) {
@@ -274,7 +274,7 @@ candidateLoop:
         return (Class<T[]>) Array.newInstance(clazz, 0).getClass();
     }
 
-    static Constructor guessConstructor(Class interceptedClass, Class[] paramSignature, Object[] params) {
+    static ConstructorAdapter guessConstructor(Class interceptedClass, Class[] paramSignature, Object[] params) {
         ArrayList<ConstructorAdapter> candidates = new ArrayList<ConstructorAdapter>();
         for (Constructor constructor : interceptedClass.getConstructors()) {
             candidates.add(new ConstructorAdapter(constructor));
@@ -288,7 +288,7 @@ candidateLoop:
             throw new IllegalArgumentException("No plausible constructor found on class " + interceptedClass.getName() + " matching specified parameters/signature");
         }
 
-        return likelyMatches.get(0).getConstructor();
+        return likelyMatches.get(0);
     }
 
     static interface Factory<F> {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@ class MockImpl<T> extends ObjectInterception<T> {
         super(clazz, name, flags, new InstantiationStackTrace("mock object \"" + name + "\" was instantiated here"), constructorArgTypes, constructorArgs);
     }
 
-    protected MethodBehavior defaultBehavior(Method method, final Object[] args, final MethodIntercept.SuperInvoker superInvoker) {
+    protected MethodBehavior defaultBehavior(InvocableAdapter invocable, final Object[] args, final SuperInvoker superInvoker) {
         if (superInvoker != null && Boolean.TRUE.equals(flags.isPartial())) {
             return new IdempotentMethodBehavior() {
                 public void doInvoke() {
@@ -42,14 +42,14 @@ class MockImpl<T> extends ObjectInterception<T> {
                     }
                 }
             };
-        } else if (TO_STRING.matches(method)) {
+        } else if (TO_STRING.matches(invocable)) {
             return new ReturnValueMethodBehavior("[mock object \"" + name + "\"]");
-        } else if (EQUALS.matches(method)) {
+        } else if (EQUALS.matches(invocable)) {
             return new ReturnValueMethodBehavior(args[0] == proxy);
-        } else if (HASH_CODE.matches(method)) {
+        } else if (HASH_CODE.matches(invocable)) {
             return new ReturnValueMethodBehavior(System.identityHashCode(proxy));
         } else {
-            return new ReturnValueMethodBehavior(MoxieUtils.defaultValue(method.getReturnType()));
+            return new ReturnValueMethodBehavior(MoxieUtils.defaultValue(invocable.getReturnType()));
         }
     }
 

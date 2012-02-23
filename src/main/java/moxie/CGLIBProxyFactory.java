@@ -116,7 +116,7 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
 
         MethodInterceptor methodInterceptor = new MethodInterceptor() {
             public Object intercept(final Object proxy, Method method, Object[] args, final MethodProxy superProxy) throws Throwable {
-                return methodIntercept.intercept(proxy, method, args, new MethodIntercept.SuperInvoker() {
+                return methodIntercept.intercept(proxy, new MethodAdapter(method), args, new MethodIntercept.SuperInvoker() {
                     public Object invokeSuper(Object[] superArgs) throws Throwable {
                         return superProxy.invokeSuper(proxy, superArgs);
                     }
@@ -142,7 +142,7 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
             if (methodIntercept == null) {
                 throw new MoxieZombieMethodInvocationError("cannot partially mock a static or final method");
             }
-            return methodIntercept.intercept(proxy, method, args, ZOMBIE_METHOD_SUPER_INVOKER);
+            return methodIntercept.intercept(proxy, new MethodAdapter(method), args, ZOMBIE_METHOD_SUPER_INVOKER);
         }
     };
 
@@ -164,7 +164,7 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
     private static final NewInvocationControl POWERMOCK_CONSTRUCTOR_HANDLER = new NewInvocationControl() {
         public Object invoke(Class type, Object[] args, Class[] sig) throws Exception {
             try {
-                return proxyIntercepts.get(type).intercept(type, null, args, ZOMBIE_CONSTRUCTOR_SUPER_INVOKER);
+                return proxyIntercepts.get(type).intercept(type, new ConstructorAdapter(type.getDeclaredConstructor(sig)), args, ZOMBIE_CONSTRUCTOR_SUPER_INVOKER);
             } catch (Exception e) {
                 throw e;
             } catch (Error e) {
