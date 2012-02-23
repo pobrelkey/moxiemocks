@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,9 @@ package moxie;
 
 import org.hamcrest.Description;
 
-class ClassExpectationImpl extends ExpectationImpl<ClassExpectationImpl, ClassInterception> implements ClassExpectation {
+import java.lang.reflect.Constructor;
+
+class ClassExpectationImpl<T> extends ExpectationImpl<ClassExpectationImpl<T>, ClassInterception> implements ClassExpectation<T> {
     protected ClassExpectationImpl(ClassInterception interception) {
         super(interception);
     }
@@ -517,28 +519,32 @@ class ClassExpectationImpl extends ExpectationImpl<ClassExpectationImpl, ClassIn
     }
 */
 
-    public void onNew(Object... params) {
+    public T onNew(Object... params) {
+        return onNew(null, params);
+    }
+
+    public T whenNew(Object... params) {
+        return onNew(params);
+    }
+
+    public T willNew(Object... params) {
+        return onNew(params);
+    }
+
+    public T onNew(Class[] paramSignature, Object... params) {
+        Class interceptedClass = interception.getInterceptedClass();
+        Constructor constructor = MoxieUtils.guessConstructor(interceptedClass, null, params);
+        CGLIBProxyFactory.zombify(constructor);
+//        TODO - generify Expectation.on(????) to handle InvocableAdapters instead of Methods
         throw new UnsupportedOperationException("WRITE ME");
     }
 
-    public void whenNew(Object... params) {
-        onNew(params);
+    public T whenNew(Class[] paramSignature, Object... params) {
+        return onNew(paramSignature, params);
     }
 
-    public void willNew(Object... params) {
-        onNew(params);
-    }
-
-    public void onNew(Class[] paramSignature, Object... params) {
-        throw new UnsupportedOperationException("WRITE ME");
-    }
-
-    public void whenNew(Class[] paramSignature, Object... params) {
-        onNew(paramSignature, params);
-    }
-
-    public void willNew(Class[] paramSignature, Object... params) {
-        onNew(paramSignature, params);
+    public T willNew(Class[] paramSignature, Object... params) {
+        return onNew(paramSignature, params);
     }
 
     @Override

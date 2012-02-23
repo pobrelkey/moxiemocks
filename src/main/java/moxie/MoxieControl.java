@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -239,9 +239,10 @@ public interface MoxieControl {
      * </p>
      *
      * @param clazz the class on which the expectation is to be set
+     * @param <T> the class on which the expectation is to be set
      * @return a {@link ClassExpectation} whose methods can be used to give details of what behavior to expect
      */
-    ClassExpectation expect(Class clazz);
+    <T> ClassExpectation<T> expect(Class<T> clazz);
 
     /**
      * <p>
@@ -266,9 +267,10 @@ public interface MoxieControl {
      * </p>
      *
      * @param clazz the class on which the expectation is to be set
+     * @param <T> the class on which the expectation is to be set
      * @return a {@link ClassExpectation} whose methods can be used to give details of what behavior to expect
      */
-    ClassExpectation stub(Class clazz);
+    <T> ClassExpectation<T> stub(Class<T> clazz);
 
     /**
      * <p>

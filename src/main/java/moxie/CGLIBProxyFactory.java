@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -60,6 +60,7 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
         }
     }
 
+    // TODO: Threadlocal?  Probably not robust if running multiple Moxies in parallel.
     private static Map<Object, MethodIntercept> proxyIntercepts = Collections.synchronizedMap(new WeakIdentityMap<Object, MethodIntercept>());
 
     private static class TrivialSubclassOfObjectToWorkAroundCGLIBBug {
@@ -190,6 +191,9 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
         }
     };
 
+    static void registerClassInterception(ClassInterception interception) {
+        proxyIntercepts.put(interception.getInterceptedClass(), interception);
+    }
 
     static void zombify(Constructor constructor) {
         if (!havePowermock) {

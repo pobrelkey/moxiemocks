@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2012 Moxie contributors
+ * Copyright (c) 2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,47 +19,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package moxie;
 
-package moxietests;
+import java.lang.reflect.Constructor;
 
-public class PartiallyMocked {
-    public static String aStaticMethod(String arg) {
-        return "hi there, " + arg;
+class ConstructorAdapter implements InvocableAdapter {
+    private final Constructor constructor;
+
+    public ConstructorAdapter(Constructor constructor) {
+        this.constructor = constructor;
     }
 
-    public String partsAandB(String arg) {
-        return partA("{" + arg + "}") + " " + partB("[" + arg + "]");
+    public Class<?>[] getParameterTypes() {
+        return constructor.getParameterTypes();
     }
 
-    public String partA(String arg) {
-        return "second(" + arg + ")";
+    public boolean isVarArgs() {
+        return constructor.isVarArgs();
     }
 
-    public String partB(String arg) {
-        return "third(" + arg + ")";
-    }
-
-    public String partsBCandD(String arg) {
-        return partB("[" + arg + "]") + " " + partC("<" + arg + ">") + " " + partD(arg);
-    }
-
-    protected String partC(String arg) {
-        return "cinquieme(" + arg + ")";
-    }
-
-    /* package private */ String partD(String arg) {
-        return "sixieme(" + arg + ")";
-    }
-
-    public String partsDEandF(String arg) {
-        return partD(arg) + " " + partE("_" + arg + "_") + " " + partF("*" + arg + "*");
-    }
-
-    private String partE(String s) {
-        return "EIGHT("+s+")";
-    }
-
-    public final String partF(String s) {
-        return "NINE("+s+")";
+    public Constructor getConstructor() {
+        return constructor;
     }
 }

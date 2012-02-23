@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -200,8 +200,9 @@ public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>,
      *
      * @param methodName  The name of the method on which to set the expectation
      * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    void on(String methodName, Object... params);
+    Object on(String methodName, Object... params);
 
     /**
      * <p>
@@ -218,8 +219,9 @@ public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>,
      *
      * @param methodName  The name of the method on which to set the expectation
      * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    void when(String methodName, Object... params);
+    Object when(String methodName, Object... params);
 
     /**
      * <p>
@@ -236,8 +238,9 @@ public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>,
      *
      * @param methodName  The name of the method on which to set the expectation
      * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    void will(String methodName, Object... params);
+    Object will(String methodName, Object... params);
 
     /**
      * <p>
@@ -255,8 +258,9 @@ public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>,
      * @param methodName      The name of the method on which to set the expectation
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    void on(String methodName, Class[] paramSignature, Object... params);
+    Object on(String methodName, Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -274,8 +278,9 @@ public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>,
      * @param methodName      The name of the method on which to set the expectation
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    void when(String methodName, Class[] paramSignature, Object... params);
+    Object when(String methodName, Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -293,7 +298,8 @@ public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>,
      * @param methodName      The name of the method on which to set the expectation
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    void will(String methodName, Class[] paramSignature, Object... params);
+    Object will(String methodName, Class[] paramSignature, Object... params);
 
 }
