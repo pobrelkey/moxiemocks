@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,40 +24,40 @@ package moxie;
 
 import java.util.List;
 
-class ClassCheckImpl extends CheckImpl<ClassCheckImpl, ClassInterception> implements ClassCheck<ClassCheckImpl> {
+class ClassCheckImpl<C, T> extends CheckImpl<ClassCheckImpl<C, T>, ClassInterception> implements ClassCheck<C, ClassCheckImpl<C, T>> {
     ClassCheckImpl(ClassInterception interception, List<Invocation> invocations) {
         super(interception, invocations);
     }
 
-    public void onNew(Object... params) {
+    public C onNew(Object... params) {
         throw new UnsupportedOperationException("WRITE ME");
     }
 
-    public void whenNew(Object... params) {
-        onNew(params);
+    public C whenNew(Object... params) {
+        return onNew(params);
     }
 
-    public void getNew(Object... params) {
-        onNew(params);
+    public C getNew(Object... params) {
+        return onNew(params);
     }
 
-    public void gotNew(Object... params) {
-        onNew(params);
+    public C gotNew(Object... params) {
+        return onNew(params);
     }
 
-    public void onNew(Class[] paramSignature, Object... params) {
+    public C onNew(Class[] paramSignature, Object... params) {
         throw new UnsupportedOperationException("WRITE ME");
     }
 
-    public void whenNew(Class[] paramSignature, Object... params) {
-        onNew(paramSignature,  params);
+    public C whenNew(Class[] paramSignature, Object... params) {
+        return onNew(paramSignature,  params);
     }
 
-    public void getNew(Class[] paramSignature, Object... params) {
-        onNew(paramSignature,  params);
+    public C getNew(Class[] paramSignature, Object... params) {
+        return onNew(paramSignature,  params);
     }
 
-    public void gotNew(Class[] paramSignature, Object... params) {
-        onNew(paramSignature,  params);
+    public C gotNew(Class[] paramSignature, Object... params) {
+        return onNew(paramSignature,  params);
     }
 }

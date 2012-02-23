@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
 
 class Invocation implements SelfDescribing {
     private final Interception interception;
-    private final Method method;
+    private final InvocableAdapter invocable;
     private final Object[] arguments;
     private final InstantiationStackTrace instantiationStackTrace;
     private ExpectationImpl expectationSatisfied;
@@ -37,65 +37,65 @@ class Invocation implements SelfDescribing {
     private Object valueReturned;
     private Object exceptionThrown;
 
-    Invocation(Interception interception, Method method, Object[] arguments) {
+    Invocation(Interception interception, InvocableAdapter invocable, Object[] arguments) {
         this.interception = interception;
-        this.method = method;
+        this.invocable = invocable;
         this.arguments = arguments;
-        instantiationStackTrace = new InstantiationStackTrace("method " + method.getName() + " called here");
+        instantiationStackTrace = new InstantiationStackTrace("method " + invocable.getName() + " called here");
     }
 
-    public Object[] getArguments() {
+    Object[] getArguments() {
         return arguments;
     }
 
-    public Interception getInterception() {
+    Interception getInterception() {
         return interception;
     }
 
-    public Method getMethod() {
-        return method;
+    InvocableAdapter getInvocable() {
+        return invocable;
     }
 
-    public InstantiationStackTrace getInstantiationStackTrace() {
+    InstantiationStackTrace getInstantiationStackTrace() {
         return instantiationStackTrace;
     }
 
-    public CheckImpl getCheckSatisfied() {
+    CheckImpl getCheckSatisfied() {
         return checkSatisfied;
     }
 
-    public void setCheckSatisfied(CheckImpl checkSatisfied) {
+    void setCheckSatisfied(CheckImpl checkSatisfied) {
         this.checkSatisfied = checkSatisfied;
     }
 
-    public ExpectationImpl getExpectationSatisfied() {
+    ExpectationImpl getExpectationSatisfied() {
         return expectationSatisfied;
     }
 
-    public void setExpectationSatisfied(ExpectationImpl expectationSatisfied) {
+    void setExpectationSatisfied(ExpectationImpl expectationSatisfied) {
         this.expectationSatisfied = expectationSatisfied;
     }
 
-    public Object getExceptionThrown() {
+    Object getExceptionThrown() {
         return exceptionThrown;
     }
 
-    public void setExceptionThrown(Object exceptionThrown) {
+    void setExceptionThrown(Object exceptionThrown) {
         this.exceptionThrown = exceptionThrown;
     }
 
-    public Object getValueReturned() {
+    Object getValueReturned() {
         return valueReturned;
     }
 
-    public void setValueReturned(Object valueReturned) {
+    void setValueReturned(Object valueReturned) {
         this.valueReturned = valueReturned;
     }
 
     public void describeTo(Description description) {
         description.appendText(interception.getName());
         description.appendText(".");
-        description.appendText(method.getName());
+        description.appendText(invocable.getName());
         if (arguments != null) {
             description.appendValueList("(", ", ", ")", arguments);
         } else {
@@ -105,7 +105,7 @@ class Invocation implements SelfDescribing {
             description.appendText(", threw " + exceptionThrown);
         } else if (valueReturned != null) {
             description.appendText(", returned " + valueReturned);
-        } else if (!method.getReturnType().equals(Void.TYPE)) {
+        } else if (!invocable.getReturnType().equals(Void.TYPE)) {
             description.appendText(", returned null");
         }
     }

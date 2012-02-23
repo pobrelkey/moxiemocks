@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Moxie contributors
+ * Copyright (c) 2011-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@ package moxie;
 import java.lang.reflect.Method;
 
 interface MethodIntercept {
-    Object intercept(Object proxy, Method method, Object[] args,
+    Object intercept(Object proxy, InvocableAdapter invocable, Object[] args,
                      SuperInvoker superInvoker) throws Throwable;
     interface SuperInvoker {
         Object invokeSuper(Object[] args) throws Throwable;

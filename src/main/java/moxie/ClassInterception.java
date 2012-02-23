@@ -22,8 +22,6 @@
 
 package moxie;
 
-import java.lang.reflect.Method;
-
 class ClassInterception<T> extends Interception {
 
     protected ClassInterception(Class<T> clazz, String name, MoxieFlags flags, InstantiationStackTrace instantiationStackTrace) {
@@ -40,14 +38,14 @@ class ClassInterception<T> extends Interception {
     }
 
     @Override
-    protected MethodBehavior defaultBehavior(final Method method, Object[] args, SuperInvoker superInvoker) {
+    protected MethodBehavior defaultBehavior(final InvocableAdapter invocable, Object[] args, SuperInvoker superInvoker) {
         return new MethodBehavior() {
             public Object invoke() throws Throwable {
                 if (flags.isAutoStubbing()) {
-                    return MoxieUtils.defaultValue(method.getReturnType());
+                    return MoxieUtils.defaultValue(invocable.getReturnType());
                 }
                 // TODO: clearer error message
-                throw new MoxieZombieMethodInvocationError("Behavior not defined for class method " + method.getName());
+                throw new MoxieZombieMethodInvocationError("Behavior not defined for class method/constructor " + invocable.getName());
             }
         };
     }

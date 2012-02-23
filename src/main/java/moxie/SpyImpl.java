@@ -34,7 +34,8 @@ class SpyImpl<T> extends ObjectInterception<T> {
         this.realObject = realObject;
     }
 
-    protected MethodBehavior defaultBehavior(final Method method, final Object[] args, SuperInvoker superInvoker) {
+    protected MethodBehavior defaultBehavior(InvocableAdapter invocable, final Object[] args, SuperInvoker superInvoker) {
+        final Method method = ((MethodAdapter) invocable).getMethod();
         return new IdempotentMethodBehavior() {
             @Override
             protected void doInvoke() {

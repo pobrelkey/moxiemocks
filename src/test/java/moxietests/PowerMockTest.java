@@ -56,4 +56,14 @@ public class PowerMockTest {
         Moxie.verify(PartiallyMocked.class);
     }
 
+    @Test
+    public void constructors() {
+        PartiallyMocked mock = Moxie.mock(PartiallyMocked.class);
+        Moxie.expect(PartiallyMocked.class).andReturn(mock).onNew(Moxie.startsWith("foo"));
+        Moxie.expect(mock).andReturn("hallo!").on().partA("blah");
+
+        Assert.assertEquals("hallo!", new PartiallyMocked("foobar").partA("blah"));
+
+        Moxie.verify(PartiallyMocked.class, mock);
+    }
 }

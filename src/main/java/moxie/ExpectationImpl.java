@@ -28,7 +28,6 @@ import org.hamcrest.SelfDescribing;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,7 +45,7 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
 
     private Set<GroupImpl> groups = null;
     private MethodIntercept handler = null;
-    private Method method;
+    private InvocableAdapter invocable;
     private List<Matcher> argMatchers = new ArrayList<Matcher>();
     private boolean defaultCardinality = true;
     private boolean unordered = false;
@@ -152,14 +151,15 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
 
     public E willHandleWith(final InvocationHandler handler) {
         return doWillHandleWith(new MethodIntercept() {
-            public Object intercept(Object proxy, Method method, Object[] args, SuperInvoker superInvoker) throws Throwable {
+            public Object intercept(Object proxy, InvocableAdapter invocable, Object[] args, SuperInvoker superInvoker) throws Throwable {
+                Method method = (invocable instanceof MethodAdapter) ? ((MethodAdapter) invocable).getMethod() : null;
                 return handler.invoke(proxy, method, args);
             }
         });
     }
 
     protected void checkMethodAndCardinality() {
-        if (this.method != null) {
+        if (this.invocable != null) {
             throw new IllegalStateException("method to match already specified");
         }
         if (this.handler instanceof ConsecutiveHandler) {
@@ -173,23 +173,21 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         }
     }
 
-    protected Object handleInvocation(Method method, Object[] params) {
-        if (this.method != null) {
+    protected Object handleInvocation(InvocableAdapter invocable, Object[] params) {
+        if (this.invocable != null) {
             throw new IllegalStateException("method to match already specified");
         }
-        if (Modifier.isPrivate(method.getModifiers()) || Modifier.isFinal(method.getModifiers()) || Modifier.isStatic(method.getModifiers())) {
-            CGLIBProxyFactory.zombify(method);
-        }
+        invocable.zombify();
 
         // TODO: deep mocks - do these type checks later.
 
         if (handler instanceof ReturnHandler) {
-            Class returnType = MoxieUtils.toNonPrimitive(method.getReturnType());
+            Class returnType = MoxieUtils.toNonPrimitive(invocable.getReturnType());
             Object result = ((ReturnHandler) handler).getResult();
             if (returnType == Void.TYPE && result != null) {
                 throw new IllegalArgumentException("return value specified for void method");
             } else if (result != null && !returnType.isAssignableFrom(result.getClass())) {
-                throw new IllegalArgumentException("incompatible result type (" + result.getClass().getName() + ") for method which returns " + method.getReturnType().getName());
+                throw new IllegalArgumentException("incompatible result type (" + result.getClass().getName() + ") for method which returns " + invocable.getReturnType().getName());
             }
         }
 
@@ -197,7 +195,7 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
             Throwable throwable = ((ThrowHandler) handler).getThrowable();
             if (throwable instanceof Exception && !(throwable instanceof RuntimeException)) {
                 boolean foundCompatibleException = false;
-                for (Class<?> exceptionType : method.getExceptionTypes()) {
+                for (Class<?> exceptionType : invocable.getExceptionTypes()) {
                     if (exceptionType.isAssignableFrom(throwable.getClass())) {
                         foundCompatibleException = true;
                         break;
@@ -209,12 +207,12 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
             }
         }
 
-        this.method = method;
-        argMatchers = MatcherSyntax.methodCall(method, params);
+        this.invocable = invocable;
+        argMatchers = MatcherSyntax.methodCall(invocable, params);
         interception.addExpectation(this);
 
         // TODO: return deep mocking stub instead!
-        return MoxieUtils.defaultValue(method.getReturnType());
+        return MoxieUtils.defaultValue(invocable.getReturnType());
     }
 
     public Object on(String methodName, Object... params) {
@@ -292,8 +290,8 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         return willHandleWith(handler);
     }
 
-    boolean match(Method method, Object[] args, MethodBehavior behavior, GroupImpl group) {
-        if (!this.method.equals(method)) {
+    boolean match(InvocableAdapter invocableAdapter, Object[] args, MethodBehavior behavior, GroupImpl group) {
+        if (!this.invocable.equals(invocableAdapter)) {
             return false;
         }
         Matcher argsMatcher = MoxieMatchers.isArrayMatcher(argMatchers);
@@ -355,7 +353,7 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         description.appendText(", invoked ");
         cardinality.describeCount(description);
         description.appendText(": ");
-        description.appendText(method.getName());
+        description.appendText(invocable.getName());
         description.appendList("(", ", ", ")", argMatchers);
         if (exceptionMatcher != null) {
             description.appendText(", expected to throw ");
@@ -382,7 +380,7 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
             this.result = result;
         }
 
-        public Object intercept(Object mockObject, Method method, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
+        public Object intercept(Object mockObject, InvocableAdapter invocable, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
             return result;
         }
 
@@ -403,7 +401,7 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
             this.throwable = throwable;
         }
 
-        public Object intercept(Object mockObject, Method method, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
+        public Object intercept(Object mockObject, InvocableAdapter invocable, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
             throwable.fillInStackTrace();
             throw throwable;
         }
@@ -425,9 +423,10 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
             this.delegate = delegate;
         }
 
-        public Object intercept(Object mockObject, Method method, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
+        public Object intercept(Object mockObject, InvocableAdapter invocable, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
+            Method method = ((MethodAdapter) invocable).getMethod();  // TODO
             try {
-                method = delegate.getClass().getMethod(method.getName(), method.getParameterTypes());
+                method = delegate.getClass().getMethod(invocable.getName(), invocable.getParameterTypes());
                 method.setAccessible(true);
             } catch (NoSuchMethodException e) {
                 // oh well, try with original method
@@ -454,14 +453,14 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
             return this;
         }
 
-        public Object intercept(Object mockObject, Method method, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
+        public Object intercept(Object mockObject, InvocableAdapter invocable, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
             if (iterator == null) {
                 iterator = handlers.iterator();
             }
             if (!iterator.hasNext()) {
                 throw new MoxieUnexpectedError("not enough consecutive-call handlers", null);
             }
-            return iterator.next().intercept(mockObject, method, parameters, superInvoker);
+            return iterator.next().intercept(mockObject, invocable, parameters, superInvoker);
         }
 
         public void describeTo(Description description) {
