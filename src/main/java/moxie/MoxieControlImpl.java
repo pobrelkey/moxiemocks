@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -117,15 +117,15 @@ class MoxieControlImpl implements MoxieControl {
         return ((ObjectInterception<T>) getInterceptionFromProxy(mockObject)).expect();
     }
 
-    public ClassExpectation expect(Class clazz) {
-        throw new UnsupportedOperationException("WRITE ME");
+    public <T> ClassExpectation<T> expect(Class<T> clazz) {
+        return getInterceptionFromClass(clazz).expect();
     }
 
     public <T> ObjectExpectation<T> stub(T mockObject) {
         return expect(mockObject).anyTimes().atAnyTime();
     }
 
-    public ClassExpectation stub(Class clazz) {
+    public <T> ClassExpectation<T> stub(Class<T> clazz) {
         return expect(clazz).anyTimes().atAnyTime();
     }
 
@@ -135,7 +135,7 @@ class MoxieControlImpl implements MoxieControl {
     }
 
     public ClassCheck check(Class clazz) {
-        throw new UnsupportedOperationException("WRITE ME");
+        return getInterceptionFromClass(clazz).check();
     }
 
     public void checkNothingElseHappened(Object... mockObjects) {
@@ -182,6 +182,15 @@ class MoxieControlImpl implements MoxieControl {
             throw new IllegalArgumentException("object is not a mock object or has already been verified: " + interception);
         }
         return ((Interception) interception);
+    }
+
+    private <T> ClassInterception<T> getInterceptionFromClass(Class<T> clazz) {
+        @SuppressWarnings("unchecked")
+        ClassInterception<T> result = (ClassInterception<T>) mocksAndGroups.get(clazz);
+        if (result == null) {
+            mocksAndGroups.put(clazz, result = new ClassInterception<T>(clazz, clazz.getSimpleName(), MoxieOptions.MOCK_DEFAULTS, new InstantiationStackTrace("class mock \"" + clazz.getSimpleName() + "\" was instantiated here")));
+        }
+        return result;
     }
 
     public void verify(Object... mockObjects) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,10 +22,13 @@
 
 package moxie;
 
-abstract class ClassInterception<T> extends Interception {
+import java.lang.reflect.Method;
+
+class ClassInterception<T> extends Interception {
 
     protected ClassInterception(Class<T> clazz, String name, MoxieFlags flags, InstantiationStackTrace instantiationStackTrace) {
         super(clazz, name, flags, instantiationStackTrace);
+        CGLIBProxyFactory.registerClassInterception(this);
     }
 
     ClassExpectationImpl expect() {
@@ -36,4 +39,16 @@ abstract class ClassInterception<T> extends Interception {
         return new ClassCheckImpl(this, invocations);
     }
 
+    @Override
+    protected MethodBehavior defaultBehavior(final Method method, Object[] args, SuperInvoker superInvoker) {
+        return new MethodBehavior() {
+            public Object invoke() throws Throwable {
+                if (flags.isAutoStubbing()) {
+                    return MoxieUtils.defaultValue(method.getReturnType());
+                }
+                // TODO: clearer error message
+                throw new MoxieZombieMethodInvocationError("Behavior not defined for class method " + method.getName());
+            }
+        };
+    }
 }

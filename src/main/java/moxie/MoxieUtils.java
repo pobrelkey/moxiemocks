@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ package moxie;
 import org.hamcrest.SelfDescribing;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -217,45 +218,55 @@ abstract class MoxieUtils {
 
     @SuppressWarnings("unchecked")
     static Method guessMethod(Class interceptedClass, String methodName, boolean isStatic, Class[] paramSignature, Object[] params) {
+        ArrayList<MethodAdapter> candidates = new ArrayList<MethodAdapter>();
+        for (Class clazz = interceptedClass; clazz != null; clazz = clazz.getSuperclass()) {
+            for (Method m : clazz.getDeclaredMethods()) {
+                if (m.getName().equals(methodName) && Modifier.isStatic(m.getModifiers()) == isStatic) {
+                    candidates.add(new MethodAdapter(m));
+                }
+            }
+        }
+
+        List<MethodAdapter> likelyMatches = guessInvocable(paramSignature, params, candidates);
+
+        if (likelyMatches.size() > 1) {
+            throw new IllegalArgumentException("Multiple methods named \"" + methodName + "\" found on class " + interceptedClass.getName() + " matching specified parameters/signature");
+        } else if (likelyMatches.isEmpty()) {
+            throw new IllegalArgumentException("No method \"" + methodName + "\" found on class " + interceptedClass.getName() + " matching specified parameters/signature");
+        }
+
+        return likelyMatches.get(0).getMethod();
+    }
+
+    private static <T extends InvocableAdapter> List<T> guessInvocable(Class[] paramSignature, Object[] params, Iterable<T> candidates) {
         if (paramSignature == null) {
             paramSignature = new Class[params.length];
             for (int i = 0; i < params.length; i++) {
                 paramSignature[i] = (params[i] != null) ? params[i].getClass() : null;
             }
         }
-        for (Class clazz = interceptedClass; clazz != null; clazz = clazz.getSuperclass()) {
-            Method likelyMatch = null;
-methods:
-            for (Method m : clazz.getDeclaredMethods()) {
-                if (!m.getName().equals(methodName) || Modifier.isStatic(m.getModifiers()) != isStatic) {
-                    continue;
-                }
-                Class[] mSignature = m.getParameterTypes();
-                if (mSignature.length > params.length) {
-                    continue;
-                }
-                // TODO: handle varargs gracefully in client methods
-                if (mSignature.length < params.length && !m.isVarArgs()) {
-                    continue;
-                }
-                for (int i = 0; i < paramSignature.length; i++) {
-                    Class paramClass = paramSignature[i];
-                    Class mClass = (i >= mSignature.length ? mSignature[mSignature.length-1] : mSignature[i]);
-                    if (paramClass != null && !mClass.isAssignableFrom(paramClass)) {
-                        continue methods;
-                    }
-                }
-                if (likelyMatch != null) {
-                    throw new IllegalArgumentException("Multiple methods named \"" + methodName + "\" found on class " + interceptedClass.getName() + " matching specified parameters/signature");
-                } else {
-                    likelyMatch = m;
+
+        List<T> likelyMatches = new ArrayList<T>();
+candidateLoop:
+        for (T adapter : candidates) {
+            Class[] mSignature = adapter.getParameterTypes();
+            if (mSignature.length > params.length) {
+                continue;
+            }
+            // TODO: handle varargs gracefully in client methods
+            if (mSignature.length < params.length && !adapter.isVarArgs()) {
+                continue;
+            }
+            for (int i = 0; i < paramSignature.length; i++) {
+                Class paramClass = paramSignature[i];
+                Class mClass = (i >= mSignature.length ? mSignature[mSignature.length-1] : mSignature[i]);
+                if (paramClass != null && !mClass.isAssignableFrom(paramClass)) {
+                    continue candidateLoop;
                 }
             }
-            if (likelyMatch != null) {
-                return likelyMatch;
-            }
+            likelyMatches.add(adapter);
         }
-        throw new IllegalArgumentException("No method \"" + methodName + "\" found on class " + interceptedClass.getName() + " matching specified parameters/signature");
+        return likelyMatches;
     }
 
     @SuppressWarnings("unchecked")
@@ -263,7 +274,25 @@ methods:
         return (Class<T[]>) Array.newInstance(clazz, 0).getClass();
     }
 
+    static Constructor guessConstructor(Class interceptedClass, Class[] paramSignature, Object[] params) {
+        ArrayList<ConstructorAdapter> candidates = new ArrayList<ConstructorAdapter>();
+        for (Constructor constructor : interceptedClass.getConstructors()) {
+            candidates.add(new ConstructorAdapter(constructor));
+        }
+
+        List<ConstructorAdapter> likelyMatches = guessInvocable(paramSignature, params, candidates);
+
+        if (likelyMatches.size() > 1) {
+            throw new IllegalArgumentException("Multiple plausible constructors found on class " + interceptedClass.getName() + " matching specified parameters/signature");
+        } else if (likelyMatches.isEmpty()) {
+            throw new IllegalArgumentException("No plausible constructor found on class " + interceptedClass.getName() + " matching specified parameters/signature");
+        }
+
+        return likelyMatches.get(0).getConstructor();
+    }
+
     static interface Factory<F> {
         F create();
     }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,8 +38,7 @@ class ObjectExpectationImpl<T> extends ExpectationImpl<ObjectExpectationImpl<T>,
         checkMethodAndCardinality();
         return interception.getProxyFactory().createProxy(new MethodIntercept() {
             public Object intercept(Object proxy, Method method, Object[] params, SuperInvoker superInvoker) throws Throwable {
-                handleInvocation(method, params);
-                return MoxieUtils.defaultValue(method.getReturnType());
+                return handleInvocation(method, params);
             }
         }, interception.getConstructorArgTypes(), interception.getConstructorArgs());
     }

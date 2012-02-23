@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Moxie contributors
+ * Copyright (c) 2011-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,11 +41,19 @@ public class PowerMockTest {
     public MoxieRule moxie = new MoxieRule();
 
     @Test
-    public void powerMock_happyPath() {
+    public void privateAndFinalMethods() {
         PartiallyMocked mock = Moxie.mock(PartiallyMocked.class, MoxieOptions.PARTIAL, MoxieOptions.PERMISSIVE);
         Moxie.expect(mock).andReturn("orange").on("partF", MoxieMatchers.hasSubstring("x"));
-        Assert.assertEquals("sixieme(xxx) EIGHT(_xxx_) orange", mock.partsDEandF("xxx"));
+        Moxie.expect(mock).andReturn("blah").on("partE", MoxieMatchers.hasSubstring("x"));
+        Assert.assertEquals("sixieme(xxx) blah orange", mock.partsDEandF("xxx"));
         Moxie.verify(mock);
+    }
+
+    @Test
+    public void staticMethods() {
+        Moxie.expect(PartiallyMocked.class).andReturn("wibble").on("aStaticMethod", Moxie.endsWith("bar"));
+        Assert.assertEquals("wibble", PartiallyMocked.aStaticMethod("foobar"));
+        Moxie.verify(PartiallyMocked.class);
     }
 
 }

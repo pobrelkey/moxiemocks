@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -173,13 +173,15 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         }
     }
 
-    protected void handleInvocation(Method method, Object[] params) {
+    protected Object handleInvocation(Method method, Object[] params) {
         if (this.method != null) {
             throw new IllegalStateException("method to match already specified");
         }
-        if (Modifier.isPrivate(method.getModifiers()) || Modifier.isFinal(method.getModifiers())) {
+        if (Modifier.isPrivate(method.getModifiers()) || Modifier.isFinal(method.getModifiers()) || Modifier.isStatic(method.getModifiers())) {
             CGLIBProxyFactory.zombify(method);
         }
+
+        // TODO: deep mocks - do these type checks later.
 
         if (handler instanceof ReturnHandler) {
             Class returnType = MoxieUtils.toNonPrimitive(method.getReturnType());
@@ -210,34 +212,36 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         this.method = method;
         argMatchers = MatcherSyntax.methodCall(method, params);
         interception.addExpectation(this);
+
+        // TODO: return deep mocking stub instead!
+        return MoxieUtils.defaultValue(method.getReturnType());
     }
 
-    public void on(String methodName, Object... params) {
-        checkMethodAndCardinality();
-        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, isStatic(), (Class[]) null, params), params);
+    public Object on(String methodName, Object... params) {
+        return on(methodName, null, params);
     }
 
     abstract protected boolean isStatic();
 
-    public void when(String methodName, Object... params) {
-        on(methodName, params);
+    public Object when(String methodName, Object... params) {
+        return on(methodName, params);
     }
 
-    public void will(String methodName, Object... params) {
-        on(methodName, params);
+    public Object will(String methodName, Object... params) {
+        return on(methodName, params);
     }
 
-    public void on(String methodName, Class[] paramSignature, Object... params) {
+    public Object on(String methodName, Class[] paramSignature, Object... params) {
         checkMethodAndCardinality();
-        handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, isStatic(), paramSignature, params), params);
+        return handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, isStatic(), paramSignature, params), params);
     }
 
-    public void when(String methodName, Class[] paramSignature, Object... params) {
-        on(methodName, paramSignature, params);
+    public Object when(String methodName, Class[] paramSignature, Object... params) {
+        return on(methodName, paramSignature, params);
     }
 
-    public void will(String methodName, Class[] paramSignature, Object... params) {
-        on(methodName, paramSignature, params);
+    public Object will(String methodName, Class[] paramSignature, Object... params) {
+        return on(methodName, paramSignature, params);
     }
 
     public E andReturn(Object result) {

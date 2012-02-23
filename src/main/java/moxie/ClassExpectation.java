@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Moxie contributors
+ * Copyright (c) 2011-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,10 @@
  */
 package moxie;
 
-public interface ClassExpectation extends Expectation<ClassExpectation>, Cardinality<ClassExpectation> {
+/**
+ * @param <T> Class on which expectations are being set.
+ */
+public interface ClassExpectation<T> extends Expectation<ClassExpectation<T>>, Cardinality<ClassExpectation<T>> {
 
     /**
      * <p>
@@ -33,8 +36,9 @@ public interface ClassExpectation extends Expectation<ClassExpectation>, Cardina
      * </p>
      * 
      * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type being constructed (for optional deep mocking)
      */
-    void onNew(Object... params);
+    T onNew(Object... params);
 
     /**
      * <p>
@@ -46,8 +50,9 @@ public interface ClassExpectation extends Expectation<ClassExpectation>, Cardina
      * </p>
      *
      * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type being constructed (for optional deep mocking)
      */
-    void whenNew(Object... params);
+    T whenNew(Object... params);
 
     /**
      * <p>
@@ -59,8 +64,9 @@ public interface ClassExpectation extends Expectation<ClassExpectation>, Cardina
      * </p>
      *
      * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type being constructed (for optional deep mocking)
      */
-    void willNew(Object... params);
+    T willNew(Object... params);
 
     /**
      * <p>
@@ -73,8 +79,9 @@ public interface ClassExpectation extends Expectation<ClassExpectation>, Cardina
      *
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type being constructed (for optional deep mocking)
      */
-    void onNew(Class[] paramSignature, Object... params);
+    T onNew(Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -87,8 +94,9 @@ public interface ClassExpectation extends Expectation<ClassExpectation>, Cardina
      *
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type being constructed (for optional deep mocking)
      */
-    void whenNew(Class[] paramSignature, Object... params);
+    T whenNew(Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -101,8 +109,9 @@ public interface ClassExpectation extends Expectation<ClassExpectation>, Cardina
      *
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type being constructed (for optional deep mocking)
      */
-    void willNew(Class[] paramSignature, Object... params);
+    T willNew(Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -115,8 +124,9 @@ public interface ClassExpectation extends Expectation<ClassExpectation>, Cardina
      *
      * @param methodName  The name of the method on which to set the expectation
      * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    void on(String methodName, Object... params);
+    Object on(String methodName, Object... params);
 
     /**
      * <p>
@@ -129,8 +139,9 @@ public interface ClassExpectation extends Expectation<ClassExpectation>, Cardina
      *
      * @param methodName  The name of the method on which to set the expectation
      * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    void when(String methodName, Object... params);
+    Object when(String methodName, Object... params);
 
     /**
      * <p>
@@ -143,8 +154,9 @@ public interface ClassExpectation extends Expectation<ClassExpectation>, Cardina
      *
      * @param methodName  The name of the method on which to set the expectation
      * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    void will(String methodName, Object... params);
+    Object will(String methodName, Object... params);
 
     /**
      * <p>
@@ -158,8 +170,9 @@ public interface ClassExpectation extends Expectation<ClassExpectation>, Cardina
      * @param methodName      The name of the method on which to set the expectation
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    void on(String methodName, Class[] paramSignature, Object... params);
+    Object on(String methodName, Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -173,8 +186,9 @@ public interface ClassExpectation extends Expectation<ClassExpectation>, Cardina
      * @param methodName      The name of the method on which to set the expectation
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    void when(String methodName, Class[] paramSignature, Object... params);
+    Object when(String methodName, Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -188,7 +202,8 @@ public interface ClassExpectation extends Expectation<ClassExpectation>, Cardina
      * @param methodName      The name of the method on which to set the expectation
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    void will(String methodName, Class[] paramSignature, Object... params);
+    Object will(String methodName, Class[] paramSignature, Object... params);
     
 }
