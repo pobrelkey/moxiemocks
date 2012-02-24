@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +26,13 @@ class SimpleMoxieFlags implements MoxieFlags {
     private final Boolean strictlyOrdered;
     private final Boolean autoStubbing;
     private final Boolean partial;
+    private final Boolean tracing;
 
-    public SimpleMoxieFlags(Boolean strictlyOrdered, Boolean autoStubbing, Boolean partial) {
+    public SimpleMoxieFlags(Boolean strictlyOrdered, Boolean autoStubbing, Boolean partial, Boolean tracing) {
         this.strictlyOrdered = strictlyOrdered;
         this.autoStubbing = autoStubbing;
         this.partial = partial;
+        this.tracing = tracing;
     }
 
     public Boolean isStrictlyOrdered() {
@@ -43,5 +45,9 @@ class SimpleMoxieFlags implements MoxieFlags {
 
     public Boolean isPartial() {
         return partial;
+    }
+
+    public Boolean isTracing() {
+        return tracing;
     }
 }

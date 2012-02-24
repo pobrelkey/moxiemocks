@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,12 +27,12 @@ import org.hamcrest.Matcher;
 class MatcherReport {
     private final Matcher matcher;
     private final Class expectedType;
-    private final Throwable whereInstantiated;
+//    private final Throwable whereInstantiated;
 
     public MatcherReport(Matcher matcher, Class expectedType) {
         this.matcher = matcher;
         this.expectedType = expectedType;
-        this.whereInstantiated = new InstantiationStackTrace("[matcher=\"" + matcher + "\", class=\""+ expectedType + "\"]");
+//        this.whereInstantiated = new InstantiationStackTrace("[matcher=\"" + matcher + "\", class=\""+ expectedType + "\"]");
     }
 
     public Matcher getMatcher() {
@@ -43,7 +43,7 @@ class MatcherReport {
         return expectedType;
     }
 
-    public Throwable getWhereInstantiated() {
-        return whereInstantiated;
-    }
+//    public Throwable getWhereInstantiated() {
+//        return whereInstantiated;
+//    }
 }

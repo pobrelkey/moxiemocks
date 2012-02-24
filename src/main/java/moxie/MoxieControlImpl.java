@@ -121,6 +121,10 @@ class MoxieControlImpl implements MoxieControl {
         return getInterceptionFromClass(clazz).expect();
     }
 
+    public <T> ClassExpectation<T> expect(Class<T> clazz, MoxieOptions... options) {
+        return getInterceptionFromClass(clazz, options).expect();
+    }
+
     public <T> ObjectExpectation<T> stub(T mockObject) {
         return expect(mockObject).anyTimes().atAnyTime();
     }
@@ -184,11 +188,13 @@ class MoxieControlImpl implements MoxieControl {
         return ((Interception) interception);
     }
 
-    private <T> ClassInterception<T> getInterceptionFromClass(Class<T> clazz) {
+    private <T> ClassInterception<T> getInterceptionFromClass(Class<T> clazz, MoxieOptions... options) {
         @SuppressWarnings("unchecked")
         ClassInterception<T> result = (ClassInterception<T>) mocksAndGroups.get(clazz);
         if (result == null) {
-            mocksAndGroups.put(clazz, result = new ClassInterception<T>(clazz, clazz.getSimpleName(), MoxieOptions.MOCK_DEFAULTS, new InstantiationStackTrace("class mock \"" + clazz.getSimpleName() + "\" was instantiated here")));
+            MoxieFlags flags = MoxieOptions.mergeWithDefaults(MoxieOptions.MOCK_DEFAULTS, options);
+            InstantiationStackTrace instantiationStackTrace = flags.isTracing() ? new InstantiationStackTrace("class mock \"" + clazz.getSimpleName() + "\" was instantiated here") : null;
+            mocksAndGroups.put(clazz, result = new ClassInterception<T>(clazz, clazz.getSimpleName(), flags, instantiationStackTrace));
         }
         return result;
     }
@@ -268,7 +274,12 @@ class MoxieControlImpl implements MoxieControl {
             PrintWriter pw = new PrintWriter(sw);
             pw.append("The following mocks/sequences were not verified:\n");
             for (Verifiable v : mocksAndGroups.values()) {
-                v.getWhereInstantiated().printStackTrace(pw);
+                Throwable whereInstantiated = v.getWhereInstantiated();
+                if (whereInstantiated != null) {
+                    whereInstantiated.printStackTrace(pw);
+                } else {
+                    pw.println(v.getName());
+                }
             }
             pw.flush();
             throw new IllegalStateException(sw.toString());

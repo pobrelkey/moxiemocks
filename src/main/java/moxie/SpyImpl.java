@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,8 +30,12 @@ class SpyImpl<T> extends ObjectInterception<T> {
     private final T realObject;
 
     SpyImpl(T realObject, String name, MoxieFlags flags, List<Invocation> invocations) {
-        super((Class<T>) realObject.getClass(), name, flags, new InstantiationStackTrace("spy object \"" + name + "\" was instantiated here"), new Class[0], new Object[0]);
+        super((Class<T>) realObject.getClass(), name, flags, instantiationStackTrace(name, flags), new Class[0], new Object[0]);
         this.realObject = realObject;
+    }
+
+    private static InstantiationStackTrace instantiationStackTrace(String name, MoxieFlags flags) {
+        return flags.isTracing() ? new InstantiationStackTrace("spy object \"" + name + "\" was instantiated here") : null;
     }
 
     protected MethodBehavior defaultBehavior(InvocableAdapter invocable, final Object[] args, SuperInvoker superInvoker) {

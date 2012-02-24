@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2012 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,12 +30,12 @@ public enum MoxieOptions implements MoxieFlags {
     /**
      * The order in which expectations are fulfilled on this mock/group will be strictly checked; out-of-order calls will fail.
      */
-    UNORDERED(Boolean.FALSE, null, null),
+    UNORDERED(false, null, null, null),
 
     /**
      * The order in which expectations are fulfilled on this mock/group will not be checked.
      */
-    ORDERED(Boolean.TRUE, null, null),
+    ORDERED(true, null, null, null),
 
     /**
      * <p>
@@ -59,7 +59,7 @@ public enum MoxieOptions implements MoxieFlags {
      * On spies, the default behavior is always to delegate to the underlying object.
      * </p>
      */
-    PERMISSIVE(null, Boolean.TRUE, null),
+    PERMISSIVE(null, true, null, null),
 
     /**
      * <p>
@@ -71,7 +71,7 @@ public enum MoxieOptions implements MoxieFlags {
      * unless a {@link Expectation#never() never()} expectation is explicitly set for those methods.  
      * </p>
      */
-    PRESCRIPTIVE(null, Boolean.FALSE, null),
+    PRESCRIPTIVE(null, false, null, null),
 
     /**
      * <p>
@@ -87,24 +87,31 @@ public enum MoxieOptions implements MoxieFlags {
      * lest unexpected method calls raise an error.
      * </p>
      */
-    PARTIAL(null ,null, Boolean.TRUE),
+    PARTIAL(null ,null, true, null),
+
+    /**
+     * Save stack traces when instantiating new mocks or recording method invocations.
+     * Makes Moxie slightly slower (~2x), but sometimes produces more informative error messages.
+     */
+    TRACE(null, null, null, true),
 
     /**
      * Represents Moxie's default settings for mocks/spies ({@link #UNORDERED} and {@link #PRESCRIPTIVE}).
      */
-    MOCK_DEFAULTS(Boolean.FALSE, Boolean.FALSE, null),
+    MOCK_DEFAULTS(false, false, null, false),
 
     /**
      * Represents Moxie's default settings for {@link Group}s ({@link #ORDERED}).
      */
-    GROUP_DEFAULTS(Boolean.TRUE, null, null);
+    GROUP_DEFAULTS(true, null, null, false);
 
-    final private Boolean strictlyOrdered, autoStubbing, partial;
+    final private Boolean strictlyOrdered, autoStubbing, partial, tracing;
 
-    MoxieOptions(Boolean strictlyOrdered, Boolean autoStubbing, Boolean partial) {
+    MoxieOptions(Boolean strictlyOrdered, Boolean autoStubbing, Boolean partial, Boolean tracing) {
         this.strictlyOrdered = strictlyOrdered;
         this.autoStubbing = autoStubbing;
         this.partial = partial;
+        this.tracing = tracing;
     }
 
     /**
@@ -128,8 +135,15 @@ public enum MoxieOptions implements MoxieFlags {
         return partial;
     }
 
+    /**
+     * @deprecated Moxie internal method.
+     */
+    public Boolean isTracing() {
+        return tracing;
+    }
+
     static MoxieFlags merge(MoxieFlags... options) {
-        Boolean strictlyOrdered = null, autoStubbing = null, partial = null;
+        Boolean strictlyOrdered = null, autoStubbing = null, partial = null, tracing = null;
         if (options != null) {
             for (MoxieFlags flags : options) {
                 if (flags.isStrictlyOrdered() != null) {
@@ -153,9 +167,16 @@ public enum MoxieOptions implements MoxieFlags {
                         throw new IllegalArgumentException("Specified options are contradictory regarding partial mocking");
                     }
                 }
+                if (flags.isTracing() != null) {
+                    if (tracing == null) {
+                        tracing = flags.isTracing();
+                    } else if (!tracing.equals(flags.isTracing())) {
+                        throw new IllegalArgumentException("Specified options are contradictory regarding tracing");
+                    }
+                }
             }
         }
-        return new SimpleMoxieFlags(strictlyOrdered, autoStubbing, partial);
+        return new SimpleMoxieFlags(strictlyOrdered, autoStubbing, partial, tracing);
     }
 
     static MoxieFlags mergeWithDefaults(MoxieFlags defaults, MoxieFlags... options) {
@@ -163,6 +184,7 @@ public enum MoxieOptions implements MoxieFlags {
         return new SimpleMoxieFlags(
                 merged.isStrictlyOrdered() != null ? merged.isStrictlyOrdered() : defaults.isStrictlyOrdered(),
                 merged.isAutoStubbing() != null ? merged.isAutoStubbing() : defaults.isAutoStubbing(),
-                merged.isPartial() != null ? merged.isPartial() : defaults.isPartial());
+                merged.isPartial() != null ? merged.isPartial() : defaults.isPartial(), 
+                merged.isTracing() != null ? merged.isTracing() : defaults.isTracing());
     }
 }

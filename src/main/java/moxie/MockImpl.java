@@ -28,7 +28,11 @@ import java.util.List;
 class MockImpl<T> extends ObjectInterception<T> {
 
     MockImpl(Class<T> clazz, String name, MoxieFlags flags, List<Invocation> invocations, Class[] constructorArgTypes, Object[] constructorArgs) {
-        super(clazz, name, flags, new InstantiationStackTrace("mock object \"" + name + "\" was instantiated here"), constructorArgTypes, constructorArgs);
+        super(clazz, name, flags, instantiationStackTrace(name, flags), constructorArgTypes, constructorArgs);
+    }
+
+    private static InstantiationStackTrace instantiationStackTrace(String name, MoxieFlags flags) {
+        return flags.isTracing() ? new InstantiationStackTrace("mock object \"" + name + "\" was instantiated here") : null;
     }
 
     protected MethodBehavior defaultBehavior(InvocableAdapter invocable, final Object[] args, final SuperInvoker superInvoker) {
