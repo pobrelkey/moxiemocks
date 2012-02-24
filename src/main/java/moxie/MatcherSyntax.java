@@ -130,7 +130,7 @@ class MatcherSyntax {
                 varargMatcher = matcherReports.removeLast().getMatcher();
             } else {
                 // construct array matcher to match elements of varargs array
-                List<Matcher> varArgMatchers = MatcherSyntax.matcherListFragment(paramType, varParamsArray);
+                List<Matcher> varArgMatchers = MatcherSyntax.matcherListFragment(paramType.getComponentType(), varParamsArray);
                 varargMatcher = MoxieMatchers.isArrayMatcher(varArgMatchers);
             }
         }

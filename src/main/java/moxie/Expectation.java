@@ -60,9 +60,9 @@ import java.lang.reflect.InvocationHandler;
  * <dt><span style="font-weight: bold; background-color: Khaki;">The penultimate bit: create a proxy</span></dt>
  * <dd>
  * This returns a proxy object of the same type as the mock, on which we invoke the method we expect
- * to be called.  Note that this may be done using the {@link #on()}, {@link #when()} or {@link #will()} methods.
- * They perform exactly the same function; which you choose to call in any given situation is a
- * matter of aesthetics.
+ * to be called.  Note that this may be done using the {@link ObjectExpectation#on()}, {@link ObjectExpectation#when()}
+ * or {@link ObjectExpectation#will()} methods.  They perform exactly the same function; which you choose to call
+ * in any given situation is a matter of aesthetics.
  * </dd>
  * <dt><span style="font-weight: bold; background-color: LightGreen;">The last bit: specify the method</span></dt>
  * <dd>
@@ -129,10 +129,10 @@ import java.lang.reflect.InvocationHandler;
  * </p></dd>
  * <dt style="font-weight: bold">verifying returned/thrown values (spies only)</dt>
  * <dd><p>
- * On spy objects, you can use the {@link #andVerifyReturn(Object) andVerifyReturn()} and
- * {@link #andVerifyThrow(Throwable) andVerifyThrow()} methods (and their aliases,
- * {@link #willReturnVerified(Object) willReturnVerified()} and
- * {@link #willThrowVerified(Throwable) willThrowVerified()}) to check that the object spied upon
+ * On spy objects, you can use the {@link ObjectExpectation#andVerifyReturn(Object) andVerifyReturn()} and
+ * {@link ObjectExpectation#andVerifyThrow(Throwable) andVerifyThrow()} methods (and their aliases,
+ * {@link ObjectExpectation#willReturnVerified(Object) willReturnVerified()} and
+ * {@link ObjectExpectation#willThrowVerified(Throwable) willThrowVerified()}) to check that the object spied upon
  * returns/throws a given value.  You can use {@link MoxieMatchers} methods to perform a
  * flexible match.
  * </p><p>

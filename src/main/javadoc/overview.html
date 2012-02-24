@@ -309,9 +309,9 @@ EasyMock.expect(<b>mock.someMethod()</b>).times(3).andReturn("result");
         sound "nicer" in a wider range of circumstances and are easier to remember, Moxie includes a number of synonyms
         for common methods. For example, in {@link moxie.Expectation Expectation}, {@link
         moxie.Expectation#willReturn(Object) willReturn()} and
-        {@link moxie.Expectation#andReturn(Object) andReturn()} do the same thing, as do {@link moxie.Expectation#on()
-        on()},
-        {@link moxie.Expectation#when() when()} and {@link moxie.Expectation#will() will()}.</p>
+        {@link moxie.Expectation#andReturn(Object) andReturn()} do the same thing, as do
+        {@link moxie.ObjectExpectation#on() on()},
+        {@link moxie.ObjectExpectation#when() when()} and {@link moxie.ObjectExpectation#will() will()}.</p>
 
         <p>This approach is borrowed from Ruby, whose class library contains many synonyms for common methods. (Example:
             in Ruby you don't need to remember whether the method on an <code>Array</code> that tells you how many items
@@ -320,6 +320,20 @@ EasyMock.expect(<b>mock.someMethod()</b>).times(3).andReturn("result");
 </dl>
 
 <h2>Release Notes</h2>
+<h4>Release 1.0 - TBD</h4>
+<ul>
+    <li>Optional integration with <a target="_top" href="http://code.google.com/p/objenesis/">Objenesis</a>
+        so that concrete mocks can be instantiated without invoking a live constructor.</li>
+    <li>Optional integration with <a target="_top" href="http://code.google.com/p/powermock/">PowerMock</a>
+        to enable mocking of final, private, static and constructor methods.</li>
+    <li>{@link moxie.MoxieOptions#PARTIAL PARTIAL} mocking support - lets you mock some methods on a concrete class
+        but have others call to the underlying implementation.</li>
+    <li>Special {@link moxie.MoxieMatchers#captureTo(java.util.Collection) captureTo()} family of matcher methods to
+        enable capture of arguments passed to mock invocations.</li>
+    <li><b style="color: red">TODO</b> Deep mocking support - e.g. <code>Moxie.expect(mock).on().someMethod().someMethodOnResult()</code></li>
+    <li>The Moxie jar may well be a valid OSGi bundle now.  I haven't tested this - feedback, good or bad, is welcome.</li>
+    <li>Bug fixes, performance improvements.</li>
+</ul>
 <h4>Release 0.9 - 1 November 2010</h4>
 <ul>
     <li>Moxie now supports "consecutive-calls" behavior on mock methods - e.g. methods that return a different value on successive calls.</li>

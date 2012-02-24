@@ -41,17 +41,20 @@ public class Bug6Test {
     Bug6TestInterface mock;
 
     @Test
-    @Ignore("TODO - fix bug 6")
     public void thisIsBug6() {
         Moxie.expect(mock).on().someVarargsString(2.2, Moxie.anyString());
         mock.someVarargsString(2.2, "woooo!");
     }
 
     @Test
-    @Ignore("TODO - fix bug 6")
     public void thisIsAlsoBug6() {
         Moxie.expect(mock).on().someVarargsString(3.3, Moxie.startsWith("Red"), Moxie.startsWith("Blue"));
         mock.someVarargsString(3.3, "Red Dawn", "Blue Thunder");
     }
 
+    @Test
+    public void notBug6ButLikelyToRegressWhenBug6IsFixed() {
+        Moxie.expect(mock).on().someVarargsString(9.9);
+        mock.someVarargsString(9.9);
+    }
 }
