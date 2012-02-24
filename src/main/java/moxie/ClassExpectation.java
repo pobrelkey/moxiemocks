@@ -94,6 +94,7 @@ public interface ClassExpectation<T> extends Expectation<ClassExpectation<T>>, C
      *
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
+     * @return a stub of the type being constructed (for optional deep mocking)
      */
     T whenNew(Class[] paramSignature, Object... params);
 

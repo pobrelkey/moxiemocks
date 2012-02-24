@@ -75,7 +75,7 @@ class GroupImpl implements Group, Verifiable {
     }
 
     public String getName() {
-        throw new UnsupportedOperationException("WRITE ME");
+        return name;
     }
 
     public void add(ExpectationImpl expectation) {
