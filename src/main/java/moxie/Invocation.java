@@ -41,7 +41,7 @@ class Invocation implements SelfDescribing {
         this.interception = interception;
         this.invocable = invocable;
         this.arguments = arguments;
-        instantiationStackTrace = new InstantiationStackTrace("method " + invocable.getName() + " called here");
+        instantiationStackTrace = interception.flags.isTracing() ? new InstantiationStackTrace("method " + invocable.getName() + " called here") : null;
     }
 
     Object[] getArguments() {

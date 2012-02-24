@@ -132,7 +132,7 @@ abstract class Interception implements MethodIntercept, Verifiable {
         return whereInstantiated;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 

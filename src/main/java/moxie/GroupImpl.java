@@ -42,7 +42,7 @@ class GroupImpl implements Group, Verifiable {
 
     GroupImpl(String name, MoxieFlags flags) {
         this.name = name;
-        this.whereInstantiated = new InstantiationStackTrace("sequence \"" + name + "\" was instantiated here");
+        this.whereInstantiated = flags.isTracing() ? new InstantiationStackTrace("sequence \"" + name + "\" was instantiated here") : null;
         reset(flags);
     }
 
@@ -72,6 +72,10 @@ class GroupImpl implements Group, Verifiable {
 
     public Throwable getWhereInstantiated() {
         return whereInstantiated;
+    }
+
+    public String getName() {
+        throw new UnsupportedOperationException("WRITE ME");
     }
 
     public void add(ExpectationImpl expectation) {

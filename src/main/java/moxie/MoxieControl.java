@@ -246,6 +246,21 @@ public interface MoxieControl {
 
     /**
      * <p>
+     * Domain-specific language method - starts a clause in which an expectation is set on static or constructor methods of a class.
+     * </p>
+     * <p>
+     * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
+     * </p>
+     *
+     * @param clazz the class on which the expectation is to be set
+     * @param options {@link MoxieOptions} which should apply for the class mock (ignored after the first invocation for any class)
+     * @param <T> the class on which the expectation is to be set
+     * @return a {@link ClassExpectation} whose methods can be used to give details of what behavior to expect
+     */
+    <T> ClassExpectation<T> expect(Class<T> clazz, MoxieOptions... options);
+
+    /**
+     * <p>
      * Domain-specific language method - starts a clause in which an stub expectation is set on a mock.
      * </p>
      * <p>

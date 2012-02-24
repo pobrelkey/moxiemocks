@@ -42,14 +42,15 @@ class MatcherSyntax {
     static private <T> T shouldFullyConsumeMatcherReports(T someCall) {
         LinkedList<MatcherReport> matcherReports = MoxieMatchers.getMatcherReports();
         if (!matcherReports.isEmpty()) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            pw.println("Too many MoxieMatchers calls were made for this expression.  Excess calls were as follows:");
-            for (MatcherReport matcherReport : matcherReports) {
-                matcherReport.getWhereInstantiated().printStackTrace(pw);
-            }
-            matcherReports.clear();
-            throw new IllegalStateException(sw.toString());
+//            StringWriter sw = new StringWriter();
+//            PrintWriter pw = new PrintWriter(sw);
+//            pw.println("Too many MoxieMatchers calls were made for this expression.  Excess calls were as follows:");
+//            for (MatcherReport matcherReport : matcherReports) {
+//                matcherReport.getWhereInstantiated().printStackTrace(pw);
+//            }
+//            matcherReports.clear();
+//            throw new IllegalStateException(sw.toString());
+            throw new IllegalStateException("Too many MoxieMatchers calls were made for this expression");
         }
         return someCall;
     }
