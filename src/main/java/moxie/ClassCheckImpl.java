@@ -30,7 +30,7 @@ class ClassCheckImpl<C, T> extends CheckImpl<ClassCheckImpl<C, T>, ClassIntercep
     }
 
     public C onNew(Object... params) {
-        throw new UnsupportedOperationException("WRITE ME");
+        return onNew(null, params);
     }
 
     public C whenNew(Object... params) {
@@ -45,8 +45,11 @@ class ClassCheckImpl<C, T> extends CheckImpl<ClassCheckImpl<C, T>, ClassIntercep
         return onNew(params);
     }
 
+    @SuppressWarnings("unchecked")
     public C onNew(Class[] paramSignature, Object... params) {
-        throw new UnsupportedOperationException("WRITE ME");
+        Class interceptedClass = interception.getInterceptedClass();
+        ConstructorAdapter constructor = MoxieUtils.guessConstructor(interceptedClass, null, params);
+        return (C) handleInvocation(constructor, params);
     }
 
     public C whenNew(Class[] paramSignature, Object... params) {
