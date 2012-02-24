@@ -28,6 +28,7 @@ import org.hamcrest.SelfDescribing;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -179,39 +180,25 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         }
         invocable.zombify();
 
-        // TODO: deep mocks - do these type checks later.
+        boolean notADeepMock = invocable.getReturnType().equals(Void.TYPE) ||
+                invocable.getReturnType().isPrimitive() ||
+                Modifier.isFinal(invocable.getReturnType().getModifiers());
 
-        if (handler instanceof ReturnHandler) {
-            Class returnType = MoxieUtils.toNonPrimitive(invocable.getReturnType());
-            Object result = ((ReturnHandler) handler).getResult();
-            if (returnType == Void.TYPE && result != null) {
-                throw new IllegalArgumentException("return value specified for void method");
-            } else if (result != null && !returnType.isAssignableFrom(result.getClass())) {
-                throw new IllegalArgumentException("incompatible result type (" + result.getClass().getName() + ") for method which returns " + invocable.getReturnType().getName());
+        // If not deep-mockable, check return/throw types now.
+        if (notADeepMock) {
+            if (handler instanceof TypeCompatibilityVerifable) {
+                ((TypeCompatibilityVerifable) handler).verifyTypeCompatible(invocable);
             }
         }
 
-        if (handler instanceof ThrowHandler) {
-            Throwable throwable = ((ThrowHandler) handler).getThrowable();
-            if (throwable instanceof Exception && !(throwable instanceof RuntimeException)) {
-                boolean foundCompatibleException = false;
-                for (Class<?> exceptionType : invocable.getExceptionTypes()) {
-                    if (exceptionType.isAssignableFrom(throwable.getClass())) {
-                        foundCompatibleException = true;
-                        break;
-                    }
-                }
-                if (!foundCompatibleException) {
-                    throw new IllegalArgumentException("exception is of type not thrown by the method (" + throwable.getClass().getName() + ")");
-                }
-            }
-        }
-
+        // TODO: handle deep mocks differently
         this.invocable = invocable;
         argMatchers = MatcherSyntax.methodCall(invocable, params);
         interception.addExpectation(this);
 
-        // TODO: return deep mocking stub instead!
+        if (!notADeepMock) {
+            // TODO: return deep mocking stub instead!
+        }
         return MoxieUtils.defaultValue(invocable.getReturnType());
     }
 
@@ -373,14 +360,20 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         }
     }
 
-    static private class ReturnHandler implements MethodIntercept, SelfDescribing {
+    static private interface TypeCompatibilityVerifable {
+        void verifyTypeCompatible(InvocableAdapter invocable);
+    }
+
+    static private class ReturnHandler implements MethodIntercept, TypeCompatibilityVerifable, SelfDescribing {
         private final Object result;
+        private boolean verified = false;
 
         public ReturnHandler(Object result) {
             this.result = result;
         }
 
         public Object intercept(Object mockObject, InvocableAdapter invocable, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
+            verifyTypeCompatible(invocable);
             return result;
         }
 
@@ -392,16 +385,30 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
             description.appendText("return ");
             description.appendValue(result);
         }
+
+        public void verifyTypeCompatible(InvocableAdapter invocable) {
+            if (!this.verified) {
+                Class returnType = MoxieUtils.toNonPrimitive(invocable.getReturnType());
+                if (returnType == Void.TYPE && result != null) {
+                    throw new IllegalArgumentException("return value specified for void method");
+                } else if (result != null && !returnType.isAssignableFrom(result.getClass())) {
+                    throw new IllegalArgumentException("incompatible result type (" + result.getClass().getName() + ") for method which returns " + invocable.getReturnType().getName());
+                }
+                this.verified = true;
+            }
+        }
     }
 
-    static private class ThrowHandler implements MethodIntercept, SelfDescribing {
+    static private class ThrowHandler implements MethodIntercept, TypeCompatibilityVerifable, SelfDescribing {
         private final Throwable throwable;
+        private boolean verified = false;
 
         public ThrowHandler(Throwable throwable) {
             this.throwable = throwable;
         }
 
         public Object intercept(Object mockObject, InvocableAdapter invocable, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
+            verifyTypeCompatible(invocable);
             throwable.fillInStackTrace();
             throw throwable;
         }
@@ -414,6 +421,24 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
             description.appendText("throw ");
             description.appendValue(throwable);
         }
+
+        public void verifyTypeCompatible(InvocableAdapter invocable) {
+            if (!this.verified) {
+                if (throwable instanceof Exception && !(throwable instanceof RuntimeException)) {
+                    boolean foundCompatibleException = false;
+                    for (Class<?> exceptionType : invocable.getExceptionTypes()) {
+                        if (exceptionType.isAssignableFrom(throwable.getClass())) {
+                            foundCompatibleException = true;
+                            break;
+                        }
+                    }
+                    if (!foundCompatibleException) {
+                        throw new IllegalArgumentException("exception is of type not thrown by the method (" + throwable.getClass().getName() + ")");
+                    }
+                }
+                this.verified = true;
+            }
+        }
     }
 
     static private class DelegateHandler implements MethodIntercept, SelfDescribing {
@@ -424,7 +449,7 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         }
 
         public Object intercept(Object mockObject, InvocableAdapter invocable, Object[] parameters, SuperInvoker superInvoker) throws Throwable {
-            Method method = ((MethodAdapter) invocable).getMethod();  // TODO
+            Method method = ((MethodAdapter) invocable).getMethod();
             try {
                 method = delegate.getClass().getMethod(invocable.getName(), invocable.getParameterTypes());
                 method.setAccessible(true);
@@ -440,7 +465,7 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         }
     }
 
-    protected static class ConsecutiveHandler implements MethodIntercept, SelfDescribing {
+    protected static class ConsecutiveHandler implements MethodIntercept, TypeCompatibilityVerifable, SelfDescribing {
         private final List<MethodIntercept> handlers = new ArrayList<MethodIntercept>();
         private Iterator<MethodIntercept> iterator = null;
 
@@ -481,6 +506,14 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
 
         public int size() {
             return handlers.size();
+        }
+
+        public void verifyTypeCompatible(InvocableAdapter invocable) {
+            for (MethodIntercept handler : handlers) {
+                if (handler instanceof TypeCompatibilityVerifable) {
+                    ((TypeCompatibilityVerifable) handler).verifyTypeCompatible(invocable);
+                }
+            }
         }
     }
 

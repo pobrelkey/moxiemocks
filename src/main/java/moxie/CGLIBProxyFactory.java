@@ -60,7 +60,6 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
         }
     }
 
-    // TODO: Threadlocal?  Probably not robust if running multiple Moxies in parallel.
     private static Map<Object, MethodIntercept> proxyIntercepts = Collections.synchronizedMap(new WeakIdentityMap<Object, MethodIntercept>());
 
     private static class TrivialSubclassOfObjectToWorkAroundCGLIBBug {
@@ -175,19 +174,19 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
         }
 
         public Object expectSubstitutionLogic(Object... arguments) throws Exception {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("EasyMock/Mockito operations on mocks are not supported by the Moxie invocation handler");
         }
 
         public Object replay(Object... mocks) {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("EasyMock/Mockito operations on mocks are not supported by the Moxie invocation handler");
         }
 
         public Object verify(Object... mocks) {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("EasyMock/Mockito operations on mocks are not supported by the Moxie invocation handler");
         }
 
         public Object reset(Object... mocks) {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("EasyMock/Mockito operations on mocks are not supported by the Moxie invocation handler");
         }
     };
 
