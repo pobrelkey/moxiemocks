@@ -56,9 +56,9 @@ package moxie;
  * <dt><span style="font-weight: bold; background-color: Khaki;">The penultimate bit: create a proxy</span></dt>
  * <dd>
  * This returns a proxy object of the same type as the mock, on which we invoke the method we wish
- * to check was called.  Note that this may be done using the {@link #on()}, {@link #when()},  {@link #get()}
- * or {@link #got()} methods.  They perform exactly the same function; which you choose to call in any
- * given situation is a matter of aesthetics.
+ * to check was called.  Note that this may be done using the {@link ObjectCheck#on()}, {@link ObjectCheck#when()},
+ * {@link ObjectCheck#get()} or {@link ObjectCheck#got()} methods.  They perform exactly the same function;
+ * which you choose to call in any given situation is a matter of aesthetics.
  * </dd>
  * <dt><span style="font-weight: bold; background-color: LightGreen;">The last bit: specify the method</span></dt>
  * <dd>
@@ -103,14 +103,20 @@ package moxie;
  * By using a {@link Group}, checks can be made where method ordering is significant.  (Checks do not pay any attention
  * to the ordering of method calls otherwise.)
  * </p></dd>
- * <dt style="font-weight: bold">checking returned/thrown values: {@link #returned(Object) returned()} and {@link #threw(Throwable) threw()}</dt>
+ * <dt style="font-weight: bold">checking returned/thrown values: {@link ObjectCheck#returned(Object) returned()} and {@link ObjectCheck#threw(Throwable) threw()}</dt>
  * <dd><p>
- * On spy objects (and mocks with esoteric handlers), {@link #returned(Object) returned()} and {@link #threw(Throwable) threw()}
+ * On spy objects (and mocks with esoteric handlers), {@link ObjectCheck#returned(Object) returned()} and {@link ObjectCheck#threw(Throwable) threw()}
  * include the value returned/thrown by the method in the check.  You can use {@link MoxieMatchers} methods to perform a
  * flexible match.
  * </p><p>
- * These methods have identically-functional aliases, {@link #returnValue(Object) returnValue()} and {@link #throwException(Throwable) throwException()},
+ * These methods have identically-functional aliases, {@link ObjectCheck#returnValue(Object) returnValue()} and {@link ObjectCheck#throwException(Throwable) throwException()},
  * which give checks that use {@link #didNot()} a nicer-sounding alternative syntax.
+ * </p><p>
+ * Note that these methods cannot be used on final, private, static or constructor methods (thus they are only available
+ * on the {@link ObjectCheck} interface).  The way these are implemented in Moxie involves using PowerMock to replace
+ * the original implementation of the method/constructor with a stub; as {@link ObjectCheck#returned(Object) returned()}
+ * and {@link ObjectCheck#threw(Throwable) threw()} are intended to verify the behavior of the underlying implementation
+ * in the mocked class, including them would make no sense.
  * </p></dd>
  * </dl>
  * <p/>
