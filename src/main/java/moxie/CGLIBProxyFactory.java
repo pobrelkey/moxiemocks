@@ -93,9 +93,16 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
     @SuppressWarnings("unchecked")
     T createProxy(final MethodIntercept methodIntercept, Class[] constructorArgTypes, Object[] constructorArgs) {
         T result;
-        if (!haveObjenesis || constructorArgTypes != null) {
+        if (!haveObjenesis || constructorArgTypes != null || constructorArgs != null) {
             try {
-                result = (T) enhancedClass.getConstructor(constructorArgTypes).newInstance(constructorArgs);
+                Constructor constructor;
+                if (constructorArgTypes == null && constructorArgs != null && constructorArgs.length > 0) {
+                    constructor = MoxieUtils.guessConstructor(enhancedClass, constructorArgTypes, constructorArgs).getConstructor();
+                } else {
+                    constructor = enhancedClass.getConstructor(constructorArgTypes);
+                }
+                constructor.setAccessible(true);
+                result = (T) constructor.newInstance(constructorArgs);
             } catch (InstantiationException e) {
                 throw new MoxieUnexpectedError(e);
             } catch (IllegalAccessException e) {
@@ -103,7 +110,12 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
             } catch (InvocationTargetException e) {
                 throw new MoxieUnexpectedError(e.getTargetException());
             } catch (NoSuchMethodException e) {
-                if (!haveObjenesis && (constructorArgTypes == null || constructorArgTypes.length == 0)) {
+                if (!haveObjenesis && (constructorArgTypes == null || constructorArgTypes.length == 0) && (constructorArgs == null || constructorArgs.length == 0)) {
+                    throw new IllegalArgumentException("To mock concrete types that don't have no-arg constructors, either pass constructor arguments or add Objenesis to the classpath");
+                }
+                throw new MoxieUnexpectedError(e);
+            } catch (MoxieUtils.NoMethodFoundException e) {
+                if (!haveObjenesis && (constructorArgTypes == null || constructorArgTypes.length == 0) && (constructorArgs == null || constructorArgs.length == 0)) {
                     throw new IllegalArgumentException("To mock concrete types that don't have no-arg constructors, either pass constructor arguments or add Objenesis to the classpath");
                 }
                 throw new MoxieUnexpectedError(e);

@@ -48,7 +48,7 @@ class ClassCheckImpl<C, T> extends CheckImpl<ClassCheckImpl<C, T>, ClassIntercep
     @SuppressWarnings("unchecked")
     public C onNew(Class[] paramSignature, Object... params) {
         Class interceptedClass = interception.getInterceptedClass();
-        ConstructorAdapter constructor = MoxieUtils.guessConstructor(interceptedClass, null, params);
+        ConstructorAdapter constructor = MoxieUtils.guessConstructor(interceptedClass, paramSignature, params);
         return (C) handleInvocation(constructor, params);
     }
 

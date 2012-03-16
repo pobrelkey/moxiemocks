@@ -37,13 +37,13 @@ import java.util.List;
 
 abstract class MoxieUtils {
 
-    private static final Character ZERO_CHAR = new Character('\0');
-    private static final Byte ZERO_BYTE = new Byte((byte) 0);
-    private static final Short ZERO_SHORT = new Short((short) 0);
-    private static final Integer ZERO_INT = new Integer(0);
-    private static final Long ZERO_LONG = new Long((long) 0);
-    private static final Double ZERO_DOUBLE = new Double((double) 0);
-    private static final Float ZERO_FLOAT = new Float((float) 0);
+    private static final Character ZERO_CHAR = Character.valueOf('\0');
+    private static final Byte ZERO_BYTE = Byte.valueOf((byte) 0);
+    private static final Short ZERO_SHORT = Short.valueOf((short) 0);
+    private static final Integer ZERO_INT = Integer.valueOf(0);
+    private static final Long ZERO_LONG = Long.valueOf((long) 0);
+    private static final Double ZERO_DOUBLE = Double.valueOf((double) 0);
+    private static final Float ZERO_FLOAT = Float.valueOf((float) 0);
 
     @SuppressWarnings("unchecked")
     static <T> T defaultValue(Class<T> clazz) {
@@ -230,9 +230,9 @@ abstract class MoxieUtils {
         List<MethodAdapter> likelyMatches = guessInvocable(paramSignature, params, candidates);
 
         if (likelyMatches.size() > 1) {
-            throw new IllegalArgumentException("Multiple methods named \"" + methodName + "\" found on class " + interceptedClass.getName() + " matching specified parameters/signature");
+            throw new MultipleMethodsFoundException("Multiple methods named \"" + methodName + "\" found on class " + interceptedClass.getName() + " matching specified parameters/signature");
         } else if (likelyMatches.isEmpty()) {
-            throw new IllegalArgumentException("No method \"" + methodName + "\" found on class " + interceptedClass.getName() + " matching specified parameters/signature");
+            throw new NoMethodFoundException("No method \"" + methodName + "\" found on class " + interceptedClass.getName() + " matching specified parameters/signature");
         }
 
         return likelyMatches.get(0);
@@ -292,9 +292,9 @@ candidateLoop:
         List<ConstructorAdapter> likelyMatches = guessInvocable(paramSignature, params, candidates);
 
         if (likelyMatches.size() > 1) {
-            throw new IllegalArgumentException("Multiple plausible constructors found on class " + interceptedClass.getName() + " matching specified parameters/signature");
+            throw new MultipleMethodsFoundException("Multiple plausible constructors found on class " + interceptedClass.getName() + " matching specified parameters/signature");
         } else if (likelyMatches.isEmpty()) {
-            throw new IllegalArgumentException("No plausible constructor found on class " + interceptedClass.getName() + " matching specified parameters/signature");
+            throw new NoMethodFoundException("No plausible constructor found on class " + interceptedClass.getName() + " matching specified parameters/signature");
         }
 
         return likelyMatches.get(0);
@@ -304,4 +304,15 @@ candidateLoop:
         F create();
     }
 
+    static class MultipleMethodsFoundException extends IllegalArgumentException {
+        MultipleMethodsFoundException(String message) {
+            super(message);
+        }
+    }
+
+    static class NoMethodFoundException extends IllegalArgumentException {
+        NoMethodFoundException(String message) {
+            super(message);
+        }
+    }
 }

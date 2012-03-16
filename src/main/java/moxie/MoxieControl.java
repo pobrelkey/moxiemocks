@@ -80,12 +80,53 @@ public interface MoxieControl {
      * </p>
      *
      * @param clazz               the class that the mock should extend
+     * @param constructorArgs     values to be passed to the constructor
+     * @param <T>                 the class or interface that the mock should extend/implement
+     * @return a new mock object
+     */
+    <T> T mock(Class<T> clazz, Object... constructorArgs);
+
+    /**
+     * <p>
+     * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
+     * This method is provided for partial mocking of objects that use constructor dependency injection,
+     * and to ease portability of legacy JMock 1/EasyMock tests.
+     * </p>
+     * <p>
+     * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
+     * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
+     * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
+     * to using constructors if Objenesis isn't on the classpath.
+     * </p>
+     *
+     * @param clazz               the class that the mock should extend
      * @param constructorArgTypes the parameter signature of the constructor to be used
      * @param constructorArgs     values to be passed to the constructor
      * @param <T>                 the class or interface that the mock should extend/implement
      * @return a new mock object
      */
     <T> T mock(Class<T> clazz, Class[] constructorArgTypes, Object[] constructorArgs);
+
+    /**
+     * <p>
+     * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
+     * This method is provided for partial mocking of objects that use constructor dependency injection,
+     * and to ease portability of legacy JMock 1/EasyMock tests.
+     * </p>
+     * <p>
+     * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
+     * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
+     * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
+     * to using constructors if Objenesis isn't on the classpath.
+     * </p>
+     *
+     * @param clazz               the class that the mock should extend
+     * @param name                the name of the mock object - will be used in error messages
+     * @param constructorArgs     values to be passed to the constructor
+     * @param <T>                 the class or interface that the mock should extend/implement
+     * @return a new mock object
+     */
+    <T> T mock(Class<T> clazz, String name, Object[] constructorArgs);
 
     /**
      * <p>
@@ -123,6 +164,27 @@ public interface MoxieControl {
      * </p>
      *
      * @param clazz               the class that the mock should extend
+     * @param constructorArgs     values to be passed to the constructor
+     * @param options             one or more {@link MoxieOptions} that should apply to the mock
+     * @param <T>                 the class or interface that the mock should extend/implement
+     * @return a new mock object
+     */
+    <T> T mock(Class<T> clazz, Object[] constructorArgs, MoxieOptions... options);
+
+    /**
+     * <p>
+     * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
+     * This method is provided for partial mocking of objects that use constructor dependency injection,
+     * and to ease portability of legacy JMock 1/EasyMock tests.
+     * </p>
+     * <p>
+     * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
+     * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
+     * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
+     * to using constructors if Objenesis isn't on the classpath.
+     * </p>
+     *
+     * @param clazz               the class that the mock should extend
      * @param constructorArgTypes the parameter signature of the constructor to be used
      * @param constructorArgs     values to be passed to the constructor
      * @param options             one or more {@link MoxieOptions} that should apply to the mock
@@ -130,6 +192,28 @@ public interface MoxieControl {
      * @return a new mock object
      */
     <T> T mock(Class<T> clazz, Class[] constructorArgTypes, Object[] constructorArgs, MoxieOptions... options);
+
+    /**
+     * <p>
+     * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
+     * This method is provided for partial mocking of objects that use constructor dependency injection,
+     * and to ease portability of legacy JMock 1/EasyMock tests.
+     * </p>
+     * <p>
+     * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
+     * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
+     * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
+     * to using constructors if Objenesis isn't on the classpath.
+     * </p>
+     *
+     * @param clazz               the class that the mock should extend
+     * @param name                the name of the mock object - will be used in error messages
+     * @param constructorArgs     values to be passed to the constructor
+     * @param options             one or more {@link MoxieOptions} that should apply to the mock
+     * @param <T>                 the class or interface that the mock should extend/implement
+     * @return a new mock object
+     */
+    <T> T mock(Class<T> clazz, String name, Object[] constructorArgs, MoxieOptions... options);
 
     /**
      * <p>

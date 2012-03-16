@@ -58,16 +58,32 @@ class MoxieControlImpl implements MoxieControl {
         return mock(clazz, name, (Class[]) null, (Object[]) null, options);
     }
 
+    public <T> T mock(Class<T> clazz, Object... constructorArgs) {
+        return mock(clazz, null, (Class[]) null, constructorArgs, MoxieOptions.MOCK_DEFAULTS);
+    }
+
     public <T> T mock(Class<T> clazz, Class[] constructorArgTypes, Object[] constructorArgs) {
         return mock(clazz, null, constructorArgTypes, constructorArgs, MoxieOptions.MOCK_DEFAULTS);
+    }
+
+    public <T> T mock(Class<T> clazz, String name, Object[] constructorArgs) {
+        return mock(clazz, name, (Class[]) null, constructorArgs, MoxieOptions.MOCK_DEFAULTS);
     }
 
     public <T> T mock(Class<T> clazz, String name, Class[] constructorArgTypes, Object[] constructorArgs) {
         return mock(clazz, name, constructorArgTypes, constructorArgs, MoxieOptions.MOCK_DEFAULTS);
     }
 
+    public <T> T mock(Class<T> clazz, Object[] constructorArgs, MoxieOptions... options) {
+        return mock(clazz, null, (Class[]) null, constructorArgs, options);
+    }
+
     public <T> T mock(Class<T> clazz, Class[] constructorArgTypes, Object[] constructorArgs, MoxieOptions... options) {
         return mock(clazz, null, constructorArgTypes, constructorArgs, options);
+    }
+
+    public <T> T mock(Class<T> clazz, String name, Object[] constructorArgs, MoxieOptions... options) {
+        return mock(clazz, name, (Class[]) null, constructorArgs, options);
     }
 
     public <T> T mock(Class<T> clazz, String name, Class[] constructorArgTypes, Object[] constructorArgs, MoxieOptions... options) {
@@ -112,15 +128,17 @@ class MoxieControlImpl implements MoxieControl {
         return group;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> ObjectExpectation<T> expect(T mockObject) {
-        // TODO
         return ((ObjectInterception<T>) getInterceptionFromProxy(mockObject)).expect();
     }
 
+    @SuppressWarnings("unchecked")
     public <T> ClassExpectation<T> expect(Class<T> clazz) {
         return getInterceptionFromClass(clazz).expect();
     }
 
+    @SuppressWarnings("unchecked")
     public <T> ClassExpectation<T> expect(Class<T> clazz, MoxieOptions... options) {
         return getInterceptionFromClass(clazz, options).expect();
     }
@@ -133,8 +151,8 @@ class MoxieControlImpl implements MoxieControl {
         return expect(clazz).anyTimes().atAnyTime();
     }
 
+    @SuppressWarnings("unchecked")
     public <T> ObjectCheck<T> check(T mockObject) {
-        // TODO
         return ((ObjectInterception<T>) getInterceptionFromProxy(mockObject)).check();
     }
 

@@ -180,12 +180,12 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         }
         invocable.zombify();
 
-        boolean notADeepMock = invocable.getReturnType().equals(Void.TYPE) ||
-                invocable.getReturnType().isPrimitive() ||
-                Modifier.isFinal(invocable.getReturnType().getModifiers());
+        boolean deepMockable = !invocable.getReturnType().equals(Void.TYPE) &&
+                !invocable.getReturnType().isPrimitive() &&
+                !Modifier.isFinal(invocable.getReturnType().getModifiers());
 
         // If not deep-mockable, check return/throw types now.
-        if (notADeepMock) {
+        if (!deepMockable) {
             if (handler instanceof TypeCompatibilityVerifable) {
                 ((TypeCompatibilityVerifable) handler).verifyTypeCompatible(invocable);
             }
@@ -196,7 +196,7 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         argMatchers = MatcherSyntax.methodCall(invocable, params);
         interception.addExpectation(this);
 
-        if (!notADeepMock) {
+        if (deepMockable) {
             // TODO: return deep mocking stub instead!
         }
         return MoxieUtils.defaultValue(invocable.getReturnType());
