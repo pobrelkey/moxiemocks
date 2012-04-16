@@ -3,7 +3,7 @@
 <body>
 
 <p>
-    Moxie is a new Java library for creating <a target="_top" href="http://www.mockobjects.com/">mock objects</a> in unit tests.
+    Moxie is a Java library for creating <a target="_top" href="http://www.mockobjects.com/">mock objects</a> in unit tests.
     It aims to be the "nicest" and easiest-to-use mocking library around, with a consistent syntax that rankles less
     than other mocking libraries currently available.
 </p>
@@ -39,6 +39,11 @@
     <li><a target="_top" href="http://cglib.sourceforge.net/">cglib</a> 2.1_3 or later (only if you want to mock concrete classes
         or use spies - not needed for interface mocks)
     </li>
+    <li><a target="_top" href="http://www.objenesis.org/">Objenesis</a> 1.2 or later (only if you want to mock concrete classes
+        that don't have no-arg constructors)
+    </li>
+    <li><a target="_top" href="http://www.powermock.org/">PowerMock</a> 1.4.9 or later (only if you want to mock private or final
+        methods, constructors or static methods on concrete classes)</li>
 </ul>
 </p>
 
@@ -320,19 +325,22 @@ EasyMock.expect(<b>mock.someMethod()</b>).times(3).andReturn("result");
 </dl>
 
 <h2>Release Notes</h2>
-<h4>Release 1.0 - TBD</h4>
+<h4>Release 1.0 - 16 April 2012</h4>
 <ul>
-    <li>Optional integration with <a target="_top" href="http://code.google.com/p/objenesis/">Objenesis</a>
+    <li>Optional integration with <a target="_top" href="http://www.objenesis.org/">Objenesis</a>
         so that concrete mocks can be instantiated without invoking a live constructor.</li>
-    <li>Optional integration with <a target="_top" href="http://code.google.com/p/powermock/">PowerMock</a>
+    <li>Optional integration with <a target="_top" href="http://www.powermock.org/">PowerMock</a>
         to enable mocking of final, private, static and constructor methods.</li>
     <li>{@link moxie.MoxieOptions#PARTIAL PARTIAL} mocking support - lets you mock some methods on a concrete class
         but have others call to the underlying implementation.</li>
     <li>Special {@link moxie.MoxieMatchers#captureTo(java.util.Collection) captureTo()} family of matcher methods to
         enable capture of arguments passed to mock invocations.</li>
-    <li><b style="color: red">TODO</b> Deep mocking support - e.g. <code>Moxie.expect(mock).on().someMethod().someMethodOnResult()</code></li>
+    <li>Performance improvement: Moxie now captures far fewer debugging stack traces unless the
+        {@link moxie.MoxieOptions#TRACE TRACE} option is given. With this improvement, Moxie is now
+        <a target="_top" href="http://code.google.com/p/moxiemocks/wiki/MockingLibraryPerformance">faster</a>
+        than any other modern mocking library.</li>
     <li>The Moxie jar may well be a valid OSGi bundle now.  I haven't tested this - feedback, good or bad, is welcome.</li>
-    <li>Bug fixes, performance improvements.</li>
+    <li>Bug fixes, API tweaks.</li>
 </ul>
 <h4>Release 0.9 - 1 November 2010</h4>
 <ul>

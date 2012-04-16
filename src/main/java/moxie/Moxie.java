@@ -40,7 +40,7 @@ package moxie;
  * for most people, and using the methods on this class will save the extra line of code involved in explicitly
  * creating a {@link MoxieControl}.</p></li>
  * <li><p><b>{@link MoxieMatchers} methods</b> - For convenience this class inherits from {@link MoxieMatchers}, enabling
- * you to use those methods with less typing/fewer <code>import</code> statements</p>.</li>
+ * you to use those methods with less typing/fewer <code>import</code> statements.</p></li>
  * </ul>
  *
  * @see moxie.MoxieControl
