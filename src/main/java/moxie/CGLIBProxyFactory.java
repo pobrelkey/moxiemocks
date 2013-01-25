@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Moxie contributors
+ * Copyright (c) 2010-2013 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,8 +44,13 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
 
     static private boolean haveObjenesis = false;
     static private boolean havePowermock = false;
+    private static Object  powermockInvocationHandler = null;
+    private static Object powermockConstructorHandler = null;
     private static ObjenesisStd objenesis;
+    private static final Map<Object, MethodIntercept> proxyIntercepts;
+
     static {
+        proxyIntercepts = Collections.synchronizedMap(new WeakIdentityMap<Object, MethodIntercept>());
         try {
             objenesis = new ObjenesisStd(true);
             haveObjenesis = true;
@@ -54,13 +59,13 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
         }
         try {
             new MemberModifier();
+            powermockInvocationHandler = new PowermockInvocationHandler(proxyIntercepts);
+            powermockConstructorHandler = new PowermockConstructorHandler(proxyIntercepts);
             havePowermock = true;
         } catch (NoClassDefFoundError e) {
             // oh well, no powermock then.
         }
     }
-
-    private static Map<Object, MethodIntercept> proxyIntercepts = Collections.synchronizedMap(new WeakIdentityMap<Object, MethodIntercept>());
 
     private static class TrivialSubclassOfObjectToWorkAroundCGLIBBug {
         public TrivialSubclassOfObjectToWorkAroundCGLIBBug() {}
@@ -86,7 +91,7 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
         e.setCallbackType(MethodInterceptor.class);
         enhancedClass = e.createClass();
         if (haveObjenesis) {
-            objenesisInstantiator = objenesis.getInstantiatorOf(enhancedClass);
+            objenesisInstantiator = ((ObjenesisStd) objenesis).getInstantiatorOf(enhancedClass);
         }
     }
 
@@ -144,64 +149,6 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
         return result;
     }
 
-    private static final InvocationHandler POWERMOCK_INVOCATION_HANDLER = new InvocationHandler() {
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (Modifier.isStatic(method.getModifiers())) {
-                proxy = method.getDeclaringClass();
-            }
-            MethodIntercept methodIntercept = proxyIntercepts.get(proxy);
-            if (methodIntercept == null) {
-                throw new MoxieZombieMethodInvocationError("cannot partially mock a static or final method");
-            }
-            return methodIntercept.intercept(proxy, new MethodAdapter(method), args, ZOMBIE_METHOD_SUPER_INVOKER);
-        }
-    };
-
-    private static final MethodIntercept.SuperInvoker ZOMBIE_METHOD_SUPER_INVOKER = new ZombieSuperInvoker("cannot partially mock a static or final method");
-    private static final MethodIntercept.SuperInvoker ZOMBIE_CONSTRUCTOR_SUPER_INVOKER = new ZombieSuperInvoker("cannot partially mock a constructor");
-
-    private static class ZombieSuperInvoker implements MethodIntercept.SuperInvoker {
-        private final String errorMessage;
-
-        public ZombieSuperInvoker(String errorMessage) {
-            this.errorMessage = errorMessage;
-        }
-
-        public Object invokeSuper(Object[] args) throws Throwable {
-            throw new MoxieZombieMethodInvocationError(errorMessage);
-        }
-    }
-
-    private static final NewInvocationControl POWERMOCK_CONSTRUCTOR_HANDLER = new NewInvocationControl() {
-        public Object invoke(Class type, Object[] args, Class[] sig) throws Exception {
-            try {
-                return proxyIntercepts.get(type).intercept(type, new ConstructorAdapter(type.getDeclaredConstructor(sig)), args, ZOMBIE_CONSTRUCTOR_SUPER_INVOKER);
-            } catch (Exception e) {
-                throw e;
-            } catch (Error e) {
-                throw e;
-            } catch (Throwable e) {
-                throw new MoxieUnexpectedError(e);
-            }
-        }
-
-        public Object expectSubstitutionLogic(Object... arguments) throws Exception {
-            throw new UnsupportedOperationException("EasyMock/Mockito operations on mocks are not supported by the Moxie invocation handler");
-        }
-
-        public Object replay(Object... mocks) {
-            throw new UnsupportedOperationException("EasyMock/Mockito operations on mocks are not supported by the Moxie invocation handler");
-        }
-
-        public Object verify(Object... mocks) {
-            throw new UnsupportedOperationException("EasyMock/Mockito operations on mocks are not supported by the Moxie invocation handler");
-        }
-
-        public Object reset(Object... mocks) {
-            throw new UnsupportedOperationException("EasyMock/Mockito operations on mocks are not supported by the Moxie invocation handler");
-        }
-    };
-
     static void registerClassInterception(ClassInterception interception) {
         proxyIntercepts.put(interception.getInterceptedClass(), interception);
     }
@@ -210,14 +157,14 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
         if (!havePowermock) {
             throw new UnsupportedOperationException("add powermock-api-support to the classpath to enable mocking of constructors");
         }
-        MockRepository.putNewInstanceControl(constructor.getDeclaringClass(), POWERMOCK_CONSTRUCTOR_HANDLER);
+        MockRepository.putNewInstanceControl(constructor.getDeclaringClass(), (NewInvocationControl<?>) powermockConstructorHandler);
     }
 
     static void zombify(Method method) {
         if (!havePowermock) {
             throw new UnsupportedOperationException("add powermock-api-support to the classpath to enable mocking of static/final methods");
         }
-        org.powermock.api.support.membermodification.MemberModifier.replace(method).with(POWERMOCK_INVOCATION_HANDLER);
+        MemberModifier.replace(method).with((InvocationHandler) powermockInvocationHandler);
     }
 
 }
