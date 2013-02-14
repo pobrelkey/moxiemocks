@@ -30,4 +30,6 @@ interface MoxieFlags {
     Boolean isPartial();
 
     Boolean isTracing();
+
+    Boolean isBackgroundAware();
 }

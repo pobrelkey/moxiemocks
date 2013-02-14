@@ -93,10 +93,12 @@ class GroupImpl implements Group, Verifiable {
     }
 
     public void verifyNoBackgroundErrors() {
-        if (unexpectedInvocations.size() == 1) {
-            throw unexpectedInvocations.get(0);
-        } else if (unexpectedInvocations.size() > 1) {
-            throw new MoxieUnexpectedInvocationError(unexpectedInvocations);
+        if (MoxieUtils.unbox(flags.isBackgroundAware(), true)) {
+            if (unexpectedInvocations.size() == 1) {
+                throw unexpectedInvocations.get(0);
+            } else if (unexpectedInvocations.size() > 1) {
+                throw new MoxieUnexpectedInvocationError(unexpectedInvocations);
+            }
         }
     }
 

@@ -30,12 +30,12 @@ public enum MoxieOptions implements MoxieFlags {
     /**
      * The order in which expectations are fulfilled on this mock/group will be strictly checked; out-of-order calls will fail.
      */
-    UNORDERED(false, null, null, null),
+    UNORDERED(false, null, null, null, null),
 
     /**
      * The order in which expectations are fulfilled on this mock/group will not be checked.
      */
-    ORDERED(true, null, null, null),
+    ORDERED(true, null, null, null, null),
 
     /**
      * <p>
@@ -59,7 +59,7 @@ public enum MoxieOptions implements MoxieFlags {
      * On spies, the default behavior is always to delegate to the underlying object.
      * </p>
      */
-    PERMISSIVE(null, true, null, null),
+    PERMISSIVE(null, true, null, null, null),
 
     /**
      * <p>
@@ -71,7 +71,7 @@ public enum MoxieOptions implements MoxieFlags {
      * unless a {@link Expectation#never() never()} expectation is explicitly set for those methods.  
      * </p>
      */
-    PRESCRIPTIVE(null, false, null, null),
+    PRESCRIPTIVE(null, false, null, null, null),
 
     /**
      * <p>
@@ -87,31 +87,54 @@ public enum MoxieOptions implements MoxieFlags {
      * lest unexpected method calls raise an error.
      * </p>
      */
-    PARTIAL(null ,null, true, null),
+    PARTIAL(null ,null, true, null, null),
 
     /**
      * Save stack traces when instantiating new mocks or recording method invocations.
      * Makes Moxie slightly slower (~2x), but sometimes produces more informative error messages.
      */
-    TRACE(null, null, null, true),
+    TRACE(null, null, null, true, null),
+
+    /**
+     * Observe the default behavior - for performance reasons, don't save stack traces.
+     * Opposite of {@link MoxieOptions#TRACE TRACE}.
+     */
+    NO_TRACE(null, null, null, false, null),
+
+    /**
+     * Don't cause tests to fail at {@link Moxie#verify(Object...) verify} time if there has been
+     * an unexpected mock invocation in a background thread.  (The unexpected invocation will still
+     * throw an error in that thread, but this is unlikely to fail your test unless you've written it
+     * to check for that error and/or its side effects.)
+     *
+     * @deprecated  This flag is a tested and supported feature of Moxie, but you really should fix your code/tests instead of using it!
+     */
+    IGNORE_BACKGROUND_FAILURES(null, null, null, null, false),
+
+    /**
+     * Observe the default behavior - fail tests when mock errors are thrown in background threads.
+     * Opposite of {@link MoxieOptions#IGNORE_BACKGROUND_FAILURES IGNORE_BACKGROUND_FAILURES}.
+     */
+    NO_IGNORE_BACKGROUND_FAILURES(null, null, null, null, true),
 
     /**
      * Represents Moxie's default settings for mocks/spies ({@link #UNORDERED} and {@link #PRESCRIPTIVE}).
      */
-    MOCK_DEFAULTS(false, false, null, false),
+    MOCK_DEFAULTS(false, false, null, false, null),
 
-    /**
+    /**                                                               1
      * Represents Moxie's default settings for {@link Group}s ({@link #ORDERED}).
      */
-    GROUP_DEFAULTS(true, null, null, false);
+    GROUP_DEFAULTS(true, null, null, false, null);
 
-    final private Boolean strictlyOrdered, autoStubbing, partial, tracing;
+    final private Boolean strictlyOrdered, autoStubbing, partial, tracing, backgroundAware;
 
-    MoxieOptions(Boolean strictlyOrdered, Boolean autoStubbing, Boolean partial, Boolean tracing) {
+    MoxieOptions(Boolean strictlyOrdered, Boolean autoStubbing, Boolean partial, Boolean tracing, Boolean backgroundAware) {
         this.strictlyOrdered = strictlyOrdered;
         this.autoStubbing = autoStubbing;
         this.partial = partial;
         this.tracing = tracing;
+        this.backgroundAware = backgroundAware;
     }
 
     /**
@@ -142,8 +165,15 @@ public enum MoxieOptions implements MoxieFlags {
         return tracing;
     }
 
+    /**
+     * @deprecated Moxie internal method.
+     */
+    public Boolean isBackgroundAware() {
+        return backgroundAware;
+    }
+
     static MoxieFlags merge(MoxieFlags... options) {
-        Boolean strictlyOrdered = null, autoStubbing = null, partial = null, tracing = null;
+        Boolean strictlyOrdered = null, autoStubbing = null, partial = null, tracing = null, backgroundAware = null;
         if (options != null) {
             for (MoxieFlags flags : options) {
                 if (flags.isStrictlyOrdered() != null) {
@@ -174,9 +204,16 @@ public enum MoxieOptions implements MoxieFlags {
                         throw new IllegalArgumentException("Specified options are contradictory regarding tracing");
                     }
                 }
+                if (flags.isBackgroundAware() != null) {
+                    if (backgroundAware == null) {
+                        backgroundAware = flags.isBackgroundAware();
+                    } else if (!backgroundAware.equals(flags.isBackgroundAware())) {
+                        throw new IllegalArgumentException("Specified options are contradictory regarding background awareness");
+                    }
+                }
             }
         }
-        return new SimpleMoxieFlags(strictlyOrdered, autoStubbing, partial, tracing);
+        return new SimpleMoxieFlags(strictlyOrdered, autoStubbing, partial, tracing, backgroundAware);
     }
 
     static MoxieFlags mergeWithDefaults(MoxieFlags defaults, MoxieFlags... options) {
@@ -185,6 +222,7 @@ public enum MoxieOptions implements MoxieFlags {
                 merged.isStrictlyOrdered() != null ? merged.isStrictlyOrdered() : defaults.isStrictlyOrdered(),
                 merged.isAutoStubbing() != null ? merged.isAutoStubbing() : defaults.isAutoStubbing(),
                 merged.isPartial() != null ? merged.isPartial() : defaults.isPartial(), 
-                merged.isTracing() != null ? merged.isTracing() : defaults.isTracing());
+                merged.isTracing() != null ? merged.isTracing() : defaults.isTracing(),
+                merged.isBackgroundAware() != null ? merged.isBackgroundAware() : defaults.isBackgroundAware());
     }
 }

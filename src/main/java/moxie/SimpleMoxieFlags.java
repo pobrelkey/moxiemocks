@@ -23,16 +23,14 @@
 package moxie;
 
 class SimpleMoxieFlags implements MoxieFlags {
-    private final Boolean strictlyOrdered;
-    private final Boolean autoStubbing;
-    private final Boolean partial;
-    private final Boolean tracing;
+    private final Boolean strictlyOrdered, autoStubbing, partial, tracing, backgroundAware;
 
-    public SimpleMoxieFlags(Boolean strictlyOrdered, Boolean autoStubbing, Boolean partial, Boolean tracing) {
+    public SimpleMoxieFlags(Boolean strictlyOrdered, Boolean autoStubbing, Boolean partial, Boolean tracing, Boolean backgroundAware) {
         this.strictlyOrdered = strictlyOrdered;
         this.autoStubbing = autoStubbing;
         this.partial = partial;
         this.tracing = tracing;
+        this.backgroundAware = backgroundAware;
     }
 
     public Boolean isStrictlyOrdered() {
@@ -49,5 +47,9 @@ class SimpleMoxieFlags implements MoxieFlags {
 
     public Boolean isTracing() {
         return tracing;
+    }
+
+    public Boolean isBackgroundAware() {
+        return backgroundAware;
     }
 }
