@@ -27,6 +27,8 @@ interface Verifiable {
 
     void verify();
 
+    void verifyNoBackgroundErrors();
+
     Throwable getWhereInstantiated();
 
     String getName();
