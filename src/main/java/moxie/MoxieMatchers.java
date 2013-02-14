@@ -34,9 +34,6 @@ import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsNull;
 import org.hamcrest.core.IsSame;
 import org.hamcrest.text.IsEqualIgnoringCase;
-import org.hamcrest.text.StringContains;
-import org.hamcrest.text.StringEndsWith;
-import org.hamcrest.text.StringStartsWith;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -244,8 +241,8 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    static public <T> T argThat(Matcher matcher) {
-        return (T) argThat(null, matcher);
+    static public <T> T argThat(Matcher<? super T> matcher) {
+        return (T) argThat((Class<T>) null, matcher);
     }
 
     /**
@@ -563,7 +560,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public String hasSubstring(String substring) {
-        return reportMatcher(new StringContains(substring), String.class);
+        return reportMatcher(Matchers.containsString(substring), String.class);
     }
 
     /**
@@ -572,7 +569,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public String endsWith(String suffix) {
-        return reportMatcher(new StringEndsWith(suffix), String.class);
+        return reportMatcher(Matchers.endsWith(suffix), String.class);
     }
 
     /**
@@ -581,7 +578,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public String startsWith(String prefix) {
-        return reportMatcher(new StringStartsWith(prefix), String.class);
+        return reportMatcher(Matchers.startsWith(prefix), String.class);
     }
 
     /**
@@ -1834,7 +1831,7 @@ public abstract class MoxieMatchers {
      * </p>
      * <p>
      * Note that the order in which the values to be matched are specified is not significant; the collection merely needs to
-     * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#collection(Object[]) collection()}.
+     * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#collection(Object...) collection()}.
      * </p>
      *
      * @return <code>null</code>
@@ -1854,7 +1851,7 @@ public abstract class MoxieMatchers {
      * </p>
      * <p>
      * Note that the order in which the values to be matched are specified is not significant; the collection merely needs to
-     * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#collection(Object[]) collection()}.
+     * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#collection(Object...) collection()}.
      * </p>
      *
      * @param collectionClass  Type of the collection to be matched
