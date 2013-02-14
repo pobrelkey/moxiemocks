@@ -128,6 +128,10 @@ abstract class Interception implements MethodIntercept, Verifiable {
         methods.verify(invocations);
     }
 
+    public void verifyNoBackgroundErrors() {
+        methods.verifyNoBackgroundErrors();
+    }
+
     public Throwable getWhereInstantiated() {
         return whereInstantiated;
     }

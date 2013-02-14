@@ -220,6 +220,9 @@ class MoxieControlImpl implements MoxieControl {
     public void verify(Object... mockObjects) {
         for (Object mockProxy : mocksAndGroupsFor(mockObjects)) {
             getVerifiableFromProxy(mockProxy).verify();
+        }
+        for (Object mockProxy : mocksAndGroupsFor(mockObjects)) {
+            getVerifiableFromProxy(mockProxy).verifyNoBackgroundErrors();
             mocksAndGroups.remove(mockProxy);
         }
     }
@@ -228,12 +231,19 @@ class MoxieControlImpl implements MoxieControl {
         for (Object mockProxy : mocksAndGroupsFor(mockObjects)) {
             getVerifiableFromProxy(mockProxy).verify();
         }
+        for (Object mockProxy : mocksAndGroupsFor(mockObjects)) {
+            getVerifiableFromProxy(mockProxy).verifyNoBackgroundErrors();
+        }
     }
 
     public void verifyAndReset(Object... mockObjects) {
         for (Object mockProxy : mocksAndGroupsFor(mockObjects)) {
             Verifiable verifiable = getVerifiableFromProxy(mockProxy);
             verifiable.verify();
+        }
+        for (Object mockProxy : mocksAndGroupsFor(mockObjects)) {
+            Verifiable verifiable = getVerifiableFromProxy(mockProxy);
+            verifiable.verifyNoBackgroundErrors();
             verifiable.reset(null);
         }
     }
@@ -278,6 +288,7 @@ class MoxieControlImpl implements MoxieControl {
     public void verifyAndReset(Object mockObject, MoxieOptions firstOption, MoxieOptions... otherOptions) {
         Verifiable verifiable = getVerifiableFromProxy(mockObject);
         verifiable.verify();
+        verifiable.verifyNoBackgroundErrors();
         verifiable.reset(MoxieOptions.merge(firstOption, MoxieOptions.merge(otherOptions)));
     }
 

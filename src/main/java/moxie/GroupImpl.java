@@ -22,7 +22,6 @@
 
 package moxie;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -33,11 +32,12 @@ class GroupImpl implements Group, Verifiable {
     private final InstantiationStackTrace whereInstantiated;
     private final List<ExpectationImpl> unorderedExpectations = new ArrayList<ExpectationImpl>();
     private final List<ExpectationImpl> orderedExpectations = new ArrayList<ExpectationImpl>();
+    private final List<MoxieUnexpectedInvocationError> unexpectedInvocations = new ArrayList<MoxieUnexpectedInvocationError>();
     private boolean defaultCardinality;
     private CardinalityImpl cardinality;
     private int cursor;
-    private int checkCursor;
 
+    private int checkCursor;
     private MoxieFlags flags;
 
     GroupImpl(String name, MoxieFlags flags) {
@@ -68,6 +68,7 @@ class GroupImpl implements Group, Verifiable {
         defaultCardinality = true;
         cardinality = new CardinalityImpl<CardinalityImpl>().once();
         cursor = 0;
+        unexpectedInvocations.clear();
     }
 
     public Throwable getWhereInstantiated() {
@@ -89,6 +90,14 @@ class GroupImpl implements Group, Verifiable {
     public void verify() {
         // keep track of invocations so we can report them nicely when we fail
         verify(null);
+    }
+
+    public void verifyNoBackgroundErrors() {
+        if (unexpectedInvocations.size() == 1) {
+            throw unexpectedInvocations.get(0);
+        } else if (unexpectedInvocations.size() > 1) {
+            throw new MoxieUnexpectedInvocationError(unexpectedInvocations);
+        }
     }
 
     void verify(List<Invocation> invocations) {
@@ -173,7 +182,9 @@ class GroupImpl implements Group, Verifiable {
     }
 
     void throwUnexpectedInvocationError(String message, InvocableAdapter invoked, Object[] invocationArgs) {
-        throw new MoxieUnexpectedInvocationError(message, name, invoked, invocationArgs, unorderedExpectations, orderedExpectations);
+        MoxieUnexpectedInvocationError moxieUnexpectedInvocationError = new MoxieUnexpectedInvocationError(message, name, invoked, invocationArgs, unorderedExpectations, orderedExpectations);
+        this.unexpectedInvocations.add(moxieUnexpectedInvocationError);
+        throw moxieUnexpectedInvocationError;
     }
 
     private void throwFailedVerificationError(String message, List<Invocation> invocations) {

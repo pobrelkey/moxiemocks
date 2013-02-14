@@ -22,15 +22,35 @@
 
 package moxie;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.List;
 
 /**
  *  {@link Error} thrown by Moxie when a method that has not been {@link Expectation expected} has been invoked on a {@link MoxieOptions#PRESCRIPTIVE PRESCRIPTIVE} mock.
  */
 public class MoxieUnexpectedInvocationError extends Error {
+    MoxieUnexpectedInvocationError(List<MoxieUnexpectedInvocationError> errors) {
+        super(createExceptionMessage(errors));
+    }
+
     MoxieUnexpectedInvocationError(String message, String name, InvocableAdapter invoked, Object[] invocationArgs, Collection<ExpectationImpl> unorderedExpectations, Collection<ExpectationImpl> orderedExpectations) {
         super(createExceptionMessage(message, name, invoked, invocationArgs, unorderedExpectations, orderedExpectations));
+    }
+
+    private static String createExceptionMessage(List<MoxieUnexpectedInvocationError> errors) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        pw.println(errors.size() + " separate unexpected invocations:");
+        for (MoxieUnexpectedInvocationError error : errors) {
+            pw.println("--------");
+            error.printStackTrace(pw);
+        }
+        pw.flush();
+        sw.flush();
+        return sw.toString();
     }
 
     private static String createExceptionMessage(String message, String name, InvocableAdapter invokedMethod, Object[] invocationArgs, Collection<ExpectationImpl> unorderedExpectations, Collection<ExpectationImpl> orderedExpectations) {
