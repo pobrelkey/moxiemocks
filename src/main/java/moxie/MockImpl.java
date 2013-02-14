@@ -32,7 +32,7 @@ class MockImpl<T> extends ObjectInterception<T> {
     }
 
     private static InstantiationStackTrace instantiationStackTrace(String name, MoxieFlags flags) {
-        return flags.isTracing() ? new InstantiationStackTrace("mock object \"" + name + "\" was instantiated here") : null;
+        return MoxieUtils.unbox(flags.isTracing(), false) ? new InstantiationStackTrace("mock object \"" + name + "\" was instantiated here") : null;
     }
 
     protected MethodBehavior defaultBehavior(InvocableAdapter invocable, final Object[] args, final SuperInvoker superInvoker) {

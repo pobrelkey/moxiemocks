@@ -211,7 +211,7 @@ class MoxieControlImpl implements MoxieControl {
         ClassInterception<T> result = (ClassInterception<T>) mocksAndGroups.get(clazz);
         if (result == null) {
             MoxieFlags flags = MoxieOptions.mergeWithDefaults(MoxieOptions.MOCK_DEFAULTS, options);
-            InstantiationStackTrace instantiationStackTrace = flags.isTracing() ? new InstantiationStackTrace("class mock \"" + clazz.getSimpleName() + "\" was instantiated here") : null;
+            InstantiationStackTrace instantiationStackTrace = MoxieUtils.unbox(flags.isTracing(), false) ? new InstantiationStackTrace("class mock \"" + clazz.getSimpleName() + "\" was instantiated here") : null;
             mocksAndGroups.put(clazz, result = new ClassInterception<T>(clazz, clazz.getSimpleName(), flags, instantiationStackTrace));
         }
         return result;

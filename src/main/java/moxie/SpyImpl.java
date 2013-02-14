@@ -35,7 +35,7 @@ class SpyImpl<T> extends ObjectInterception<T> {
     }
 
     private static InstantiationStackTrace instantiationStackTrace(String name, MoxieFlags flags) {
-        return flags.isTracing() ? new InstantiationStackTrace("spy object \"" + name + "\" was instantiated here") : null;
+        return MoxieUtils.unbox(flags.isTracing(), false) ? new InstantiationStackTrace("spy object \"" + name + "\" was instantiated here") : null;
     }
 
     protected MethodBehavior defaultBehavior(InvocableAdapter invocable, final Object[] args, SuperInvoker superInvoker) {

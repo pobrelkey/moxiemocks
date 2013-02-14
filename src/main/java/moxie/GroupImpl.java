@@ -42,7 +42,7 @@ class GroupImpl implements Group, Verifiable {
 
     GroupImpl(String name, MoxieFlags flags) {
         this.name = name;
-        this.whereInstantiated = flags.isTracing() ? new InstantiationStackTrace("sequence \"" + name + "\" was instantiated here") : null;
+        this.whereInstantiated = MoxieUtils.unbox(flags.isTracing(), false) ? new InstantiationStackTrace("sequence \"" + name + "\" was instantiated here") : null;
         reset(flags);
     }
 

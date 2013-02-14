@@ -283,6 +283,10 @@ candidateLoop:
         return (Class<T[]>) Array.newInstance(clazz, 0).getClass();
     }
 
+    static boolean unbox(Boolean bool, boolean defaultIfBoolIsNull) {
+        return bool != null ? bool : defaultIfBoolIsNull;
+    }
+
     static ConstructorAdapter guessConstructor(Class interceptedClass, Class[] paramSignature, Object[] params) {
         ArrayList<ConstructorAdapter> candidates = new ArrayList<ConstructorAdapter>();
         for (Constructor constructor : interceptedClass.getConstructors()) {
