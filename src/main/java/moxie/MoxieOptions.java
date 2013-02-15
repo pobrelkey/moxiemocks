@@ -97,23 +97,23 @@ public enum MoxieOptions implements MoxieFlags {
 
     /**
      * Observe the default behavior - for performance reasons, don't save stack traces.
-     * Opposite of {@link MoxieOptions#TRACE TRACE}.
+     * Opposite of {@link #TRACE}.
      */
     NO_TRACE(null, null, null, false, null),
 
     /**
-     * Don't cause tests to fail at {@link Moxie#verify(Object...) verify} time if there has been
+     * Don't cause tests to fail on {@link Moxie#verify(Object...) verify()} if there has been
      * an unexpected mock invocation in a background thread.  (The unexpected invocation will still
      * throw an error in that thread, but this is unlikely to fail your test unless you've written it
      * to check for that error and/or its side effects.)
      *
-     * @deprecated  This flag is a tested and supported feature of Moxie, but you really should fix your code/tests instead of using it!
+     * @deprecated  This flag is a tested and supported feature of Moxie, but you really should fix your code/tests instead of using it!  Consider using {@link #PERMISSIVE} instead.
      */
     IGNORE_BACKGROUND_FAILURES(null, null, null, null, false),
 
     /**
      * Observe the default behavior - fail tests when mock errors are thrown in background threads.
-     * Opposite of {@link MoxieOptions#IGNORE_BACKGROUND_FAILURES IGNORE_BACKGROUND_FAILURES}.
+     * Opposite of {@link #IGNORE_BACKGROUND_FAILURES}.
      */
     NO_IGNORE_BACKGROUND_FAILURES(null, null, null, null, true),
 
