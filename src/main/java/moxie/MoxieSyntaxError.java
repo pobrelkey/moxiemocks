@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Moxie contributors
+ * Copyright (c) 2013 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,19 @@
 
 package moxie;
 
-class ClassInterception<T> extends Interception {
-
-    protected ClassInterception(Class<T> clazz, String name, MoxieFlags flags, InstantiationStackTrace instantiationStackTrace) {
-        super(clazz, name, flags, instantiationStackTrace);
-        ProxyIntercepts.registerClassInterception(this);
+/**
+ *  {@link Error} thrown by Moxie in some cases of incorrect mocking syntax.
+ */
+public class MoxieSyntaxError extends Error {
+    MoxieSyntaxError(String msg, Throwable t) {
+        super(msg, t);
     }
 
-    ClassExpectationImpl expect() {
-        return new ClassExpectationImpl(this);
+    MoxieSyntaxError(Throwable e) {
+        super(e);
     }
 
-    ClassCheckImpl check() {
-        return new ClassCheckImpl(this, invocations);
-    }
-
-    @Override
-    protected MethodBehavior defaultBehavior(final InvocableAdapter invocable, Object[] args, SuperInvoker superInvoker) {
-        return new MethodBehavior() {
-            public Object invoke() throws Throwable {
-                if (flags.isAutoStubbing()) {
-                    return MoxieUtils.defaultValue(invocable.getReturnType());
-                }
-                // TODO: clearer error message
-                throw new MoxieZombieMethodInvocationError("Behavior not defined for constructor or class method \"" + invocable.getName() + '"');
-            }
-        };
+    MoxieSyntaxError(String s) {
+        super(s);
     }
 }

@@ -28,7 +28,6 @@ import org.hamcrest.SelfDescribing;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -62,7 +61,7 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
 
     private CardinalityImpl<E> newCardinality() {
         if (!defaultCardinality) {
-            throw new IllegalStateException("already specified number of times");
+            throw new MoxieSyntaxError("already specified number of times");
         }
         defaultCardinality = false;
         @SuppressWarnings("unchecked")
@@ -161,22 +160,22 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
 
     protected void checkMethodAndCardinality() {
         if (this.invocable != null) {
-            throw new IllegalStateException("method to match already specified");
+            throw new MoxieSyntaxError("method to match already specified");
         }
         if (this.handler instanceof ConsecutiveHandler) {
             ConsecutiveHandler consecutiveHandler = (ConsecutiveHandler) this.handler;
             if (this.cardinality.getMinTimes() != null && this.cardinality.getMinTimes() > consecutiveHandler.size()) {
-                throw new IllegalStateException("not enough consecutive-call handlers ("+consecutiveHandler.size()+") defined to handle minimal number of calls (" + this.cardinality.getMinTimes() + ")");
+                throw new MoxieSyntaxError("not enough consecutive-call handlers ("+consecutiveHandler.size()+") defined to handle minimal number of calls (" + this.cardinality.getMinTimes() + ")");
             }
             if (this.cardinality.getMaxTimes() != null && this.cardinality.getMaxTimes() < consecutiveHandler.size()) {
-                throw new IllegalStateException("more consecutive-call handlers ("+consecutiveHandler.size()+") defined than can handle maximum number of calls (" + this.cardinality.getMaxTimes() + ")");
+                throw new MoxieSyntaxError("more consecutive-call handlers ("+consecutiveHandler.size()+") defined than can handle maximum number of calls (" + this.cardinality.getMaxTimes() + ")");
             }
         }
     }
 
     protected Object handleInvocation(InvocableAdapter invocable, Object[] params) {
         if (this.invocable != null) {
-            throw new IllegalStateException("method to match already specified");
+            throw new MoxieSyntaxError("method to match already specified");
         }
         invocable.zombify();
 

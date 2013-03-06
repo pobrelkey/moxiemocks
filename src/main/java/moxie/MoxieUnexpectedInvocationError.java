@@ -24,7 +24,6 @@ package moxie;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 

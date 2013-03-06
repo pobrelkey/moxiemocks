@@ -22,7 +22,6 @@
 
 package moxie;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 class MockImpl<T> extends ObjectInterception<T> {

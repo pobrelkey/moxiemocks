@@ -25,8 +25,6 @@ package moxie;
 import org.hamcrest.Description;
 import org.hamcrest.SelfDescribing;
 
-import java.lang.reflect.Method;
-
 class Invocation implements SelfDescribing {
     private final Interception interception;
     private final InvocableAdapter invocable;

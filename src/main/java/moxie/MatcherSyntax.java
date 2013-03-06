@@ -25,9 +25,6 @@ package moxie;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.IsEqual;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,8 +46,8 @@ class MatcherSyntax {
 //                matcherReport.getWhereInstantiated().printStackTrace(pw);
 //            }
 //            matcherReports.clear();
-//            throw new IllegalStateException(sw.toString());
-            throw new IllegalStateException("Too many MoxieMatchers calls were made for this expression");
+//            throw new MoxieSyntaxError(sw.toString());
+            throw new MoxieSyntaxError("Too many MoxieMatchers calls were made for this expression");
         }
         return someCall;
     }

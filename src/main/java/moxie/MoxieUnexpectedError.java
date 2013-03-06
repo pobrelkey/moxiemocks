@@ -30,7 +30,7 @@ public class MoxieUnexpectedError extends Error {
         super(msg, t);
     }
 
-    public MoxieUnexpectedError(Throwable e) {
+    MoxieUnexpectedError(Throwable e) {
         super(e);
     }
 }

@@ -117,7 +117,7 @@ public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>,
      * </p>
      * <p>
      * This option only makes sense for mocks of concrete classes; specifying it for an interface mock
-     * or a spy will raise an {@link IllegalStateException}.
+     * or a spy will raise an {@link MoxieSyntaxError}.
      * </p>
      * <p>
      * Note that {@link #willCallOriginal()} and {@link #andCallOriginal()} do exactly the same thing -
@@ -135,7 +135,7 @@ public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>,
      * </p>
      * <p>
      * This option only makes sense for mocks of concrete classes; specifying it for an interface mock
-     * or a spy will raise an {@link IllegalStateException}.
+     * or a spy will raise an {@link MoxieSyntaxError}.
      * </p>
      * <p>
      * Note that {@link #willCallOriginal()} and {@link #andCallOriginal()} do exactly the same thing -

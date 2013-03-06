@@ -35,7 +35,7 @@ class ObjectCheckImpl<T> extends CheckImpl<ObjectCheckImpl<T>, ObjectInterceptio
     public ObjectCheckImpl<T> throwException(Throwable throwable) {
         Matcher matcher = MatcherSyntax.singleMatcherExpression(Throwable.class, throwable);
         if (this.throwableMatcher != null) {
-            throw new IllegalStateException("already specified a Throwable for this check");
+            throw new MoxieSyntaxError("already specified a Throwable for this check");
         }
         this.throwableMatcher = matcher;
         return this;
@@ -48,7 +48,7 @@ class ObjectCheckImpl<T> extends CheckImpl<ObjectCheckImpl<T>, ObjectInterceptio
     public ObjectCheckImpl<T> returnValue(Object returnValue) {
         Matcher matcher = MatcherSyntax.singleMatcherExpression(null, returnValue);
         if (this.resultMatcher != null) {
-            throw new IllegalStateException("cannot specify a return value twice");
+            throw new MoxieSyntaxError("cannot specify a return value twice");
         }
         this.resultMatcher = matcher;
         return this;

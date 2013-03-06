@@ -114,7 +114,7 @@ class CardinalityImpl<T> implements Cardinality<T> {
 
     private void freeze() {
         if (frozen) {
-            throw new IllegalStateException("already specified number of times");
+            throw new MoxieSyntaxError("already specified number of times");
         }
         frozen = true;
     }

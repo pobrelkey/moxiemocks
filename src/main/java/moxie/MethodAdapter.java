@@ -37,7 +37,7 @@ class MethodAdapter implements InvocableAdapter {
 
     public void zombify() {
         if (Modifier.isPrivate(method.getModifiers()) || Modifier.isFinal(method.getModifiers()) || Modifier.isStatic(method.getModifiers())) {
-            CGLIBProxyFactory.zombify(method);
+            PowermockUtil.zombify(method);
         }
     }
 
@@ -51,6 +51,10 @@ class MethodAdapter implements InvocableAdapter {
 
     public String getName() {
         return method.getName();
+    }
+
+    public Class getDeclaringClass() {
+        return method.getDeclaringClass();
     }
 
     public Class<?>[] getParameterTypes() {
