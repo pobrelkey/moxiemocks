@@ -26,59 +26,22 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.Factory;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import org.objenesis.ObjenesisStd;
-import org.objenesis.instantiator.ObjectInstantiator;
-import org.powermock.api.support.membermodification.MemberModifier;
-import org.powermock.core.MockRepository;
-import org.powermock.core.spi.NewInvocationControl;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Collections;
-import java.util.Map;
 
-class CGLIBProxyFactory<T> extends ProxyFactory<T> {
-
-    static private boolean haveObjenesis = false;
-    static private boolean havePowermock = false;
-    private static Object  powermockInvocationHandler = null;
-    private static Object powermockConstructorHandler = null;
-    private static ObjenesisStd objenesis;
-    private static final Map<Object, MethodIntercept> proxyIntercepts;
-
-    static {
-        proxyIntercepts = Collections.synchronizedMap(new WeakIdentityMap<Object, MethodIntercept>());
-        try {
-            objenesis = new ObjenesisStd(true);
-            haveObjenesis = true;
-        } catch (NoClassDefFoundError e) {
-            // oh well, no objenesis then.
-        }
-        try {
-            new MemberModifier();
-            powermockInvocationHandler = new PowermockInvocationHandler(proxyIntercepts);
-            powermockConstructorHandler = new PowermockConstructorHandler(proxyIntercepts);
-            havePowermock = true;
-        } catch (NoClassDefFoundError e) {
-            // oh well, no powermock then.
-        }
-    }
+class CGLIBProxyFactory<T> extends ConcreteTypeProxyFactory<T> {
 
     private static class TrivialSubclassOfObjectToWorkAroundCGLIBBug {
         public TrivialSubclassOfObjectToWorkAroundCGLIBBug() {}
     }
 
-    private final Class enhancedClass;
-    private ObjectInstantiator objenesisInstantiator;
-
-    @SuppressWarnings("unchecked")
     CGLIBProxyFactory(Class<T> clazz, Class[] ancillaryTypes) {
-        if (!haveObjenesis && clazz.getDeclaringClass() != null && !Modifier.isStatic(clazz.getModifiers())) {
-            throw new IllegalArgumentException("Cannot mock a non-static inner class (" + clazz.getName() + ") - add Objenesis to the classpath to get around this");
-        }
+        super(clazz, ancillaryTypes);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected Class<? extends T> createEnhancedClass(Class<T> clazz, Class[] ancillaryTypes) {
         if (clazz == Object.class) {
             clazz = (Class<T>) TrivialSubclassOfObjectToWorkAroundCGLIBBug.class;
         }
@@ -89,47 +52,11 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
         e.setUseFactory(true);
         e.setUseCache(true);
         e.setCallbackType(MethodInterceptor.class);
-        enhancedClass = e.createClass();
-        if (haveObjenesis) {
-            objenesisInstantiator = ((ObjenesisStd) objenesis).getInstantiatorOf(enhancedClass);
-        }
+        return e.createClass();
     }
 
-    @SuppressWarnings("unchecked")
-    T createProxy(final MethodIntercept methodIntercept, Class[] constructorArgTypes, Object[] constructorArgs) {
-        T result;
-        if (!haveObjenesis || constructorArgTypes != null || constructorArgs != null) {
-            try {
-                Constructor constructor;
-                if (constructorArgTypes == null && constructorArgs != null && constructorArgs.length > 0) {
-                    constructor = MoxieUtils.guessConstructor(enhancedClass, constructorArgTypes, constructorArgs).getConstructor();
-                } else {
-                    constructor = enhancedClass.getConstructor(constructorArgTypes);
-                }
-                constructor.setAccessible(true);
-                result = (T) constructor.newInstance(constructorArgs);
-            } catch (InstantiationException e) {
-                throw new MoxieUnexpectedError(e);
-            } catch (IllegalAccessException e) {
-                throw new MoxieUnexpectedError(e);
-            } catch (InvocationTargetException e) {
-                throw new MoxieUnexpectedError(e.getTargetException());
-            } catch (NoSuchMethodException e) {
-                if (!haveObjenesis && (constructorArgTypes == null || constructorArgTypes.length == 0) && (constructorArgs == null || constructorArgs.length == 0)) {
-                    throw new IllegalArgumentException("To mock concrete types that don't have no-arg constructors, either pass constructor arguments or add Objenesis to the classpath");
-                }
-                throw new MoxieUnexpectedError(e);
-            } catch (MoxieUtils.NoMethodFoundException e) {
-                if (!haveObjenesis && (constructorArgTypes == null || constructorArgTypes.length == 0) && (constructorArgs == null || constructorArgs.length == 0)) {
-                    throw new IllegalArgumentException("To mock concrete types that don't have no-arg constructors, either pass constructor arguments or add Objenesis to the classpath");
-                }
-                throw new MoxieUnexpectedError(e);
-            }
-        } else {
-            // no specific constructor requested and have Objenesis, so use that instead.
-            result = (T) objenesisInstantiator.newInstance();
-        }
-
+    @Override
+    protected void decorateInstance(T result, final MethodIntercept methodIntercept) {
         MethodInterceptor methodInterceptor = new MethodInterceptor() {
             public Object intercept(final Object proxy, Method method, Object[] args, final MethodProxy superProxy) throws Throwable {
                 return methodIntercept.intercept(proxy, new MethodAdapter(method), args, new MethodIntercept.SuperInvoker() {
@@ -144,27 +71,6 @@ class CGLIBProxyFactory<T> extends ProxyFactory<T> {
         for(int i = 0; i < callbackCount; i++) {
             factory.setCallback(i, methodInterceptor);
         }
-
-        proxyIntercepts.put(result, methodIntercept);
-        return result;
-    }
-
-    static void registerClassInterception(ClassInterception interception) {
-        proxyIntercepts.put(interception.getInterceptedClass(), interception);
-    }
-
-    static void zombify(Constructor constructor) {
-        if (!havePowermock) {
-            throw new UnsupportedOperationException("add powermock-api-support to the classpath to enable mocking of constructors");
-        }
-        MockRepository.putNewInstanceControl(constructor.getDeclaringClass(), (NewInvocationControl<?>) powermockConstructorHandler);
-    }
-
-    static void zombify(Method method) {
-        if (!havePowermock) {
-            throw new UnsupportedOperationException("add powermock-api-support to the classpath to enable mocking of static/final methods");
-        }
-        MemberModifier.replace(method).with((InvocationHandler) powermockInvocationHandler);
     }
 
 }

@@ -39,7 +39,7 @@ class ConstructorAdapter implements InvocableAdapter {
     }
 
     public void zombify() {
-        CGLIBProxyFactory.zombify(constructor);
+        PowermockUtil.zombify(constructor);
     }
 
     public Class getReturnType() {
@@ -52,6 +52,10 @@ class ConstructorAdapter implements InvocableAdapter {
 
     public String getName() {
         return constructor.getName();
+    }
+
+    public Class getDeclaringClass() {
+        return constructor.getDeclaringClass();
     }
 
     public Constructor getConstructor() {

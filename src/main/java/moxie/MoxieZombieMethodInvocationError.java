@@ -41,7 +41,7 @@ package moxie;
  * </p>
  */
 public class MoxieZombieMethodInvocationError extends Error {
-    public MoxieZombieMethodInvocationError(String s) {
+    MoxieZombieMethodInvocationError(String s) {
         super(s);
     }
 }

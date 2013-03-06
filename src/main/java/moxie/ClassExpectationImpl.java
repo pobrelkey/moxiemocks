@@ -22,10 +22,6 @@
 
 package moxie;
 
-import org.hamcrest.Description;
-
-import java.lang.reflect.Constructor;
-
 class ClassExpectationImpl<T> extends ExpectationImpl<ClassExpectationImpl<T>, ClassInterception> implements ClassExpectation<T> {
     protected ClassExpectationImpl(ClassInterception interception) {
         super(interception);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2012 Moxie contributors
+ * Copyright (c) 2013 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,10 +21,19 @@
  */
 package moxie;
 
-interface MethodIntercept {
-    Object intercept(Object proxy, InvocableAdapter invocable, Object[] args,
-                     SuperInvoker superInvoker) throws Throwable;
-    interface SuperInvoker {
-        Object invokeSuper(Object[] args) throws Throwable;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+
+class MethodInterceptAdapter implements InvocationHandler {
+    private final MethodIntercept methodIntercept;
+    private final Class superClass;
+
+    public MethodInterceptAdapter(Class superClass, MethodIntercept methodIntercept) {
+        this.methodIntercept = methodIntercept;
+        this.superClass = superClass;
+    }
+
+    public Object invoke(final Object proxy, final Method method, Object[] args) throws Throwable {
+        return methodIntercept.intercept(proxy, new MethodAdapter(method), args, new SimpleSuperInvoker(superClass, method, proxy));
     }
 }

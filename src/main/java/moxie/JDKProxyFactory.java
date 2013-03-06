@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2012 Moxie contributors
+ * Copyright (c) 2011-2013 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import java.util.Arrays;
 class JDKProxyFactory<T> extends ProxyFactory<T> {
     private Constructor<T> constructor;
 
+    @SuppressWarnings("unchecked")
     public JDKProxyFactory(Class<T> clazz, Class[] ancillaryTypes) {
         ArrayList<Class> interfaces = new ArrayList(Arrays.asList(ancillaryTypes));
         if (clazz != null) {
@@ -49,7 +50,7 @@ class JDKProxyFactory<T> extends ProxyFactory<T> {
         try {
             return constructor.newInstance(new InvocationHandler() {
                 public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                    return methodIntercept.intercept(proxy, new MethodAdapter(method), args, null);
+                    return methodIntercept.intercept(proxy, new MethodAdapter(method), args, new ZombieSuperInvoker("This is an interface mock - there are no superclass methods to invoke"));
                 }
             });
         } catch (InstantiationException e) {

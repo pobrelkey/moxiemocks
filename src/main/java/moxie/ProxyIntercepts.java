@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2012 Moxie contributors
+ * Copyright (c) 2013 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,12 +19,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package moxie;
 
-interface MethodIntercept {
-    Object intercept(Object proxy, InvocableAdapter invocable, Object[] args,
-                     SuperInvoker superInvoker) throws Throwable;
-    interface SuperInvoker {
-        Object invokeSuper(Object[] args) throws Throwable;
+import java.util.Collections;
+import java.util.Map;
+
+class ProxyIntercepts {
+    static final Map<Object, MethodIntercept> proxyIntercepts = Collections.synchronizedMap(new WeakIdentityMap<Object, MethodIntercept>());
+
+    static void registerClassInterception(ClassInterception interception) {
+        proxyIntercepts.put(interception.getInterceptedClass(), interception);
+    }
+
+    static void registerInterception(Object proxy, MethodIntercept methodIntercept) {
+        proxyIntercepts.put(proxy, methodIntercept);
     }
 }

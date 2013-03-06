@@ -48,10 +48,10 @@ class GroupImpl implements Group, Verifiable {
 
     public Cardinality<Group> willBeCalled() {
         if (!flags.isStrictlyOrdered()) {
-            throw new IllegalStateException("cannot set cardinality on an unordered method group");
+            throw new MoxieSyntaxError("cannot set cardinality on an unordered method group");
         }
         if (!defaultCardinality) {
-            throw new IllegalStateException("already specified number of times");
+            throw new MoxieSyntaxError("already specified number of times");
         }
         defaultCardinality = false;
         CardinalityImpl<Group> result = new CardinalityImpl<Group>(this);

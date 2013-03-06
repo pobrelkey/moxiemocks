@@ -52,7 +52,7 @@ class ObjectExpectationImpl<T> extends ExpectationImpl<ObjectExpectationImpl<T>,
     public ObjectExpectationImpl<T> willReturnVerified(Object result) {
         Matcher matcher = MatcherSyntax.singleMatcherExpression(null, result);
         if (!(interception instanceof SpyImpl)) {
-            throw new IllegalStateException("this method is only for expectations on spy objects");
+            throw new MoxieSyntaxError("this method is only for expectations on spy objects");
         }
         returnValueMatcher = matcher;
         return this;
@@ -65,7 +65,7 @@ class ObjectExpectationImpl<T> extends ExpectationImpl<ObjectExpectationImpl<T>,
     public ObjectExpectationImpl<T> willThrowVerified(Throwable throwable) {
         Matcher matcher = MatcherSyntax.singleMatcherExpression(Throwable.class, throwable);
         if (!(interception instanceof SpyImpl)) {
-            throw new IllegalStateException("this method is only for expectations on spy objects");
+            throw new MoxieSyntaxError("this method is only for expectations on spy objects");
         }
         exceptionMatcher = matcher;
         return this;

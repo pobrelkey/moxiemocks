@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -42,6 +43,13 @@
         </developer>
     </developers>
 
+    <!--<repositories>-->
+        <!--<repository>-->
+            <!--<id>local-repo</id>-->
+            <!--<url>file://${basedir}/repo</url>-->
+        <!--</repository>-->
+    <!--</repositories>-->
+
     <dependencies>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -71,6 +79,10 @@
             <optional>true</optional>
         </dependency>
         <dependency>
+            <!--
+                Doesn't work with CGLIB 3.0, which I presume is broken (or at least not API-compatible).
+                TODO: get Moxie to use Javassist in preference to CGLIB.
+              -->
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
             <version>2.2.2</version>
@@ -94,6 +106,18 @@
             <version>1.5</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.17.1-GA</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.google.dexmaker</groupId>
+            <artifactId>dexmaker</artifactId>
+            <version>1.0</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -109,7 +133,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.2</version>                
+                <version>2.1.2</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -122,7 +146,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.7</version>                
+                <version>2.7</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -162,7 +186,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.1</version>                
+                <version>2.1</version>
                 <configuration>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                 </configuration>
@@ -184,7 +208,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.6</version>                
+                <version>2.6</version>
             </plugin>
         </plugins>
     </reporting>

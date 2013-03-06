@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Moxie contributors
+ * Copyright (c) 2010-2013 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ package moxietests;
 import moxie.Group;
 import moxie.Moxie;
 import moxie.MoxieFailedVerificationError;
+import moxie.MoxieSyntaxError;
 import moxie.MoxieUnexpectedInvocationError;
 import org.junit.Assert;
 import org.junit.Test;
@@ -605,13 +606,13 @@ public class ExpectationTest {
         }
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = MoxieSyntaxError.class)
     public void behaviorOnConsecutiveCalls_tooFew() {
         List mock = Moxie.mock(List.class);
         Moxie.expect(mock).andConsecutivelyReturn("one", "two", "three").times(4).on().get(0);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = MoxieSyntaxError.class)
     public void behaviorOnConsecutiveCalls_tooMany() {
         List mock = Moxie.mock(List.class);
         Moxie.expect(mock).andConsecutivelyReturn("one", "two", "three").times(2).on().get(0);

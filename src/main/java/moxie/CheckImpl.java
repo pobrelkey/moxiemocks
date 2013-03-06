@@ -47,7 +47,7 @@ abstract class CheckImpl<C extends CheckImpl<C,I>, I extends Interception> {
     @SuppressWarnings("unchecked")
     public C didNot() {
         if (negated) {
-            throw new IllegalStateException("no double negatives!");
+            throw new MoxieSyntaxError("no double negatives!");
         }
         negated = true;
         return (C) this;
@@ -56,7 +56,7 @@ abstract class CheckImpl<C extends CheckImpl<C,I>, I extends Interception> {
     @SuppressWarnings("unchecked")
     public C unexpectedly() {
         if (unexpectedly) {
-            throw new IllegalStateException("you already called unexpectedly()!");
+            throw new MoxieSyntaxError("you already called unexpectedly()!");
         }
         unexpectedly = true;
         return (C) this;
@@ -153,7 +153,7 @@ abstract class CheckImpl<C extends CheckImpl<C,I>, I extends Interception> {
     @SuppressWarnings("unchecked")
     public C inGroup(Group... groups) {
         if (this.groups != null) {
-            throw new IllegalStateException("group(s) already specified for this check");
+            throw new MoxieSyntaxError("group(s) already specified for this check");
         }
         for (Group group : groups) {
             if (!((GroupImpl) group).isStrictlyOrdered()) {
@@ -166,7 +166,7 @@ abstract class CheckImpl<C extends CheckImpl<C,I>, I extends Interception> {
 
     private CardinalityImpl<C> newCardinality() {
         if (!defaultCardinality) {
-            throw new IllegalStateException("already specified number of times");
+            throw new MoxieSyntaxError("already specified number of times");
         }
         defaultCardinality = false;
         @SuppressWarnings("unchecked")

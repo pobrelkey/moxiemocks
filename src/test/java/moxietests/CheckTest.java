@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Moxie contributors
+ * Copyright (c) 2010-2013 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@ import moxie.Moxie;
 import moxie.MoxieFailedCheckError;
 import moxie.MoxieOptions;
 import moxie.MoxieRule;
+import moxie.MoxieSyntaxError;
 import moxie.MoxieUncheckedInvocationError;
 import moxie.Spy;
 import org.junit.Assert;
@@ -512,25 +513,25 @@ public class CheckTest {
         Moxie.check(spy).didNot().unexpectedly().get().get(2);
     }    
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = MoxieSyntaxError.class)
     public void didNot_abuse() {
         mock.add("something");
         Moxie.check(mock).didNot().didNot().get().add("something");
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = MoxieSyntaxError.class)
     public void cardinality_abuse() {
         mock.add("something");
         Moxie.check(mock).times(2).times(3).got().add("something");
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = MoxieSyntaxError.class)
     public void returned_abuse() {
         Assert.assertEquals("three", spy.get(3));
         Moxie.check(spy).returned("zwei").returned("three").on().get(3);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = MoxieSyntaxError.class)
     public void unexpectedly_abuse() {
         Assert.assertEquals("three", spy.get(3));
         Moxie.check(spy).unexpectedly().unexpectedly().returned("three").on().get(3);
@@ -559,7 +560,7 @@ public class CheckTest {
         Moxie.check(mock).inGroup(group).once().got().add("four");
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = MoxieSyntaxError.class)
     public void threw_abuse() {
         try {
             spy.get(-1);
