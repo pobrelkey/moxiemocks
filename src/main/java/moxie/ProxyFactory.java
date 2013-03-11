@@ -22,6 +22,7 @@
 
 package moxie;
 
+import com.google.dexmaker.stock.ProxyBuilder;
 import net.sf.cglib.proxy.Enhancer;
 
 import java.util.Arrays;
@@ -44,6 +45,31 @@ abstract class ProxyFactory<T> {
         }
     }
 
+    static private boolean haveJavassist = false;
+    static {
+        try {
+            new javassist.util.proxy.ProxyFactory();
+            haveJavassist = true;
+        } catch (NoClassDefFoundError e) {
+            // oh well, no javassist then.
+        }
+    }
+
+    // TODO: better test?
+    static private final boolean onDalvik =
+            (System.getProperty("java.vm.name","").indexOf("Dalvik") != -1) &&
+            (System.getProperty("moxie.weAreNotOnDalvik","").length() == 0);
+
+    static private boolean haveDexmaker = false;
+    static {
+        try {
+            ProxyBuilder.class.getName();
+            haveDexmaker = true;
+        } catch (NoClassDefFoundError e) {
+            // oh well, no dexmaker then.
+        }
+    }
+
     private final static Map<TypeKey, ProxyFactory> proxyFactories = new HashMap<TypeKey, ProxyFactory>();
 
     @SuppressWarnings("unchecked")
@@ -57,10 +83,19 @@ abstract class ProxyFactory<T> {
         ProxyFactory<T> factory;
         if (clazz == null || clazz.isInterface()) {
             factory = new JDKProxyFactory<T>(clazz, ancillaryTypes);
-        } else if (!haveCglib) {
-            throw new UnsupportedOperationException("You must have CGLIB on the classpath to mock concrete classes");
-        } else {
+        } else if (onDalvik) {
+            if (haveDexmaker) {
+                factory = new DexmakerProxyFactory(clazz, ancillaryTypes);
+            } else {
+                throw new UnsupportedOperationException("On Dalvik, you must have Dexmaker on the classpath to mock concrete classes");
+            }
+        } else if (haveJavassist) {
+            // Use Javassist in preference to CGLIB as it doesn't blow up on JDK 1.7 invokedynamic opcodes.
+            factory = new JavassistProxyFactory(clazz, ancillaryTypes);
+        } else if (haveCglib) {
             factory = new CGLIBProxyFactory<T>(clazz, ancillaryTypes);
+        } else {
+            throw new UnsupportedOperationException("You must have Javassist or CGLIB on the classpath to mock concrete classes");
         }
         proxyFactories.put(tk, factory);
         return factory;

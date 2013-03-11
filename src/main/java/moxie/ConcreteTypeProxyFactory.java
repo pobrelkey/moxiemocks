@@ -34,6 +34,7 @@ abstract class ConcreteTypeProxyFactory<T> extends ProxyFactory<T> {
     protected static ObjenesisStd objenesis;
     protected final Class<? extends T> enhancedClass;
     protected ObjectInstantiator objenesisInstantiator;
+    protected final Class<T> originalClass;
 
     static {
         try {
@@ -45,6 +46,7 @@ abstract class ConcreteTypeProxyFactory<T> extends ProxyFactory<T> {
     }
 
     protected ConcreteTypeProxyFactory(Class<T> clazz, Class[] ancillaryTypes) {
+        originalClass = clazz;
         if (!haveObjenesis && clazz.getDeclaringClass() != null && !Modifier.isStatic(clazz.getModifiers())) {
             throw new IllegalArgumentException("Cannot mock a non-static inner class (" + clazz.getName() + ") - add Objenesis to the classpath to get around this");
         }
