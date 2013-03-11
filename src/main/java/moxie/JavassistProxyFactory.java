@@ -21,116 +21,47 @@
  */
 package moxie;
 
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.NotFoundException;
-import javassist.bytecode.AccessFlag;
-import javassist.bytecode.MethodInfo;
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.Proxy;
+import javassist.util.proxy.ProxyFactory;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.lang.reflect.Method;
 
 class JavassistProxyFactory<T> extends ConcreteTypeProxyFactory<T> {
 
-    private static final Random random = new Random();
-    private static final String INVOCATION_HANDLER_FIELD_NAME = "$MoxieInvocationHandler$";
-    private Field methodInterceptField;
-    private final Class<T> originalClass;
-
     JavassistProxyFactory(Class<T> originalClass, Class[] ancillaryTypes) {
         super(originalClass, ancillaryTypes);
-        this.originalClass = originalClass;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected Class<? extends T> createEnhancedClass(Class<T> clazz, Class[] ancillaryTypes) {
-        try {
-            ClassPool classPool = ClassPool.getDefault();
-            CtClass original = null;
-            CtClass proxyClass;
-            List<CtClass> allImplementedClasses = new ArrayList<CtClass>();
-
-            String proxyClassName = "$MoxieProxy$" + Long.toHexString(random.nextLong());
-            if (clazz != null) {
-                original = classPool.get(clazz.getName());
-                proxyClass = classPool.makeClass(clazz.getName() + proxyClassName, original);
-                allImplementedClasses.add(original);
-            } else {
-                proxyClass = classPool.makeClass(proxyClassName);
-            }
-
-            for (Class ancillaryType : ancillaryTypes) {
-                CtClass ancillaryCtClass = classPool.get(ancillaryType.getName());
-                proxyClass.addInterface(ancillaryCtClass);
-                allImplementedClasses.add(ancillaryCtClass);
-            }
-
-            CtClass invocationHandlerClass = classPool.get(InvocationHandler.class.getName());
-            CtField invocationHandlerField = new CtField(invocationHandlerClass, INVOCATION_HANDLER_FIELD_NAME, proxyClass);
-            invocationHandlerField.setModifiers(AccessFlag.PUBLIC);
-            proxyClass.addField(invocationHandlerField);
-
-            Set<CtClass> classesToCheck = new HashSet<CtClass>();
-            for (CtClass implementedClass : allImplementedClasses) {
-                for (; implementedClass != null && !classesToCheck.contains(implementedClass); implementedClass = implementedClass.getSuperclass()) {
-                    classesToCheck.add(implementedClass);
-                }
-            }
-            for (CtClass ctClass : classesToCheck) {
-                for (CtMethod originalMethod : ctClass.getMethods()) {
-                    MethodInfo methodInfo = originalMethod.getMethodInfo();
-                    if (!methodInfo.isMethod() || (methodInfo.getAccessFlags() & (AccessFlag.FINAL | AccessFlag.PRIVATE | AccessFlag.STATIC)) != 0) {
-                        continue;
-                    }
-                    CtMethod proxyMethod = new CtMethod(originalMethod.getReturnType(), originalMethod.getName(), originalMethod.getParameterTypes(), proxyClass);
-                    proxyMethod.setModifiers(originalMethod.getModifiers());
-                    proxyClass.addMethod(proxyMethod);
-
-                    StringBuilder methodBody = new StringBuilder();
-                    methodBody.append('{');
-                    if (originalMethod.getReturnType() != CtClass.voidType) {
-                        methodBody.append("return ");
-                    }
-                    methodBody.append("$0.");
-                    methodBody.append(INVOCATION_HANDLER_FIELD_NAME);
-                    methodBody.append(".invoke($0, $0.getClass().getMethod(\"");
-                    methodBody.append(proxyMethod.getName());
-                    methodBody.append("\", $sig), $args); }");
-                    proxyMethod.setBody(methodBody.toString());
-                }
-            }
-
-            @SuppressWarnings("unchecked")
-            Class<? extends T> result = proxyClass.toClass();
-            try {
-                methodInterceptField = result.getField(INVOCATION_HANDLER_FIELD_NAME);
-                methodInterceptField.setAccessible(true);
-            } catch (NoSuchFieldException e) {
-                throw new MoxieUnexpectedError(e);
-            }
-            return result;
-        } catch (NotFoundException e) {
-            throw new MoxieUnexpectedError(e);
-        } catch (CannotCompileException e) {
-            throw new MoxieUnexpectedError(e);
+        ProxyFactory f = new ProxyFactory();
+        f.setSuperclass(clazz);
+        if (ancillaryTypes != null) {
+            f.setInterfaces(ancillaryTypes);
         }
+        return f.createClass();
     }
 
     @Override
     protected void decorateInstance(T result, final MethodIntercept methodIntercept) {
-        try {
-            methodInterceptField.set(result, new MethodInterceptAdapter(originalClass, methodIntercept));
-        } catch (IllegalAccessException e) {
-            throw new MoxieUnexpectedError(e);
-        }
+        ((Proxy) result).setHandler(new MethodHandler() {
+            public Object invoke(final Object proxy, final Method thisMethod, final Method proceed, Object[] args) throws Throwable {
+                return methodIntercept.intercept(proxy, new MethodAdapter(thisMethod), args, new MethodIntercept.SuperInvoker() {
+                    public Object invokeSuper(Object[] args) throws Throwable {
+                        if (proceed != null) {
+                            return proceed.invoke(proxy, args);
+                        } else {
+                            throw new MoxieZombieMethodInvocationError("Method not implemented in superclass: " + thisMethod.getName());
+                        }
+//
+//                        MethodAdapter methodAdapter = MoxieUtils.guessMethod(originalClass, thisMethod.getName(), Modifier.isStatic(thisMethod.getModifiers()), thisMethod.getParameterTypes(), args);
+//                        return methodAdapter.getMethod().invoke(proxy, args);
+                    }
+                });
+            }
+        });
     }
 
 }
