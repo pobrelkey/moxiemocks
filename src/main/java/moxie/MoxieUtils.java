@@ -22,8 +22,6 @@
 
 package moxie;
 
-import org.hamcrest.SelfDescribing;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
@@ -34,6 +32,7 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.hamcrest.SelfDescribing;
 
 abstract class MoxieUtils {
 
@@ -267,7 +266,7 @@ candidateLoop:
                 mSignature[mSignature.length-1] = mSignature[mSignature.length-1].getComponentType();
             }
             for (int i = 0; i < paramSignature.length; i++) {
-                Class paramClass = paramSignature[i];
+                Class paramClass = toNonPrimitive(paramSignature[i]);
                 Class mClass = (i >= mSignature.length ? mSignature[mSignature.length-1] : mSignature[i]);
                 if (paramClass != null && !toNonPrimitive(mClass).isAssignableFrom(paramClass)) {
                     continue candidateLoop;
