@@ -26,13 +26,78 @@ import java.util.Collections;
 import java.util.Map;
 
 class ProxyIntercepts {
-    static final Map<Object, MethodIntercept> proxyIntercepts = Collections.synchronizedMap(new WeakIdentityMap<Object, MethodIntercept>());
+    private static final ProxyIntercepts INSTANCE = new ProxyIntercepts();
 
-    static void registerClassInterception(ClassInterception interception) {
-        proxyIntercepts.put(interception.getInterceptedClass(), interception);
+    private final Map<Class, MethodIntercept> classIntercepts = Collections.synchronizedMap(new WeakIdentityMap<Class, MethodIntercept>());
+    private final Map<Object, MethodIntercept> proxyIntercepts = Collections.synchronizedMap(new WeakIdentityMap<Object, MethodIntercept>());
+
+    private final Map<Class, ThreadLocal<MethodIntercept>> classThreadLocalIntercepts = Collections.synchronizedMap(new WeakIdentityMap<Class, ThreadLocal<MethodIntercept>>());
+    private final Map<Object, ThreadLocal<MethodIntercept>> proxyThreadLocalIntercepts = Collections.synchronizedMap(new WeakIdentityMap<Object, ThreadLocal<MethodIntercept>>());
+
+    private ProxyIntercepts() {}
+
+    void registerClassIntercept(Class clazz, MethodIntercept intercept) {
+        classIntercepts.put(clazz, intercept);
     }
 
-    static void registerInterception(Object proxy, MethodIntercept methodIntercept) {
-        proxyIntercepts.put(proxy, methodIntercept);
+    void registerThreadLocalClassIntercept(Class clazz, MethodIntercept intercept) {
+        register(clazz, intercept, classThreadLocalIntercepts);
+    }
+
+    void clearThreadLocalClassIntercept(Class clazz) {
+        ThreadLocal<MethodIntercept> threadLocal = classThreadLocalIntercepts.get(clazz);
+        if (threadLocal != null) {
+            threadLocal.remove();
+        }
+    }
+
+    void registerIntercept(Object proxy, MethodIntercept intercept) {
+        proxyIntercepts.put(proxy, intercept);
+    }
+
+    void registerThreadLocalIntercept(Object proxy, MethodIntercept intercept) {
+        register(proxy, intercept, proxyThreadLocalIntercepts);
+    }
+
+    void clearThreadLocalIntercept(Object proxy) {
+        ThreadLocal<MethodIntercept> threadLocal = proxyThreadLocalIntercepts.get(proxy);
+        if (threadLocal != null) {
+            threadLocal.remove();
+        }
+    }
+
+    static ProxyIntercepts getInstance() {
+        return INSTANCE;
+    }
+
+    MethodIntercept getClassIntercept(Class<?> clazz) {
+        return getThreadLocalOrGeneral(clazz, classThreadLocalIntercepts, classIntercepts);
+    }
+
+    MethodIntercept getIntercept(Object proxy) {
+        return getThreadLocalOrGeneral(proxy, proxyThreadLocalIntercepts, proxyIntercepts);
+    }
+
+    private <T> void register(T key, MethodIntercept interception, Map<T, ThreadLocal<MethodIntercept>> threadLocalIntercepts) {
+        ThreadLocal<MethodIntercept> threadLocal = threadLocalIntercepts.get(key);
+        if (threadLocal == null) {
+            threadLocal = new ThreadLocal<MethodIntercept>();
+            threadLocal.set(interception);
+            threadLocalIntercepts.put(key, threadLocal);
+        } else {
+            threadLocal.set(interception);
+        }
+    }
+
+    private <T> MethodIntercept getThreadLocalOrGeneral(T key, Map<T, ThreadLocal<MethodIntercept>> threadLocalIntercepts, Map<T, MethodIntercept> intercepts) {
+        MethodIntercept methodIntercept = null;
+        ThreadLocal<MethodIntercept> methodInterceptThreadLocal = threadLocalIntercepts.get(key);
+        if (methodInterceptThreadLocal != null) {
+            methodIntercept = methodInterceptThreadLocal.get();
+        }
+        if (methodIntercept == null) {
+            methodIntercept = intercepts.get(key);
+        }
+        return methodIntercept;
     }
 }

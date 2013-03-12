@@ -23,19 +23,17 @@ package moxie;
 
 import org.powermock.core.spi.NewInvocationControl;
 
-import java.util.Map;
-
 class PowermockConstructorHandler implements NewInvocationControl {
     private static final MethodIntercept.SuperInvoker ZOMBIE_CONSTRUCTOR_SUPER_INVOKER = new ZombieSuperInvoker("cannot partially mock a constructor");
-    private final Map<Object, MethodIntercept> proxyIntercepts;
+    private final ProxyIntercepts proxyIntercepts;
 
-    PowermockConstructorHandler(Map<Object, MethodIntercept> proxyIntercepts) {
+    PowermockConstructorHandler(ProxyIntercepts proxyIntercepts) {
         this.proxyIntercepts = proxyIntercepts;
     }
 
     public Object invoke(Class type, Object[] args, Class[] sig) throws Exception {
         try {
-            return proxyIntercepts.get(type).intercept(type, new ConstructorAdapter(type.getDeclaredConstructor(sig)), args, ZOMBIE_CONSTRUCTOR_SUPER_INVOKER);
+            return proxyIntercepts.getClassIntercept(type).intercept(type, new ConstructorAdapter(type.getDeclaredConstructor(sig)), args, ZOMBIE_CONSTRUCTOR_SUPER_INVOKER);
         } catch (Exception e) {
             throw e;
         } catch (Error e) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Moxie contributors
+ * Copyright (c) 2010-2013 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,9 +27,7 @@ import org.hamcrest.Matcher;
 import java.util.List;
 
 abstract class CheckImpl<C extends CheckImpl<C,I>, I extends Interception> {
-
-    protected final I interception;
-    private final List<Invocation> invocations;
+    protected final List<Invocation> invocations;
     private boolean negated = false;
     private boolean unexpectedly = false;
     private CardinalityImpl cardinality = new CardinalityImpl<CardinalityImpl>().once();
@@ -38,9 +36,7 @@ abstract class CheckImpl<C extends CheckImpl<C,I>, I extends Interception> {
     protected Matcher resultMatcher;
     protected Matcher throwableMatcher;
 
-
-    CheckImpl(I interception, List<Invocation> invocations) {
-        this.interception = interception;
+    public CheckImpl(List<Invocation> invocations) {
         this.invocations = invocations;
     }
 
@@ -79,7 +75,7 @@ abstract class CheckImpl<C extends CheckImpl<C,I>, I extends Interception> {
 
         for (; cursor < invocations.size(); cursor++) {
             final Invocation invocation = invocations.get(cursor);
-            if (interception.equals(invocation.getInterception()) && invocable.equals(invocation.getInvocable()) && argsMatcher.matches(invocation.getArguments())) {
+            if (getInterception().equals(invocation.getInterception()) && invocable.equals(invocation.getInvocable()) && argsMatcher.matches(invocation.getArguments())) {
                 if (unexpectedly && invocation.getExpectationSatisfied() != null) {
                     continue;
                 }
@@ -118,38 +114,6 @@ abstract class CheckImpl<C extends CheckImpl<C,I>, I extends Interception> {
         return MoxieUtils.defaultValue(invocable.getReturnType());
     }
 
-    public Object on(String methodName, Object... params) {
-        return handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, false, null, params), params);
-    }
-
-    public Object when(String methodName, Object... params) {
-        return on(methodName, params);
-    }
-
-    public Object get(String methodName, Object... params) {
-        return on(methodName, params);
-    }
-
-    public Object got(String methodName, Object... params) {
-        return on(methodName, params);
-    }
-
-    public Object on(String methodName, Class[] paramSignature, Object... params) {
-        return handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, false, paramSignature, params), params);
-    }
-
-    public Object when(String methodName, Class[] paramSignature, Object... params) {
-        return on(methodName, paramSignature, params);
-    }
-
-    public Object get(String methodName, Class[] paramSignature, Object... params) {
-       return on(methodName, paramSignature, params);
-    }
-
-    public Object got(String methodName, Class[] paramSignature, Object... params) {
-        return on(methodName, paramSignature, params);
-    }
-
     @SuppressWarnings("unchecked")
     public C inGroup(Group... groups) {
         if (this.groups != null) {
@@ -174,7 +138,6 @@ abstract class CheckImpl<C extends CheckImpl<C,I>, I extends Interception> {
         cardinality = result;
         return result;
     }
-
 
     public C never() {
         return newCardinality().never();
@@ -215,4 +178,6 @@ abstract class CheckImpl<C extends CheckImpl<C,I>, I extends Interception> {
     private void throwFailedCheckError(String message, InvocableAdapter checkedInvocable, List<Matcher> argMatchers) {
         throw new MoxieFailedCheckError(message, checkedInvocable, argMatchers, cardinality, throwableMatcher, resultMatcher, invocations);
     }
+
+    protected abstract I getInterception();
 }

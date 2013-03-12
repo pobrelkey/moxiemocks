@@ -26,7 +26,7 @@ class ClassInterception<T> extends Interception {
 
     protected ClassInterception(Class<T> clazz, String name, MoxieFlags flags, InstantiationStackTrace instantiationStackTrace) {
         super(clazz, name, flags, instantiationStackTrace);
-        ProxyIntercepts.registerClassInterception(this);
+        ProxyIntercepts.getInstance().registerClassIntercept(this.getInterceptedClass(), this);
     }
 
     ClassExpectationImpl expect() {

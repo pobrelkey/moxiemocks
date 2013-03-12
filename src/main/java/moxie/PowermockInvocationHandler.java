@@ -25,21 +25,22 @@ package moxie;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Map;
 
 class PowermockInvocationHandler implements InvocationHandler {
     private static final MethodIntercept.SuperInvoker ZOMBIE_METHOD_SUPER_INVOKER = new ZombieSuperInvoker("cannot partially mock a static or final method");
-    private final Map<Object, MethodIntercept> proxyIntercepts;
+    private final ProxyIntercepts proxyIntercepts;
 
-    PowermockInvocationHandler(Map<Object, MethodIntercept> proxyIntercepts) {
+    PowermockInvocationHandler(ProxyIntercepts proxyIntercepts) {
         this.proxyIntercepts = proxyIntercepts;
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        MethodIntercept methodIntercept;
         if (Modifier.isStatic(method.getModifiers())) {
-            proxy = method.getDeclaringClass();
+            methodIntercept = proxyIntercepts.getClassIntercept(method.getDeclaringClass());
+        } else {
+            methodIntercept = proxyIntercepts.getIntercept(proxy);
         }
-        MethodIntercept methodIntercept = proxyIntercepts.get(proxy);
         if (methodIntercept == null) {
             throw new MoxieZombieMethodInvocationError("cannot partially mock a static or final method");
         }
