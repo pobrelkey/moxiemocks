@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Moxie contributors
+ * Copyright (c) 2010-2013 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -198,7 +198,7 @@ class MoxieControlImpl implements MoxieControl {
         return verifiable;
     }
 
-    private Interception getInterceptionFromProxy(Object mockProxy) {
+    Interception getInterceptionFromProxy(Object mockProxy) {
         Verifiable interception = mocksAndGroups.get(mockProxy);
         if (interception == null || !(interception instanceof Interception)) {
             throw new IllegalArgumentException("object is not a mock object or has already been verified: " + interception);
@@ -206,7 +206,7 @@ class MoxieControlImpl implements MoxieControl {
         return ((Interception) interception);
     }
 
-    private <T> ClassInterception<T> getInterceptionFromClass(Class<T> clazz, MoxieOptions... options) {
+    <T> ClassInterception<T> getInterceptionFromClass(Class<T> clazz, MoxieOptions... options) {
         @SuppressWarnings("unchecked")
         ClassInterception<T> result = (ClassInterception<T>) mocksAndGroups.get(clazz);
         if (result == null) {
@@ -397,4 +397,14 @@ class MoxieControlImpl implements MoxieControl {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    <T> List<T> proxiesForClass(Class<T> clazz) {
+        List<T> result = new ArrayList<T>();
+        for (Object o : mocksAndGroups.keySet()) {
+            if (clazz.isAssignableFrom(o.getClass())) {
+                result.add((T) o);
+            }
+        }
+        return result;
+    }
 }

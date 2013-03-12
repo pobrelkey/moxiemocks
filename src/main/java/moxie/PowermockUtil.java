@@ -38,8 +38,8 @@ class PowermockUtil {
     static {
         try {
             new MemberModifier();
-            powermockInvocationHandler = new PowermockInvocationHandler(ProxyIntercepts.proxyIntercepts);
-            powermockConstructorHandler = new PowermockConstructorHandler(ProxyIntercepts.proxyIntercepts);
+            powermockInvocationHandler = new PowermockInvocationHandler(ProxyIntercepts.getInstance());
+            powermockConstructorHandler = new PowermockConstructorHandler(ProxyIntercepts.getInstance());
             havePowermock = true;
         } catch (NoClassDefFoundError e) {
             // oh well, no powermock then.

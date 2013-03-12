@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Moxie contributors
+ * Copyright (c) 2010-2013 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@ import org.hamcrest.Matcher;
 
 import java.util.List;
 
-class ObjectCheckImpl<T> extends CheckImpl<ObjectCheckImpl<T>, ObjectInterception<T>> implements ObjectCheck<T> {
+class ObjectCheckImpl<T> extends NonLambdaCheckImpl<ObjectCheckImpl<T>, ObjectInterception<T>> implements ObjectCheck<T> {
 
     ObjectCheckImpl(ObjectInterception<T> interception, List<Invocation> invocations) {
         super(interception, invocations);
@@ -59,11 +59,11 @@ class ObjectCheckImpl<T> extends CheckImpl<ObjectCheckImpl<T>, ObjectInterceptio
     }
 
     public T on() {
-        return interception.getProxyFactory().createProxy(new MethodIntercept() {
+        return getInterception().getProxyFactory().createProxy(new MethodIntercept() {
             public Object intercept(Object proxy, InvocableAdapter invocable, Object[] params, SuperInvoker superInvoker) throws Throwable {
                 return handleInvocation(invocable, params);
             }
-        }, interception.getConstructorArgTypes(),  interception.getConstructorArgs());
+        }, getInterception().getConstructorArgTypes(),  getInterception().getConstructorArgs());
     }
 
     public T when() {
@@ -76,5 +76,9 @@ class ObjectCheckImpl<T> extends CheckImpl<ObjectCheckImpl<T>, ObjectInterceptio
 
     public T got() {
         return on();
+    }
+
+    protected boolean isStatic() {
+        return false;
     }
 }

@@ -22,7 +22,7 @@
 
 package moxie;
 
-class ClassExpectationImpl<T> extends ExpectationImpl<ClassExpectationImpl<T>, ClassInterception> implements ClassExpectation<T> {
+class ClassExpectationImpl<T> extends NonLambdaExpectationImpl<ClassExpectationImpl<T>, ClassInterception> implements ClassExpectation<T> {
     protected ClassExpectationImpl(ClassInterception interception) {
         super(interception);
     }
@@ -41,7 +41,7 @@ class ClassExpectationImpl<T> extends ExpectationImpl<ClassExpectationImpl<T>, C
 
     @SuppressWarnings("unchecked")
     public T onNew(Class[] paramSignature, Object... params) {
-        Class interceptedClass = interception.getInterceptedClass();
+        Class interceptedClass = getInterception().getInterceptedClass();
         ConstructorAdapter constructor = MoxieUtils.guessConstructor(interceptedClass, null, params);
         constructor.zombify();
         return (T) handleInvocation(constructor, params);

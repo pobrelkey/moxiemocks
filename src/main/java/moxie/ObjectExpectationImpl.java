@@ -26,7 +26,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.SelfDescribing;
 
-class ObjectExpectationImpl<T> extends ExpectationImpl<ObjectExpectationImpl<T>, ObjectInterception<T>> implements ObjectExpectation<T> {
+class ObjectExpectationImpl<T> extends NonLambdaExpectationImpl<ObjectExpectationImpl<T>, ObjectInterception<T>> implements ObjectExpectation<T> {
 
     protected ObjectExpectationImpl(ObjectInterception<T> interception) {
         super(interception);
@@ -34,11 +34,11 @@ class ObjectExpectationImpl<T> extends ExpectationImpl<ObjectExpectationImpl<T>,
 
     public T on() {
         checkMethodAndCardinality();
-        return interception.getProxyFactory().createProxy(new MethodIntercept() {
+        return getInterception().getProxyFactory().createProxy(new MethodIntercept() {
             public Object intercept(Object proxy, InvocableAdapter invocable, Object[] params, SuperInvoker superInvoker) throws Throwable {
                 return handleInvocation(invocable, params);
             }
-        }, interception.getConstructorArgTypes(), interception.getConstructorArgs());
+        }, getInterception().getConstructorArgTypes(), getInterception().getConstructorArgs());
     }
 
     public T will() {
@@ -51,7 +51,7 @@ class ObjectExpectationImpl<T> extends ExpectationImpl<ObjectExpectationImpl<T>,
 
     public ObjectExpectationImpl<T> willReturnVerified(Object result) {
         Matcher matcher = MatcherSyntax.singleMatcherExpression(null, result);
-        if (!(interception instanceof SpyImpl)) {
+        if (!(getInterception() instanceof SpyImpl)) {
             throw new MoxieSyntaxError("this method is only for expectations on spy objects");
         }
         returnValueMatcher = matcher;
@@ -64,7 +64,7 @@ class ObjectExpectationImpl<T> extends ExpectationImpl<ObjectExpectationImpl<T>,
 
     public ObjectExpectationImpl<T> willThrowVerified(Throwable throwable) {
         Matcher matcher = MatcherSyntax.singleMatcherExpression(Throwable.class, throwable);
-        if (!(interception instanceof SpyImpl)) {
+        if (!(getInterception() instanceof SpyImpl)) {
             throw new MoxieSyntaxError("this method is only for expectations on spy objects");
         }
         exceptionMatcher = matcher;

@@ -55,9 +55,6 @@ class JavassistProxyFactory<T> extends ConcreteTypeProxyFactory<T> {
                         } else {
                             throw new MoxieZombieMethodInvocationError("Method not implemented in superclass: " + thisMethod.getName());
                         }
-//
-//                        MethodAdapter methodAdapter = MoxieUtils.guessMethod(originalClass, thisMethod.getName(), Modifier.isStatic(thisMethod.getModifiers()), thisMethod.getParameterTypes(), args);
-//                        return methodAdapter.getMethod().invoke(proxy, args);
                     }
                 });
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Moxie contributors
+ * Copyright (c) 2010-2013 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,12 +37,8 @@ import java.util.List;
 import java.util.Set;
 
 abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interception> implements SelfDescribing {
-
-    protected final I interception;
-
     @SuppressWarnings("unchecked")
-    private CardinalityImpl<E> cardinality = new CardinalityImpl<CardinalityImpl>().once();
-
+    protected CardinalityImpl<E> cardinality = new CardinalityImpl<CardinalityImpl>().once();
     private Set<GroupImpl> groups = null;
     private MethodIntercept handler = null;
     private InvocableAdapter invocable;
@@ -52,11 +48,8 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
     protected Matcher returnValueMatcher;
     protected Matcher exceptionMatcher;
 
-    @SuppressWarnings("unchecked")
-    protected ExpectationImpl(I interception) {
-        this.interception = interception;
+    protected ExpectationImpl() {
         cardinality = new CardinalityImpl<E>((E) this);
-        cardinality.atLeastOnce();
     }
 
     private CardinalityImpl<E> newCardinality() {
@@ -193,39 +186,12 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
 //        // TODO: handle deep mocks differently
         this.invocable = invocable;
         argMatchers = MatcherSyntax.methodCall(invocable, params);
-        interception.addExpectation(this);
+        getInterception().addExpectation(this);
 
 //        if (deepMockable) {
 //            // TODO: return deep mocking stub instead!
 //        }
         return MoxieUtils.defaultValue(invocable.getReturnType());
-    }
-
-    public Object on(String methodName, Object... params) {
-        return on(methodName, null, params);
-    }
-
-    abstract protected boolean isStatic();
-
-    public Object when(String methodName, Object... params) {
-        return on(methodName, params);
-    }
-
-    public Object will(String methodName, Object... params) {
-        return on(methodName, params);
-    }
-
-    public Object on(String methodName, Class[] paramSignature, Object... params) {
-        checkMethodAndCardinality();
-        return handleInvocation(MoxieUtils.guessMethod(this.interception.getInterceptedClass(), methodName, isStatic(), paramSignature, params), params);
-    }
-
-    public Object when(String methodName, Class[] paramSignature, Object... params) {
-        return on(methodName, paramSignature, params);
-    }
-
-    public Object will(String methodName, Class[] paramSignature, Object... params) {
-        return on(methodName, paramSignature, params);
     }
 
     public E andReturn(Object result) {
@@ -358,6 +324,8 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
             description.appendText(")");
         }
     }
+
+    protected abstract I getInterception();
 
     static private interface TypeCompatibilityVerifable {
         void verifyTypeCompatible(InvocableAdapter invocable);
@@ -515,5 +483,4 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
             }
         }
     }
-
 }

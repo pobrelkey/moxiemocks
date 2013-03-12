@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Moxie contributors
+ * Copyright (c) 2010-2013 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@ package moxie;
 
 import java.util.List;
 
-class ClassCheckImpl<C, T> extends CheckImpl<ClassCheckImpl<C, T>, ClassInterception> implements ClassCheck<C, ClassCheckImpl<C, T>> {
+class ClassCheckImpl<C, T> extends NonLambdaCheckImpl<ClassCheckImpl<C, T>, ClassInterception> implements ClassCheck<C, ClassCheckImpl<C, T>> {
     ClassCheckImpl(ClassInterception interception, List<Invocation> invocations) {
         super(interception, invocations);
     }
@@ -47,7 +47,7 @@ class ClassCheckImpl<C, T> extends CheckImpl<ClassCheckImpl<C, T>, ClassIntercep
 
     @SuppressWarnings("unchecked")
     public C onNew(Class[] paramSignature, Object... params) {
-        Class interceptedClass = interception.getInterceptedClass();
+        Class interceptedClass = getInterception().getInterceptedClass();
         ConstructorAdapter constructor = MoxieUtils.guessConstructor(interceptedClass, paramSignature, params);
         return (C) handleInvocation(constructor, params);
     }
@@ -62,5 +62,9 @@ class ClassCheckImpl<C, T> extends CheckImpl<ClassCheckImpl<C, T>, ClassIntercep
 
     public C gotNew(Class[] paramSignature, Object... params) {
         return onNew(paramSignature,  params);
+    }
+
+    protected boolean isStatic() {
+        return true;
     }
 }

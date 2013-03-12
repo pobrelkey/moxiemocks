@@ -81,7 +81,8 @@
         <dependency>
             <!--
                 Doesn't work with CGLIB 3.0, which I presume is broken (or at least not API-compatible).
-                TODO: get Moxie to use Javassist in preference to CGLIB.
+                Moxie can mock concrete types using Javassist instead of CGLIB; Javassist is a
+                better-supported library, so you should really use that instead.
               -->
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
