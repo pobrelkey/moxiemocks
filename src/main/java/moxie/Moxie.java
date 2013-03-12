@@ -433,6 +433,10 @@ public abstract class Moxie extends MoxieMatchers {
         return instance.expect(clazz);
     }
 
+    static public LambdaExpectation expect() {
+        return instance.expect();
+    }
+
     /**
      * <p>
      * Domain-specific language method - starts a clause in which an stub expectation is set on a mock.
@@ -466,6 +470,10 @@ public abstract class Moxie extends MoxieMatchers {
         return instance.stub(clazz);
     }
 
+    static public LambdaExpectation stub() {
+        return instance.stub();
+    }
+
     /**
      * <p>
      * Domain-specific language method - starts a clause in which a check is performed against a mock after use.
@@ -497,6 +505,10 @@ public abstract class Moxie extends MoxieMatchers {
      */
     static public ClassCheck check(Class clazz) {
         return instance.check(clazz);
+    }
+
+    static public LambdaCheck check() {
+        return instance.check();
     }
 
     /**

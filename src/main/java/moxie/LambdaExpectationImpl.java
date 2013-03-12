@@ -22,22 +22,46 @@
 
 package moxie;
 
-class LambdaExpectationImpl extends ExpectationImpl<LambdaExpectationImpl, Interception> {
+class LambdaExpectationImpl extends ExpectationImpl<LambdaExpectationImpl, Interception> implements LambdaExpectation {
 
     private Interception interception;
     private final MoxieControlImpl moxie;
 
-    public LambdaExpectationImpl() {
-        moxie = null;
+    public LambdaExpectationImpl(MoxieControlImpl moxie) {
+        this.moxie = moxie;
     }
 
     public void on(Runnable lambda) {
-        new MagicLambdaHelper(moxie) {
+        getMagicLambdaHelper().doInvoke(lambda, MagicLambdaHelper.RUNNABLE_METHOD);
+    }
+
+    public void when(Runnable lambda) {
+        on(lambda);
+    }
+
+    public void will(Runnable lambda) {
+        on(lambda);
+    }
+
+    public void on(Supplier<?> lambda) {
+        getMagicLambdaHelper().doInvoke(lambda, MagicLambdaHelper.SUPPLIER_METHOD);
+    }
+
+    public void when(Supplier<?> lambda) {
+        on(lambda);
+    }
+
+    public void will(Supplier<?> lambda) {
+        on(lambda);
+    }
+
+    private MagicLambdaHelper getMagicLambdaHelper() {
+        return new MagicLambdaHelper(moxie) {
             @Override
-            protected MethodIntercept getLambdaInterceptForClass(ClassInterception classInterception) {
-                interception = classInterception;
+            protected MethodIntercept getLambdaInterceptForClass(final ClassInterception classInterception) {
                 return new MethodIntercept() {
                     public Object intercept(Object proxy, InvocableAdapter invocable, Object[] args, SuperInvoker superInvoker) throws Throwable {
+                        interception = classInterception;
                         return handleInvocation(invocable, args);
                     }
                 };
@@ -51,15 +75,7 @@ class LambdaExpectationImpl extends ExpectationImpl<LambdaExpectationImpl, Inter
                     }
                 };
             }
-        }.doInvoke(lambda, MagicLambdaHelper.RUNNABLE_METHOD);
-    }
-
-    public void when(Runnable lambda) {
-        on(lambda);
-    }
-
-    public void will(Runnable lambda) {
-        on(lambda);
+        };
     }
 
     @Override

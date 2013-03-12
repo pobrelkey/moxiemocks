@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 class MoxieControlImpl implements MoxieControl {
 
@@ -87,10 +88,15 @@ class MoxieControlImpl implements MoxieControl {
     }
 
     public <T> T mock(Class<T> clazz, String name, Class[] constructorArgTypes, Object[] constructorArgs, MoxieOptions... options) {
+        MoxieFlags flags = MoxieOptions.mergeWithDefaults(MoxieOptions.MOCK_DEFAULTS, options);
         if (name == null || name.length() == 0) {
             name = clazz.getSimpleName();
         }
-        MockImpl<T> mock = new MockImpl(clazz, name, MoxieOptions.mergeWithDefaults(MoxieOptions.MOCK_DEFAULTS, options), invocations, constructorArgTypes, constructorArgs);
+        if (MoxieUtils.unbox(flags.isPartial(), false) && clazz.isInterface()) {
+            throw new MoxieSyntaxError("Cannot partially mock an interface");
+        }
+        @SuppressWarnings("unchecked")
+        MockImpl<T> mock = new MockImpl(clazz, name, flags, invocations, constructorArgTypes, constructorArgs);
         T result = mock.getProxy();
         mocksAndGroups.put(result, mock);
         return result;
@@ -104,6 +110,7 @@ class MoxieControlImpl implements MoxieControl {
         if (name == null || name.length() == 0) {
             name = realObject.getClass().getSimpleName();
         }
+        @SuppressWarnings("unchecked")
         SpyImpl<T> spy = new SpyImpl(realObject, name, MoxieOptions.mergeWithDefaults(MoxieOptions.MOCK_DEFAULTS, options), invocations);
         T result = spy.getProxy();
         mocksAndGroups.put(result, spy);
@@ -143,6 +150,10 @@ class MoxieControlImpl implements MoxieControl {
         return getInterceptionFromClass(clazz, options).expect();
     }
 
+    public LambdaExpectation expect() {
+        return new LambdaExpectationImpl(this);
+    }
+
     public <T> ObjectExpectation<T> stub(T mockObject) {
         return expect(mockObject).anyTimes().atAnyTime();
     }
@@ -151,13 +162,22 @@ class MoxieControlImpl implements MoxieControl {
         return expect(clazz).anyTimes().atAnyTime();
     }
 
+    public LambdaExpectation stub() {
+        return expect().anyTimes().atAnyTime();
+    }
+
     @SuppressWarnings("unchecked")
     public <T> ObjectCheck<T> check(T mockObject) {
         return ((ObjectInterception<T>) getInterceptionFromProxy(mockObject)).check();
     }
 
+    @SuppressWarnings("unchecked")
     public ClassCheck check(Class clazz) {
         return getInterceptionFromClass(clazz).check();
+    }
+
+    public LambdaCheck check() {
+        return new LambdaCheckImpl(this, invocations);
     }
 
     public void checkNothingElseHappened(Object... mockObjects) {
@@ -263,6 +283,7 @@ class MoxieControlImpl implements MoxieControl {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Collection mocksAndGroupsFor(Object... mockObjects) {
         if (mockObjects != null && mockObjects.length > 0) {
             return Arrays.asList(mockObjects);
@@ -271,6 +292,7 @@ class MoxieControlImpl implements MoxieControl {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Collection mocksFor(Object... mockObjects) {
         if (mockObjects != null && mockObjects.length > 0) {
             return Arrays.asList(mockObjects);
@@ -315,6 +337,7 @@ class MoxieControlImpl implements MoxieControl {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public Object[] autoMock(Object... testComponents) {
         for (Object testInstance : testComponents) {
             if (valuesOverwrittenByAutoMock.containsKey(testInstance)) {
@@ -361,6 +384,7 @@ class MoxieControlImpl implements MoxieControl {
         return result.toArray(new Object[result.size()]);
     }
 
+    @SuppressWarnings("unchecked")
     public void autoUnMock(Object... testComponents) {
         Collection components;
         if (testComponents != null && testComponents.length > 0) {
@@ -378,12 +402,12 @@ class MoxieControlImpl implements MoxieControl {
             Map<String, Object> oldValues = valuesOverwrittenByAutoMock.remove(testInstance);
             for (Class c = testInstance.getClass(); c != null; c = c.getSuperclass()) {
                 for (Field f : c.getDeclaredFields()) {
-                    if (f.isAnnotationPresent(Mock.class) || f.isAnnotationPresent(Spy.class) || f.isAnnotationPresent(AutoMock.class) || Group.class.equals(f.getType())) {
+                    if (f.getAnnotation(Mock.class) != null || f.getAnnotation(Spy.class) != null || f.getAnnotation(AutoMock.class) != null || Group.class.equals(f.getType())) {
                         if (!f.isAccessible()) {
                             f.setAccessible(true);
                         }
                         try {
-                            if (f.isAnnotationPresent(AutoMock.class)) {
+                            if (f.getAnnotation(AutoMock.class) != null) {
                                 autoUnMock(f.get(testInstance));
                                 continue;
                             }
@@ -398,7 +422,7 @@ class MoxieControlImpl implements MoxieControl {
     }
 
     @SuppressWarnings("unchecked")
-    <T> List<T> proxiesForClass(Class<T> clazz) {
+    <T> List<T> getProxiesForClass(Class<T> clazz) {
         List<T> result = new ArrayList<T>();
         for (Object o : mocksAndGroups.keySet()) {
             if (clazz.isAssignableFrom(o.getClass())) {
@@ -406,5 +430,9 @@ class MoxieControlImpl implements MoxieControl {
             }
         }
         return result;
+    }
+
+    Set<Object> getAllProxies() {
+        return mocksAndGroups.keySet();
     }
 }

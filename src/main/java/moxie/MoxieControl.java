@@ -343,6 +343,8 @@ public interface MoxieControl {
      */
     <T> ClassExpectation<T> expect(Class<T> clazz, MoxieOptions... options);
 
+    LambdaExpectation expect();
+
     /**
      * <p>
      * Domain-specific language method - starts a clause in which an stub expectation is set on a mock.
@@ -371,6 +373,8 @@ public interface MoxieControl {
      */
     <T> ClassExpectation<T> stub(Class<T> clazz);
 
+    LambdaExpectation stub();
+
     /**
      * <p>
      * Domain-specific language method - starts a clause in which a check is performed against a mock after use.
@@ -397,6 +401,8 @@ public interface MoxieControl {
      * @return a {@link ClassCheck} whose methods can be used to give details of what should have occurred
      */
     ClassCheck check(Class clazz);
+
+    LambdaCheck check();
 
     /**
      * <p>
