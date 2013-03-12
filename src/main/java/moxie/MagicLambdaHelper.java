@@ -121,6 +121,7 @@ abstract class MagicLambdaHelper {
                         List possibleProxies = moxie.getProxiesForClass(instanceMethod.getDeclaringClass());
                         MethodIntercept lambdaInterceptForObject = incrementingMethodIntercept(getLambdaInterceptForObject());
                         for (Object proxy : possibleProxies) {
+                            // TODO: this won't work - see ObjectInterception.getProxy()
                             proxyIntercepts.registerThreadLocalIntercept(proxy, lambdaInterceptForObject);
                         }
                         lambdaMethod.invoke(lambdaObject);
@@ -175,7 +176,7 @@ abstract class MagicLambdaHelper {
                 throw new MoxieSyntaxError("Cannot detect a method invocation in magic lambda");
             } else if (invocationCount > 1) {
                 // TODO: stacktraces if MoxieOptions.TRACE?
-                throw new MoxieSyntaxError("Too many method invocations ("+invocationCount+" in magic lambda");
+                throw new MoxieSyntaxError("Too many method invocations (" + invocationCount + " in magic lambda");
             }
 
         } catch (NotFoundException e) {
@@ -224,7 +225,7 @@ abstract class MagicLambdaHelper {
         CtClass[] magicMethodParamCtTypes = Descriptor.getParameterTypes(magicMethodDescriptor, classPool);
         Class[] magicMethodParamTypes = new Class[magicMethodParamCtTypes.length];
         for (int i = 0; i < magicMethodParamCtTypes.length; i++) {
-            magicMethodParamTypes[i] = Class.forName(magicMethodParamCtTypes[i].getName());
+            magicMethodParamTypes[i] = getJvmClassForCtClass(magicMethodParamCtTypes[i]);
         }
 
         return MoxieUtils.guessConstructor(magicMethodClass, magicMethodParamTypes, null);
@@ -245,9 +246,33 @@ abstract class MagicLambdaHelper {
         CtClass[] magicMethodParamCtTypes = Descriptor.getParameterTypes(magicMethodDescriptor, classPool);
         Class[] magicMethodParamTypes = new Class[magicMethodParamCtTypes.length];
         for (int i = 0; i < magicMethodParamCtTypes.length; i++) {
-            magicMethodParamTypes[i] = Class.forName(magicMethodParamCtTypes[i].getName());
+            magicMethodParamTypes[i] = getJvmClassForCtClass(magicMethodParamCtTypes[i]);
         }
 
         return MoxieUtils.guessMethod(magicMethodClass, magicMethodName, isStatic, magicMethodParamTypes, null);
+    }
+
+    private static Class<?> getJvmClassForCtClass(CtClass ctClass) throws ClassNotFoundException {
+        if (ctClass == CtClass.booleanType) {
+            return Boolean.TYPE;
+        } else if (ctClass == CtClass.byteType) {
+            return Byte.TYPE;
+        } else if (ctClass == CtClass.charType) {
+            return Character.TYPE;
+        } else if (ctClass == CtClass.doubleType) {
+            return Double.TYPE;
+        } else if (ctClass == CtClass.floatType) {
+            return Float.TYPE;
+        } else if (ctClass == CtClass.intType) {
+            return Integer.TYPE;
+        } else if (ctClass == CtClass.longType) {
+            return Long.TYPE;
+        } else if (ctClass == CtClass.shortType) {
+            return Short.TYPE;
+        } else if (ctClass == CtClass.voidType) {
+            return Void.TYPE;
+        } else {
+            return Class.forName(ctClass.getName());
+        }
     }
 }
