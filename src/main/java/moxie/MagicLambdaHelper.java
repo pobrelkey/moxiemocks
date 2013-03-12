@@ -22,6 +22,10 @@
 
 package moxie;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Set;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -33,17 +37,15 @@ import javassist.bytecode.Descriptor;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.Opcode;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-
 abstract class MagicLambdaHelper {
 
     static Method RUNNABLE_METHOD;
+    static Method SUPPLIER_METHOD;
 
     static {
         try {
-            MagicLambdaHelper.RUNNABLE_METHOD = Runnable.class.getMethod("run");
+            RUNNABLE_METHOD = Runnable.class.getMethod("run");
+            SUPPLIER_METHOD = Supplier.class.getMethod("get");
         } catch (NoSuchMethodException e) {
             throw new MoxieUnexpectedError(e);
         }
@@ -51,6 +53,7 @@ abstract class MagicLambdaHelper {
 
     private final MoxieControlImpl moxie;
     private final ProxyIntercepts proxyIntercepts;
+    private int invocationCount = 0;
 
     protected MagicLambdaHelper(MoxieControlImpl moxie) {
         this.moxie = moxie;
@@ -101,48 +104,78 @@ abstract class MagicLambdaHelper {
                     if ("<init>".equals(magicMethodName)) {
                         ConstructorAdapter constructorAdapter = guessConstructor(classPool, constPool, descriptorRef);
                         constructorAdapter.zombify();
-                        MethodIntercept expectationIntercept = getLambdaInterceptForClass(moxie.getInterceptionFromClass(constructorAdapter.getDeclaringClass()));
-                        proxyIntercepts.registerThreadLocalClassIntercept(constructorAdapter.getDeclaringClass(), expectationIntercept);
+                        registerThreadLocalClassIntercept(constructorAdapter.getDeclaringClass());
                         lambdaMethod.invoke(lambdaObject);
                         proxyIntercepts.clearThreadLocalClassIntercept(constructorAdapter.getDeclaringClass());
-                        return;
+                        break;
                     }
                     // FALL THROUGH
 
                 case Opcode.INVOKEINTERFACE:
                 case Opcode.INVOKEVIRTUAL:
                     // Calling an instance method...
-                    MethodAdapter instanceMethod = guessMethod(classPool, constPool, descriptorRef, false, lastInvokeOpcode == Opcode.INVOKEINTERFACE);
-                    instanceMethod.zombify();
-
-                    @SuppressWarnings("unchecked")
-                    List list = moxie.proxiesForClass(instanceMethod.getDeclaringClass());
-                    MethodIntercept lambdaInterceptForObject = getLambdaInterceptForObject();
-                    for (Object proxy : list) {
-                        proxyIntercepts.registerThreadLocalIntercept(proxy, lambdaInterceptForObject);
+                    {
+                        MethodAdapter instanceMethod = guessMethod(classPool, constPool, descriptorRef, false, lastInvokeOpcode == Opcode.INVOKEINTERFACE);
+                        instanceMethod.zombify();
+                        @SuppressWarnings("unchecked")
+                        List possibleProxies = moxie.getProxiesForClass(instanceMethod.getDeclaringClass());
+                        MethodIntercept lambdaInterceptForObject = incrementingMethodIntercept(getLambdaInterceptForObject());
+                        for (Object proxy : possibleProxies) {
+                            proxyIntercepts.registerThreadLocalIntercept(proxy, lambdaInterceptForObject);
+                        }
+                        lambdaMethod.invoke(lambdaObject);
+                        for (Object proxy : possibleProxies) {
+                            proxyIntercepts.clearThreadLocalIntercept(proxy);
+                        }
+                        break;
                     }
-                    lambdaMethod.invoke(lambdaObject);
-                    for (Object proxy : list) {
-                        proxyIntercepts.clearThreadLocalIntercept(proxy);
-                    }
-                    return;
 
                 case Opcode.INVOKESTATIC:
                     // Calling a static method...
-                    MethodAdapter staticMethod = guessMethod(classPool, constPool, descriptorRef, true, false);
-                    staticMethod.zombify();
-                    MethodIntercept expectationIntercept = getLambdaInterceptForClass(moxie.getInterceptionFromClass(staticMethod.getDeclaringClass()));
-                    proxyIntercepts.registerThreadLocalClassIntercept(staticMethod.getDeclaringClass(), expectationIntercept);
-                    lambdaMethod.invoke(lambdaObject);
-                    proxyIntercepts.clearThreadLocalClassIntercept(staticMethod.getDeclaringClass());
-                    return;
+                    {
+                        MethodAdapter staticMethod = guessMethod(classPool, constPool, descriptorRef, true, false);
+                        staticMethod.zombify();
+                        registerThreadLocalClassIntercept(staticMethod.getDeclaringClass());
+                        lambdaMethod.invoke(lambdaObject);
+                        proxyIntercepts.clearThreadLocalClassIntercept(staticMethod.getDeclaringClass());
+                        break;
+                    }
 
                 case Opcode.INVOKEDYNAMIC:
-                    // TODO: makes my brain hurt
-                    throw new MoxieSyntaxError("Magic lambdas cannot use dynamic invocation");
+                    // HACK: since I have no idea what the JVM is about to do, push a thread-local intercept onto every last class/proxy.
+                    //   Note that this means your lambda can't call finals/statics/constructors unless they've been previously zombified.
+                    //   This is of course a wild stab in the dark at proper behavior - if you ever actually use this code, please e-mail me.
+                    {
+                        MethodIntercept lambdaInterceptForObject = incrementingMethodIntercept(getLambdaInterceptForObject());
+                        Set<Object> allProxies = moxie.getAllProxies();
+                        for (Object proxy : allProxies) {
+                            if (proxy instanceof Class) {
+                                registerThreadLocalClassIntercept((Class) proxy);
+                            } else {
+                                proxyIntercepts.registerThreadLocalIntercept(proxy, lambdaInterceptForObject);
+                            }
+                        }
+                        lambdaMethod.invoke(lambdaObject);
+                        for (Object proxy : allProxies) {
+                            if (proxy instanceof Class) {
+                                proxyIntercepts.clearThreadLocalClassIntercept((Class) proxy);
+                            } else {
+                                proxyIntercepts.clearThreadLocalIntercept(proxy);
+                            }
+                        }
+                        break;
+                    }
 
                 default:
                     throw new MoxieSyntaxError("Cannot detect a method invocation in magic lambda");
+            }
+
+            // Verify that the magic lambda indeed called a mock setup method.
+            if (invocationCount == 0) {
+                throw new MoxieSyntaxError("Cannot detect a method invocation in magic lambda");
+            } else if (invocationCount > 1) {
+                // TODO: stacktraces if MoxieOptions.TRACE?
+                throw new MoxieSyntaxError("Too many method invocations ("+invocationCount+" in magic lambda");
             }
 
         } catch (NotFoundException e) {
@@ -164,6 +197,20 @@ abstract class MagicLambdaHelper {
             }
         }
 
+    }
+
+    private void registerThreadLocalClassIntercept(Class clazz) {
+        MethodIntercept classIntercept = getLambdaInterceptForClass(moxie.getInterceptionFromClass(clazz));
+        proxyIntercepts.registerThreadLocalClassIntercept(clazz, incrementingMethodIntercept(classIntercept));
+    }
+
+    protected MethodIntercept incrementingMethodIntercept(final MethodIntercept intercept) {
+        return new MethodIntercept() {
+            public Object intercept(Object proxy, InvocableAdapter invocable, Object[] args, SuperInvoker superInvoker) throws Throwable {
+                invocationCount++;
+                return intercept.intercept(proxy, invocable, args, superInvoker);
+            }
+        };
     }
 
     protected abstract MethodIntercept getLambdaInterceptForClass(ClassInterception classInterception);

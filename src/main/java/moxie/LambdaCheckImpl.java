@@ -24,7 +24,7 @@ package moxie;
 
 import java.util.List;
 
-class LambdaCheckImpl extends CheckImpl<LambdaCheckImpl, Interception> {
+class LambdaCheckImpl extends CheckImpl<LambdaCheckImpl, Interception> implements LambdaCheck {
     private Interception interception;
     private final MoxieControlImpl moxie;
 
@@ -34,14 +34,45 @@ class LambdaCheckImpl extends CheckImpl<LambdaCheckImpl, Interception> {
     }
 
     public void on(Runnable lambda) {
-        new MagicLambdaHelper(moxie) {
+        getMagicLambdaHelper().doInvoke(lambda, MagicLambdaHelper.RUNNABLE_METHOD);
+    }
+
+    public void when(Runnable lambda) {
+        on(lambda);
+    }
+
+    public void get(Runnable lambda) {
+        on(lambda);
+    }
+
+    public void got(Runnable lambda) {
+        on(lambda);
+    }
+
+    public void on(Supplier lambda) {
+        getMagicLambdaHelper().doInvoke(lambda, MagicLambdaHelper.SUPPLIER_METHOD);
+    }
+
+    public void when(Supplier lambda) {
+        on(lambda);
+    }
+
+    public void get(Supplier lambda) {
+        on(lambda);
+    }
+
+    public void got(Supplier lambda) {
+        on(lambda);
+    }
+
+    private MagicLambdaHelper getMagicLambdaHelper() {
+        return new MagicLambdaHelper(moxie) {
             @Override
-            protected MethodIntercept getLambdaInterceptForClass(ClassInterception classInterception) {
-                interception = classInterception;
-                final ClassCheckImpl check = new ClassCheckImpl(classInterception, invocations);
+            protected MethodIntercept getLambdaInterceptForClass(final ClassInterception classInterception) {
                 return new MethodIntercept() {
                     public Object intercept(Object proxy, InvocableAdapter invocable, Object[] args, SuperInvoker superInvoker) throws Throwable {
-                        return check.handleInvocation(invocable, args);
+                        interception = classInterception;
+                        return handleInvocation(invocable, args);
                     }
                 };
             }
@@ -55,19 +86,7 @@ class LambdaCheckImpl extends CheckImpl<LambdaCheckImpl, Interception> {
                     }
                 };
             }
-        }.doInvoke(lambda, MagicLambdaHelper.RUNNABLE_METHOD);
-    }
-
-    public void when(Runnable lambda) {
-        on(lambda);
-    }
-
-    public void get(Runnable lambda) {
-        on(lambda);
-    }
-
-    public void got(Runnable lambda) {
-        on(lambda);
+        };
     }
 
     @Override
