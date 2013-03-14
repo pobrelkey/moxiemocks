@@ -22,7 +22,6 @@
 
 package moxietests;
 
-import java.util.List;
 import junit.framework.Assert;
 import moxie.Moxie;
 import moxie.MoxieRule;
@@ -33,15 +32,11 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(LambdaExpectationTest.SomeClass.class)
-public class LambdaExpectationTest {
+import java.util.List;
 
-    public static class SomeClass {
-        public static String blah() { return "blah"; }
-        public SomeClass(String param) {}
-        public SomeClass(String param1, String param2) {}
-    }
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(PartiallyMocked.class)
+public class LambdaExpectationTest {
 
     @Rule
     public MoxieRule moxie = new MoxieRule();
@@ -51,24 +46,24 @@ public class LambdaExpectationTest {
         // this is far prettier in Java 8, trust me...
         Moxie.expect().times(2).andReturn("wibble").on(new Runnable() {
             public void run() {
-                SomeClass.blah();
+                PartiallyMocked.aStaticMethod(Moxie.startsWith("foo"));
             }
         });
 
-        Assert.assertEquals("wibble", SomeClass.blah());
-        Assert.assertEquals("wibble", SomeClass.blah());
+        Assert.assertEquals("wibble", PartiallyMocked.aStaticMethod("foobar"));
+        Assert.assertEquals("wibble", PartiallyMocked.aStaticMethod("foo industries ltd."));
     }
 
     @Test
     public void staticMethod_Supplier_happyPath() {
         Moxie.expect().times(2).andReturn("feep").on(new Supplier<Object>() {
             public Object get() {
-                return SomeClass.blah();
+                return PartiallyMocked.aStaticMethod("blah");
             }
         });
 
-        Assert.assertEquals("feep", SomeClass.blah());
-        Assert.assertEquals("feep", SomeClass.blah());
+        Assert.assertEquals("feep", PartiallyMocked.aStaticMethod("blah"));
+        Assert.assertEquals("feep", PartiallyMocked.aStaticMethod("blah"));
     }
 
     @Test
@@ -76,26 +71,25 @@ public class LambdaExpectationTest {
         // TODO: this fails, PowerMock gets its knickers in a twist.  Hooray!
         Moxie.expect().times(3).on(new Runnable() {
             public void run() {
-                new SomeClass(Moxie.startsWith("porridge"));
+                new PartiallyMocked(Moxie.startsWith("porridge"));
             }
         });
         Moxie.expect().times(2).on(new Supplier<Object>() {
             public Object get() {
-                return new SomeClass(Moxie.startsWith("dog"));
+                return new PartiallyMocked(Moxie.startsWith("dog"));
             }
         });
 
-        new SomeClass("porridge oats");
-        new SomeClass("porridge-colored sky");
-        new SomeClass("dog-eared");
-        new SomeClass("dog's breakfast");
-        new SomeClass("porridge grey");
+        new PartiallyMocked("porridge oats");
+        new PartiallyMocked("porridge-colored sky");
+        new PartiallyMocked("dog-eared");
+        new PartiallyMocked("dog's breakfast");
+        new PartiallyMocked("porridge grey");
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void mockInstances_happyPath() {
-        // TODO: this also fails, Javassist chokes on primitive types.
         final List<String> mockList = Moxie.mock(List.class);
 
         Moxie.stub().andReturn("frog").on(new Runnable() {

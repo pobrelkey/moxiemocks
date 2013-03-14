@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2012 Moxie contributors
+ * Copyright (c) 2011-2013 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +22,12 @@
 
 package moxietests;
 
+import junit.framework.Assert;
+
 public class PartiallyMocked {
     public PartiallyMocked(String blah) {
         // constructor that we can mock with PowerMock
+        Assert.fail("original constructor got called");
     }
 
     public static String aStaticMethod(String arg) {

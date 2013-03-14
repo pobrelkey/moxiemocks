@@ -52,14 +52,13 @@ abstract class MagicLambdaHelper {
     }
 
     private final MoxieControlImpl moxie;
-    private final ProxyIntercepts proxyIntercepts;
     private int invocationCount = 0;
 
     protected MagicLambdaHelper(MoxieControlImpl moxie) {
         this.moxie = moxie;
-        proxyIntercepts = ProxyIntercepts.getInstance();
     }
 
+    @SuppressWarnings("unchecked")
     void doInvoke(Object lambdaObject, Method lambdaMethod) {
         Class lambdaClass = lambdaObject.getClass();
         try {
@@ -103,10 +102,13 @@ abstract class MagicLambdaHelper {
                     String magicMethodName = constPool.getMethodrefName(descriptorRef);
                     if ("<init>".equals(magicMethodName)) {
                         ConstructorAdapter constructorAdapter = guessConstructor(classPool, constPool, descriptorRef);
-                        constructorAdapter.zombify();
                         registerThreadLocalClassIntercept(constructorAdapter.getDeclaringClass());
-                        lambdaMethod.invoke(lambdaObject);
-                        proxyIntercepts.clearThreadLocalClassIntercept(constructorAdapter.getDeclaringClass());
+                        constructorAdapter.zombify();
+                        try {
+                            lambdaMethod.invoke(lambdaObject);
+                        } finally {
+                            moxie.getInterceptionFromProxy(constructorAdapter.getDeclaringClass()).clearThreadLocalHandler();
+                        }
                         break;
                     }
                     // FALL THROUGH
@@ -116,17 +118,19 @@ abstract class MagicLambdaHelper {
                     // Calling an instance method...
                     {
                         MethodAdapter instanceMethod = guessMethod(classPool, constPool, descriptorRef, false, lastInvokeOpcode == Opcode.INVOKEINTERFACE);
-                        instanceMethod.zombify();
                         @SuppressWarnings("unchecked")
                         List possibleProxies = moxie.getProxiesForClass(instanceMethod.getDeclaringClass());
                         MethodIntercept lambdaInterceptForObject = incrementingMethodIntercept(getLambdaInterceptForObject());
                         for (Object proxy : possibleProxies) {
-                            // TODO: this won't work - see ObjectInterception.getProxy()
-                            proxyIntercepts.registerThreadLocalIntercept(proxy, lambdaInterceptForObject);
+                            moxie.getInterceptionFromProxy(proxy).registerThreadLocalHandler(lambdaInterceptForObject);
                         }
-                        lambdaMethod.invoke(lambdaObject);
-                        for (Object proxy : possibleProxies) {
-                            proxyIntercepts.clearThreadLocalIntercept(proxy);
+                        instanceMethod.zombify();
+                        try {
+                            lambdaMethod.invoke(lambdaObject);
+                        } finally {
+                            for (Object proxy : possibleProxies) {
+                                moxie.getInterceptionFromProxy(proxy).clearThreadLocalHandler();
+                            }
                         }
                         break;
                     }
@@ -135,10 +139,13 @@ abstract class MagicLambdaHelper {
                     // Calling a static method...
                     {
                         MethodAdapter staticMethod = guessMethod(classPool, constPool, descriptorRef, true, false);
-                        staticMethod.zombify();
                         registerThreadLocalClassIntercept(staticMethod.getDeclaringClass());
-                        lambdaMethod.invoke(lambdaObject);
-                        proxyIntercepts.clearThreadLocalClassIntercept(staticMethod.getDeclaringClass());
+                        staticMethod.zombify();
+                        try {
+                            lambdaMethod.invoke(lambdaObject);
+                        } finally {
+                            moxie.getInterceptionFromClass(staticMethod.getDeclaringClass()).clearThreadLocalHandler();
+                        }
                         break;
                     }
 
@@ -153,15 +160,14 @@ abstract class MagicLambdaHelper {
                             if (proxy instanceof Class) {
                                 registerThreadLocalClassIntercept((Class) proxy);
                             } else {
-                                proxyIntercepts.registerThreadLocalIntercept(proxy, lambdaInterceptForObject);
+                                moxie.getInterceptionFromProxy(proxy).registerThreadLocalHandler(lambdaInterceptForObject);
                             }
                         }
-                        lambdaMethod.invoke(lambdaObject);
-                        for (Object proxy : allProxies) {
-                            if (proxy instanceof Class) {
-                                proxyIntercepts.clearThreadLocalClassIntercept((Class) proxy);
-                            } else {
-                                proxyIntercepts.clearThreadLocalIntercept(proxy);
+                        try {
+                            lambdaMethod.invoke(lambdaObject);
+                        } finally {
+                            for (Object proxy : allProxies) {
+                                moxie.getInterceptionFromProxy(proxy).clearThreadLocalHandler();
                             }
                         }
                         break;
@@ -201,8 +207,10 @@ abstract class MagicLambdaHelper {
     }
 
     private void registerThreadLocalClassIntercept(Class clazz) {
-        MethodIntercept classIntercept = getLambdaInterceptForClass(moxie.getInterceptionFromClass(clazz));
-        proxyIntercepts.registerThreadLocalClassIntercept(clazz, incrementingMethodIntercept(classIntercept));
+        @SuppressWarnings("unchecked")
+        ClassInterception interceptionFromClass = moxie.getInterceptionFromClass(clazz);
+        MethodIntercept classIntercept = getLambdaInterceptForClass(interceptionFromClass);
+        interceptionFromClass.registerThreadLocalHandler(incrementingMethodIntercept(classIntercept));
     }
 
     protected MethodIntercept incrementingMethodIntercept(final MethodIntercept intercept) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Moxie contributors
+ * Copyright (c) 2010-2013 Moxie contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -60,6 +60,7 @@ abstract class Interception implements MethodIntercept, Verifiable {
     protected final List<Invocation> invocations = new ArrayList<Invocation>();
     protected MoxieFlags flags;
     private GroupImpl methods;
+    private ThreadLocal<MethodIntercept> threadLocalHandler = null;
 
     protected Interception(Class clazz, String name, MoxieFlags flags, InstantiationStackTrace instantiationStackTrace) {
         this.clazz = clazz;
@@ -78,6 +79,13 @@ abstract class Interception implements MethodIntercept, Verifiable {
     }
 
     public Object intercept(Object unusedProxy, InvocableAdapter invocable, Object[] args, SuperInvoker superInvoker) throws Throwable {
+        if (threadLocalHandler != null) {
+            MethodIntercept threadLocalIntercept = threadLocalHandler.get();
+            if (threadLocalIntercept != null) {
+                return threadLocalIntercept.intercept(unusedProxy, invocable, args, superInvoker);
+            }
+        }
+
         final Invocation invocation = new Invocation(this, invocable, args);
         invocations.add(invocation);
 
@@ -147,4 +155,16 @@ abstract class Interception implements MethodIntercept, Verifiable {
         methods.add(expectation);
     }
 
+    void registerThreadLocalHandler(MethodIntercept handler) {
+        if (threadLocalHandler == null) {
+            threadLocalHandler = new ThreadLocal<MethodIntercept>();
+        }
+        threadLocalHandler.set(handler);
+    }
+
+    void clearThreadLocalHandler() {
+        if (threadLocalHandler != null) {
+            threadLocalHandler.remove();
+        }
+    }
 }
