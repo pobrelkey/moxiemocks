@@ -41,7 +41,11 @@ class ClassInterception<T> extends Interception {
     protected MethodBehavior defaultBehavior(final InvocableAdapter invocable, Object[] args, SuperInvoker superInvoker) {
         return new MethodBehavior() {
             public Object invoke() throws Throwable {
-                if (flags.isAutoStubbing()) {
+                if (invocable instanceof ConstructorAdapter && ConcreteTypeProxyFactory.haveObjenesis) {
+                    // Whenever mocking a constructor, default behavior should be to return a new instance
+                    // of that type.  (Put another way, we can't have constructors returning null!)
+                    return ConcreteTypeProxyFactory.objenesis.newInstance(invocable.getReturnType());
+                } else if (flags.isAutoStubbing()) {
                     return MoxieUtils.defaultValue(invocable.getReturnType());
                 }
                 // TODO: clearer error message
