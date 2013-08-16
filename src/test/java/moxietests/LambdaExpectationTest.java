@@ -26,12 +26,9 @@ import junit.framework.Assert;
 import moxie.Moxie;
 import moxie.MoxieRule;
 import moxie.Supplier;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.support.SuppressCode;
-import org.powermock.core.classloader.annotations.PrepareEverythingForTest;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
