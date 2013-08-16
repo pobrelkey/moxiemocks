@@ -26,9 +26,12 @@ import junit.framework.Assert;
 import moxie.Moxie;
 import moxie.MoxieRule;
 import moxie.Supplier;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.powermock.api.support.SuppressCode;
+import org.powermock.core.classloader.annotations.PrepareEverythingForTest;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -67,8 +70,8 @@ public class LambdaExpectationTest {
     }
 
     @Test
+    @PrepareForTest(fullyQualifiedNames = "moxietests.*")  // IMPORTANT - this PreparesForTest this method's lambda classes!
     public void constructor_happyPath() {
-        // TODO: this fails, PowerMock gets its knickers in a twist.  Hooray!
         Moxie.expect().times(3).on(new Runnable() {
             public void run() {
                 new PartiallyMocked(Moxie.startsWith("porridge"));
