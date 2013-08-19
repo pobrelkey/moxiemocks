@@ -24,6 +24,7 @@ package moxie;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
+import javassist.util.proxy.ProxyObject;
 
 import java.lang.reflect.Method;
 
@@ -46,7 +47,7 @@ class JavassistProxyFactory<T> extends ConcreteTypeProxyFactory<T> {
 
     @Override
     protected void decorateInstance(T result, final MethodIntercept methodIntercept) {
-        ((Proxy) result).setHandler(new MethodHandler() {
+        MethodHandler mi = new MethodHandler() {
             public Object invoke(final Object proxy, final Method thisMethod, final Method proceed, Object[] args) throws Throwable {
                 return methodIntercept.intercept(proxy, new MethodAdapter(thisMethod), args, new MethodIntercept.SuperInvoker() {
                     public Object invokeSuper(Object[] args) throws Throwable {
@@ -58,7 +59,13 @@ class JavassistProxyFactory<T> extends ConcreteTypeProxyFactory<T> {
                     }
                 });
             }
-        });
+        };
+        // weird code to play nice with pre-3.16 version of Javassist...
+        if (result instanceof ProxyObject) {
+            ((ProxyObject) result).setHandler(mi);
+        } else {
+            ((Proxy) result).setHandler(mi);
+        }
     }
 
 }
