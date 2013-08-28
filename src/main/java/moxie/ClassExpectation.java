@@ -22,6 +22,28 @@
 package moxie;
 
 /**
+ * <p>
+ * Interface containing domain-specific language methods called in "the middle bit" of statements that
+ * set expectations on static methods and constructors.
+ * </p>
+ * <p>
+ * See documentation on the parent {@link Expectation} interface for a high-level introduction to the syntax.
+ * </p>
+ * <p>
+ * <h2>Requires PowerMock</h2>
+ * </p>
+ * <p>
+ * Setting expectations on static methods or constructors requires that
+ * <a href="http://www.powermock.org/">PowerMock</a> be on your classpath.  Additionally, in JUnit you'll need
+ * to run your tests using <code>PowerMockRunner</code> and tell PowerMock to pre-instrument any classes
+ * on which you'll be testing statics/constructors using the <code>PrepareForTest</code> annotation.
+ * Typically you'd do this by putting annotations like these at the top of your test class:
+ * <blockquote><code>
+ * &#64;RunWith(PowerMockRunner.class)<br />
+ * &#64;PrepareForTest(&#123; ClassWithStaticMethodToBeMocked.class &#125;)
+ * </code></blockquote>
+ * </p>
+ *
  * @param <T> Class on which expectations are being set.
  */
 public interface ClassExpectation<T> extends Expectation<ClassExpectation<T>>, Cardinality<ClassExpectation<T>> {

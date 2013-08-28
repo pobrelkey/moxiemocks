@@ -21,6 +21,17 @@
  */
 package moxie;
 
+/*
+ * <p>
+ * Interface containing domain-specific language methods called in "the middle bit" of statements that perform
+ * post-invocation verifications on mock object instances.
+ * </p>
+ * <p>
+ * See documentation on the parent {@link Check} interface for a high-level introduction to the syntax.
+ * </p>
+ *
+ * @param <T> Type of the mock object on which checks are being carried out.
+ */
 public interface ObjectCheck<T> extends Check<ObjectCheck<T>>, Cardinality<ObjectCheck<T>> {
 
     /**

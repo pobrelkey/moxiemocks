@@ -48,6 +48,7 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
     protected Matcher returnValueMatcher;
     protected Matcher exceptionMatcher;
 
+    @SuppressWarnings("unchecked")
     protected ExpectationImpl() {
         cardinality = new CardinalityImpl<E>((E) this);
     }
@@ -353,6 +354,7 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
             description.appendValue(result);
         }
 
+        @SuppressWarnings("unchecked")
         public void verifyTypeCompatible(InvocableAdapter invocable) {
             if (!this.verified) {
                 Class returnType = MoxieUtils.toNonPrimitive(invocable.getReturnType());

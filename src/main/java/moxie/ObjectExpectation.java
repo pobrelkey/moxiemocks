@@ -22,6 +22,15 @@
 package moxie;
 
 /**
+ * <p>
+ * Interface containing domain-specific language methods called in "the middle bit" of statements that
+ * set expectations on mock object instances.
+ * </p>
+ * <p>
+ * See documentation on the parent {@link Expectation} interface for a high-level introduction to the syntax.
+ * </p>
+ * <p>
+ *
  * @param <T> Type of the mock object for which expectations are being set.
  */
 public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>, Cardinality<ObjectExpectation<T>> {
