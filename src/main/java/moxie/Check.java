@@ -29,7 +29,7 @@ package moxie;
  * <p/>
  * <h2>Syntax Overview</h2>
  * <p>
- * A typical Moxie check statement, such as this one:
+ * A typical Moxie check statement on a mock object looks like this:
  * </p>
  * <blockquote><code>
  * <span style="background-color: LightBlue">Moxie.check(mock)</span><span
@@ -38,7 +38,7 @@ package moxie;
  * style="background-color: LightGreen">.someMethod(Moxie.hasSubstring("foo"))</span>;
  * </code></blockquote>
  * <p>
- * can be divided into four parts:
+ * It can be understood in four parts:
  * </p>
  * <dl>
  * <dt><span style="font-weight: bold; background-color: LightBlue;">The first bit: identify the mock</span></dt>
@@ -48,7 +48,7 @@ package moxie;
  * </dd>
  * <dt><span style="font-weight: bold; background-color: LightPink;">The middle bit: add conditions</span></dt>
  * <dd>
- * Using the methods on the {@link Check} interface, we can attach variousadditional conditions to the check -
+ * Using the methods on the {@link ObjectCheck} interface, we can attach various additional conditions to the check -
  * when and how many times the method should have been called, what it should have returned/thrown, etc.
  * See the next section for an overview of the different categories of methods.  Note that methods that go in this
  * section of a check statement can appear in any order.
@@ -69,8 +69,43 @@ package moxie;
  * </dd>
  * </dl>
  * <p/>
+ * <p>
+ * The syntax for specifying checks on static methods and constructorss is slightly different, but reads
+ * similarly - see documentation on the {@link ClassCheck} interface for further detail:
+ * </p>
+ * <blockquote><code>
+ * <span style="background-color: LightBlue">Moxie.check(SomeClass.class)</span><span
+ * style="background-color: LightPink">.returned(Moxie.startsWith("x")).once()</span><span
+ * style="background-color: LightGreen">.on("someStaticMethod", Moxie.endsWith("y"))</span>;
+ * <br />
+ * <span style="background-color: LightBlue">Moxie.check(SomeClass.class)</span><span
+ * style="background-color: LightPink">.atLeast(3)</span><span
+ * style="background-color: LightGreen">.onNew("constructor args or matchers")</span>;
+ * </code></blockquote>
+ * <p>
+ * Finally, {@link LambdaCheck}s let one perform checks on static methods and constructors with a refactorable
+ * syntax that goes well with Java 8 lambdas.  (You can of course use this on older versions of Java, but the
+ * corresponding anonymous-inner-class syntax is more cumbersome.)  Some examples:
+ * </p>
+ * <blockquote><code>
+ * <span style="background-color: LightBlue">Moxie.check()</span><span
+ * style="background-color: LightPink">.returned(Moxie.lt(100)).times(3)</span><span
+ * style="background-color: Khaki">.on(<span
+ * style="background-color: LightGreen">() -> &#123; mock.someMethod(Moxie.hasSubstring("foo")); &#125;</span>)</span>;
+ * <br />
+ * <span style="background-color: LightBlue">Moxie.check()</span><span
+ * style="background-color: LightPink">.returned(Moxie.startsWith("x")).once()</span><span
+ * style="background-color: Khaki">.on(<span
+ * style="background-color: LightGreen">() -> &#123; SomeClass.someStaticMethod(Moxie.endsWith("y")); &#125;</span>)</span>;
+ * <br />
+ * <span style="background-color: LightBlue">Moxie.check()</span><span
+ * style="background-color: LightPink">.atLeast(3)</span><span
+ * style="background-color: Khaki">.on(<span
+ * style="background-color: LightGreen">() -> &#123; new SomeClass("constructor args or matchers"); &#125;</span>)</span>;
+ * </code></blockquote>
+ * <p>
  * <h2>Condition Syntax</h2>
- * <p/>
+ * </p>
  * <p>
  * The "middle bit" of the check statement can contain zero or more condition-setting methods:
  * </p>
@@ -120,15 +155,17 @@ package moxie;
  * </p></dd>
  * </dl>
  * <p/>
- * <h2>Flexibility of Syntax</h2>
+ * <h2>Subclasses</h2>
  * <p/>
  * <p>
- * This initial release of Moxie offers a number of aliases and alternatives for the methods comprising its
- * domain-specific language.  This is partly out of recognition that the same DSL methods may sound stilted
- * in different situations; partly out of recognition that different developers will have differing personal
- * tastes; and partly out of plain lack of consensus as to what patterns method names should follow.
- * Does this make Moxie more confusing and difficult to learn, or does it make Moxie's DSL easier and more
- * enjoyable to use?  Feedback on this aspect of Moxie is welcome.
+ * Note that most of the useful methods on this class have been migrated to one of its three subclasses -
+ * please see the documentation of these classes for more detail:
+ * <ul>
+ * <li>{@link ObjectCheck} - for checking calls on most mock/spy objects in the traditional manner.</li>
+ * <li>{@link ClassCheck} - for checking calls to static/constructor methods (reflection-based API).</li>
+ * <li>{@link LambdaCheck} - lets one specify mock calls (either on individual mocks or to statics/constructors)
+ *     using Java 8 lambda syntax.</li>
+ * </ul>
  * </p>
  */
 public interface Check<C extends Check<C>> extends Cardinality<C>  {

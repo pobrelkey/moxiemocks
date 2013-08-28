@@ -31,7 +31,7 @@ import java.lang.reflect.InvocationHandler;
  * <p/>
  * <h2>Syntax Overview</h2>
  * <p>
- * A typical Moxie expectation statement, such as this one:
+ * A typical Moxie expectation statement on a mock object looks like this:
  * </p>
  * <blockquote><code>
  * <span style="background-color: LightBlue">Moxie.expect(mock)</span><span
@@ -40,7 +40,7 @@ import java.lang.reflect.InvocationHandler;
  * style="background-color: LightGreen">.someMethod(Moxie.leq(42))</span>;
  * </code></blockquote>
  * <p>
- * can be divided into four parts:
+ * It can be understood in four parts:
  * </p>
  * <dl>
  * <dt><span style="font-weight: bold; background-color: LightBlue;">The first bit: identify the mock</span></dt>
@@ -52,7 +52,7 @@ import java.lang.reflect.InvocationHandler;
  * </dd>
  * <dt><span style="font-weight: bold; background-color: LightPink;">The middle bit: set conditions and behaviors</span></dt>
  * <dd>
- * Using the methods on the {@link Expectation} interface, we attach various conditions and behaviors to the expectation -
+ * Using the methods on the {@link ObjectExpectation} interface, we attach various conditions and behaviors to the expectation -
  * when and how many times we expect the method to be called, what to return/throw/do when this happens, etc.
  * See the next section for an overview of the different categories of methods.  Note that methods that go in this
  * section of an expectation statement can appear in any order.
@@ -72,9 +72,40 @@ import java.lang.reflect.InvocationHandler;
  * will contain a certain substring, etc.) - see method descriptions on that class for more details.
  * </dd>
  * </dl>
- * <p/>
+ * <p>
+ * The syntax for setting expectations on static methods and constructors is slightly different, but reads
+ * similarly - see documentation on the {@link ClassExpectation} interface for further detail:
+ * </p>
+ * <blockquote><code>
+ * <span style="background-color: LightBlue">Moxie.expect(SomeClass.class)</span><span
+ * style="background-color: LightPink">.times(2).andReturn("wibble")</span><span
+ * style="background-color: LightGreen">.on("aStaticMethod", Moxie.gt(5))</span>;<br />
+ * <span style="background-color: LightBlue">Moxie.expect(SomeClass.class)</span><span
+ * style="background-color: LightPink">.once()</span><span
+ * style="background-color: LightGreen">.onNew("constructor args", Moxie.hasSubstring("or matchers"))</span>;
+ * </code></blockquote>
+ * <p>
+ * Finally, {@link LambdaExpectation}s let one set expectations on static methods and constructors with a
+ * refactorable syntax that goes well with Java 8 lambdas.  (You can of course use this on older versions
+ * of Java, but the corresponding anonymous-inner-class syntax is more cumbersome.)  Some examples:
+ * </p>
+ * <blockquote><code>
+ * <span style="background-color: LightBlue">Moxie.expect()</span><span
+ * style="background-color: LightPink">.willReturn("someValue").atLeastOnce()</span><span
+ * style="background-color: Khaki">.on(<span
+ * style="background-color: LightGreen">() -> &#123; mock.someMethod(Moxie.leq(42)); &#125;</span>)</span>;<br />
+ * <span style="background-color: LightBlue">Moxie.expect()</span><span
+ * style="background-color: LightPink">.times(2).andReturn("wibble")</span><span
+ * style="background-color: Khaki">.on(<span
+ * style="background-color: LightGreen">() -> &#123; SomeClass.aStaticMethod(Moxie.gt(5)); &#125;</span>)</span>;<br />
+ * <span style="background-color: LightBlue">Moxie.expect()</span><span
+ * style="background-color: LightPink">.once()</span><span
+ * style="background-color: Khaki">.on(<span
+ * style="background-color: LightGreen">() -> &#123; new SomeClass("constructor args", Moxie.hasSubstring("or matchers")); &#125;</span>)</span>;
+ * </code></blockquote>
+ * <p>
  * <h2>Conditions and Behaviors</h2>
- * <p/>
+ * </p>
  * <p>
  * The "middle bit" of the expectation statement can contain zero or more condition/expectation setting methods:
  * </p>
@@ -154,6 +185,18 @@ import java.lang.reflect.InvocationHandler;
  * </p></dd>
  * </dl>
  * <p/>
+ * <h2>Subclasses</h2>
+ * <p/>
+ * <p>
+ * Note that most of the useful methods on this class have been migrated to one of its three subclasses -
+ * please see the documentation of these classes for more detail:
+ * <ul>
+ * <li>{@link ObjectExpectation} - for setting expectations on most mock/spy objects in the traditional manner.</li>
+ * <li>{@link ClassExpectation} - for expectations on static/constructor methods (reflection-based API).</li>
+ * <li>{@link LambdaExpectation} - lets one specify mock calls (either on individual mocks or to statics/constructors)
+ *     using Java 8 lambda syntax.</li>
+ * </ul>
+ * </p>
  */
 public interface Expectation<E extends Expectation<E>> extends Cardinality<E> {
 
