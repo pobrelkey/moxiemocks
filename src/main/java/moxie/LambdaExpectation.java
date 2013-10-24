@@ -54,13 +54,17 @@ package moxie;
  * </code></blockquote>
  * Note that this annotation can be applied at the individual test level.
  * </p>
+ *
+ * @param <R> Return type of the method being checked, or an ancestor type thereof.
  */
-public interface LambdaExpectation extends Expectation<LambdaExpectation> {
+public interface LambdaExpectation<R> extends Expectation<LambdaExpectation<R>,R> {
     // TODO javadoc
-    void on(Runnable lambda);
-    void when(Runnable lambda);
-    void will(Runnable lambda);
-    void on(Supplier<?> lambda);
-    void when(Supplier<?> lambda);
-    void will(Supplier<?> lambda);
+    LambdaExpectation<Void> that(ThrowingRunnable lambda);
+    LambdaExpectation<Void> on(ThrowingRunnable lambda);
+    LambdaExpectation<Void> when(ThrowingRunnable lambda);
+    LambdaExpectation<Void> will(ThrowingRunnable lambda);
+    <RR extends R> LambdaExpectation<RR> that(ThrowingSupplier<RR> lambda);
+    <RR extends R> LambdaExpectation<RR> on(ThrowingSupplier<RR> lambda);
+    <RR extends R> LambdaExpectation<RR> when(ThrowingSupplier<RR> lambda);
+    <RR extends R> LambdaExpectation<RR> will(ThrowingSupplier<RR> lambda);
 }

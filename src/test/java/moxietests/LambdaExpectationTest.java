@@ -25,7 +25,8 @@ package moxietests;
 import junit.framework.Assert;
 import moxie.Moxie;
 import moxie.MoxieRule;
-import moxie.Supplier;
+import moxie.ThrowingRunnable;
+import moxie.ThrowingSupplier;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +45,7 @@ public class LambdaExpectationTest {
     @Test
     public void staticMethod_Runnable_happyPath() {
         // this is far prettier in Java 8, trust me...
-        Moxie.expect().times(2).andReturn("wibble").on(new Runnable() {
+        Moxie.expect().times(2).andReturn("wibble").on(new ThrowingRunnable() {
             public void run() {
                 PartiallyMocked.aStaticMethod(Moxie.startsWith("foo"));
             }
@@ -56,7 +57,7 @@ public class LambdaExpectationTest {
 
     @Test
     public void staticMethod_Supplier_happyPath() {
-        Moxie.expect().times(2).andReturn("feep").on(new Supplier<Object>() {
+        Moxie.expect().times(2).andReturn("feep").on(new ThrowingSupplier<Object>() {
             public Object get() {
                 return PartiallyMocked.aStaticMethod("blah");
             }
@@ -69,12 +70,12 @@ public class LambdaExpectationTest {
     @Test
     @PrepareForTest(fullyQualifiedNames = "moxietests.*")  // IMPORTANT - this PreparesForTest this method's lambda classes!
     public void constructor_happyPath() {
-        Moxie.expect().times(3).on(new Runnable() {
+        Moxie.expect().times(3).on(new ThrowingRunnable() {
             public void run() {
                 new PartiallyMocked(Moxie.startsWith("porridge"));
             }
         });
-        Moxie.expect().times(2).on(new Supplier<Object>() {
+        Moxie.expect().times(2).on(new ThrowingSupplier<Object>() {
             public Object get() {
                 return new PartiallyMocked(Moxie.startsWith("dog"));
             }
@@ -92,17 +93,17 @@ public class LambdaExpectationTest {
     public void mockInstances_happyPath() {
         final List<String> mockList = Moxie.mock(List.class);
 
-        Moxie.stub().andReturn("frog").on(new Runnable() {
+        Moxie.stub().andReturn("frog").on(new ThrowingRunnable() {
             public void run() {
                 mockList.get(2);
             }
         });
-        Moxie.expect().times(2).andReturn("toad").on(new Runnable() {
+        Moxie.expect().times(2).andReturn("toad").on(new ThrowingRunnable() {
             public void run() {
                 mockList.get(Moxie.gt(6));
             }
         });
-        Moxie.stub().andReturn("snake").on(new Supplier<Object>() {
+        Moxie.stub().andReturn("snake").on(new ThrowingSupplier<Object>() {
             public Object get() {
                 return mockList.get(4);
             }

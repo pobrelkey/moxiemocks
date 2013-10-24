@@ -133,6 +133,9 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
 
     @SuppressWarnings("unchecked")
     protected E doWillHandleWith(MethodIntercept handler) {
+        if (this.invocable != null && handler instanceof TypeCompatibilityVerifable) {
+            ((TypeCompatibilityVerifable) handler).verifyTypeCompatible(this.invocable);
+        }
         if (this.handler instanceof ConsecutiveHandler) {
             ((ConsecutiveHandler) this.handler).add(handler);
         } else if (this.handler != null) {

@@ -150,7 +150,7 @@ class MoxieControlImpl implements MoxieControl {
         return getInterceptionFromClass(clazz, options).expect();
     }
 
-    public LambdaExpectation expect() {
+    public LambdaExpectation<Object> expect() {
         return new LambdaExpectationImpl(this);
     }
 
@@ -162,7 +162,7 @@ class MoxieControlImpl implements MoxieControl {
         return expect(clazz).anyTimes().atAnyTime();
     }
 
-    public LambdaExpectation stub() {
+    public LambdaExpectation<Object> stub() {
         return expect().anyTimes().atAnyTime();
     }
 

@@ -433,7 +433,7 @@ public abstract class Moxie extends MoxieMatchers {
         return instance.expect(clazz);
     }
 
-    static public LambdaExpectation expect() {
+    static public LambdaExpectation<Object> expect() {
         return instance.expect();
     }
 
@@ -470,7 +470,7 @@ public abstract class Moxie extends MoxieMatchers {
         return instance.stub(clazz);
     }
 
-    static public LambdaExpectation stub() {
+    static public LambdaExpectation<Object> stub() {
         return instance.stub();
     }
 

@@ -46,7 +46,7 @@ package moxie;
  *
  * @param <C> Type on which checks are being carried out.
  */
-public interface ClassCheck<C> extends Check<ClassCheck<C>> {
+public interface ClassCheck<C> extends Check<ClassCheck<C>,Object> {
 
     /**
      * <p>
@@ -60,9 +60,8 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      *
      * @param methodName  The name of the method to be checked
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object on(String methodName, Object... params);
+    void on(String methodName, Object... params);
 
     /**
      * <p>
@@ -76,9 +75,8 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      *
      * @param methodName  The name of the method to be checked
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object when(String methodName, Object... params);
+    void when(String methodName, Object... params);
 
     /**
      * <p>
@@ -92,9 +90,8 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      *
      * @param methodName  The name of the method to be checked
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object get(String methodName, Object... params);
+    void get(String methodName, Object... params);
 
     /**
      * <p>
@@ -108,9 +105,8 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      *
      * @param methodName  The name of the method to be checked
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object got(String methodName, Object... params);
+    void got(String methodName, Object... params);
 
     /**
      * <p>
@@ -125,9 +121,8 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      * @param methodName      The name of the method to be checked
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object on(String methodName, Class[] paramSignature, Object... params);
+    void on(String methodName, Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -142,9 +137,8 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      * @param methodName      The name of the method to be checked
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object when(String methodName, Class[] paramSignature, Object... params);
+    void when(String methodName, Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -159,9 +153,8 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      * @param methodName      The name of the method to be checked
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object get(String methodName, Class[] paramSignature, Object... params);
+    void get(String methodName, Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -176,9 +169,8 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      * @param methodName      The name of the method to be checked
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object got(String methodName, Class[] paramSignature, Object... params);
+    void got(String methodName, Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -191,9 +183,8 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      * </p>
      *
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type being constructed (for optional deep mocking)
      */
-    C onNew(Object... params);
+    void onNew(Object... params);
 
     /**
      * <p>
@@ -206,9 +197,8 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      * </p>
      *
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type being constructed (for optional deep mocking)
      */
-    C whenNew(Object... params);
+    void whenNew(Object... params);
 
     /**
      * <p>
@@ -221,9 +211,8 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      * </p>
      *
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type being constructed (for optional deep mocking)
      */
-    C getNew(Object... params);
+    void getNew(Object... params);
 
     /**
      * <p>
@@ -236,9 +225,8 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      * </p>
      *
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type being constructed (for optional deep mocking)
      */
-    C gotNew(Object... params);
+    void gotNew(Object... params);
 
     /**
      * <p>
@@ -252,9 +240,8 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      *
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type being constructed (for optional deep mocking)
      */
-    C onNew(Class[] paramSignature, Object... params);
+    void onNew(Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -268,9 +255,8 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      *
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type being constructed (for optional deep mocking)
      */
-    C whenNew(Class[] paramSignature, Object... params);
+    void whenNew(Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -284,9 +270,8 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      *
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type being constructed (for optional deep mocking)
      */
-    C getNew(Class[] paramSignature, Object... params);
+    void getNew(Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -300,8 +285,7 @@ public interface ClassCheck<C> extends Check<ClassCheck<C>> {
      *
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type being constructed (for optional deep mocking)
      */
-    C gotNew(Class[] paramSignature, Object... params);
+    void gotNew(Class[] paramSignature, Object... params);
 
 }

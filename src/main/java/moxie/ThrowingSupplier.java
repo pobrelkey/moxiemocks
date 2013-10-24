@@ -27,19 +27,17 @@ package moxie;
  * Interface for a no-arg method object that returns a value.
  * </p>
  * <p>
- * Note that this is essentially the same interface as
+ * This is largely the same interface as
  * <code></code><a href="http://download.java.net/jdk8/docs/api/java/util/function/Supplier.html">java.util.function.Supplier</a></code>
- * in Java 8; Moxie uses its own version of this interface to make APIs
- * using this interface available on pre-1.8 JVMs where the above interface
- * is not available.
+ * in Java 8, modified to throw {@link Exception} to make mocking methods that throw checked exceptions easier.
  * </p>
  *
  * @param <T> the type of the value to be returned
  */
-public interface Supplier<T> {
+public interface ThrowingSupplier<T> {
     /**
      * Returns a value.
      * @return the value
      */
-    T get();
+    T get() throws Exception;
 }

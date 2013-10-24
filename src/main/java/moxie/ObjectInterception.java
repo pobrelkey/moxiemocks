@@ -41,6 +41,7 @@ abstract class ObjectInterception<T> extends Interception {
         return proxy;
     }
 
+    @SuppressWarnings("unchecked")
     ProxyFactory<T> getProxyFactory() {
         if (proxyFactory == null) {
             proxyFactory = ProxyFactory.create(clazz);

@@ -54,15 +54,19 @@ package moxie;
  * </code></blockquote>
  * Note that this annotation can be applied at the individual test level.
  * </p>
+ *
+ * @param <R> Return type of the method being checked, or an ancestor type thereof.
  */
-public interface LambdaCheck extends Check<LambdaCheck> {
+public interface LambdaCheck<R> extends Check<LambdaCheck<R>, R> {
     // TODO javadoc
-    void on(Runnable lambda);
-    void when(Runnable lambda);
-    void get(Runnable lambda);
-    void got(Runnable lambda);
-    void on(Supplier<?> lambda);
-    void when(Supplier<?> lambda);
-    void get(Supplier<?> lambda);
-    void got(Supplier<?> lambda);
+    LambdaCheck<R> that(ThrowingRunnable lambda);
+    LambdaCheck<R> on(ThrowingRunnable lambda);
+    LambdaCheck<R> when(ThrowingRunnable lambda);
+    LambdaCheck<R> get(ThrowingRunnable lambda);
+    LambdaCheck<R> got(ThrowingRunnable lambda);
+    <RR extends R> LambdaCheck<RR> that(ThrowingSupplier<RR> lambda);
+    <RR extends R> LambdaCheck<RR> on(ThrowingSupplier<RR> lambda);
+    <RR extends R> LambdaCheck<RR> when(ThrowingSupplier<RR> lambda);
+    <RR extends R> LambdaCheck<RR> get(ThrowingSupplier<RR> lambda);
+    <RR extends R> LambdaCheck<RR> got(ThrowingSupplier<RR> lambda);
 }
