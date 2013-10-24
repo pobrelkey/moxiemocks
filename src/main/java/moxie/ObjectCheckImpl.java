@@ -22,40 +22,12 @@
 
 package moxie;
 
-import org.hamcrest.Matcher;
-
 import java.util.List;
 
 class ObjectCheckImpl<T> extends NonLambdaCheckImpl<ObjectCheckImpl<T>, ObjectInterception<T>> implements ObjectCheck<T> {
 
     ObjectCheckImpl(ObjectInterception<T> interception, List<Invocation> invocations) {
         super(interception, invocations);
-    }
-
-    public ObjectCheckImpl<T> throwException(Throwable throwable) {
-        Matcher matcher = MatcherSyntax.singleMatcherExpression(Throwable.class, throwable);
-        if (this.throwableMatcher != null) {
-            throw new MoxieSyntaxError("already specified a Throwable for this check");
-        }
-        this.throwableMatcher = matcher;
-        return this;
-    }
-
-    public ObjectCheckImpl<T> threw(Throwable throwable) {
-        return throwException(throwable);
-    }
-
-    public ObjectCheckImpl<T> returnValue(Object returnValue) {
-        Matcher matcher = MatcherSyntax.singleMatcherExpression(null, returnValue);
-        if (this.resultMatcher != null) {
-            throw new MoxieSyntaxError("cannot specify a return value twice");
-        }
-        this.resultMatcher = matcher;
-        return this;
-    }
-
-    public ObjectCheckImpl<T> returned(Object returnValue) {
-        return returnValue(returnValue);
     }
 
     public T on() {

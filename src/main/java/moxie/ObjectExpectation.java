@@ -33,7 +33,7 @@ package moxie;
  *
  * @param <T> Type of the mock object for which expectations are being set.
  */
-public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>, Cardinality<ObjectExpectation<T>> {
+public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>,Object>, Cardinality<ObjectExpectation<T>> {
 
     /**
      * <p>
@@ -209,9 +209,8 @@ public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>,
      *
      * @param methodName  The name of the method on which to set the expectation
      * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object on(String methodName, Object... params);
+    void on(String methodName, Object... params);
 
     /**
      * <p>
@@ -228,9 +227,8 @@ public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>,
      *
      * @param methodName  The name of the method on which to set the expectation
      * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object when(String methodName, Object... params);
+    void when(String methodName, Object... params);
 
     /**
      * <p>
@@ -247,9 +245,8 @@ public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>,
      *
      * @param methodName  The name of the method on which to set the expectation
      * @param params      Values or {@link MoxieMatchers} invocations matching the expected parameters
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object will(String methodName, Object... params);
+    void will(String methodName, Object... params);
 
     /**
      * <p>
@@ -267,9 +264,8 @@ public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>,
      * @param methodName      The name of the method on which to set the expectation
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object on(String methodName, Class[] paramSignature, Object... params);
+    void on(String methodName, Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -287,9 +283,8 @@ public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>,
      * @param methodName      The name of the method on which to set the expectation
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object when(String methodName, Class[] paramSignature, Object... params);
+    void when(String methodName, Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -307,8 +302,7 @@ public interface ObjectExpectation<T> extends Expectation<ObjectExpectation<T>>,
      * @param methodName      The name of the method on which to set the expectation
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the expected parameters
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object will(String methodName, Class[] paramSignature, Object... params);
+    void will(String methodName, Class[] paramSignature, Object... params);
 
 }

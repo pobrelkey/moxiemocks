@@ -29,39 +29,38 @@ class ClassCheckImpl<C> extends NonLambdaCheckImpl<ClassCheckImpl<C>, ClassInter
         super(interception, invocations);
     }
 
-    public C onNew(Object... params) {
-        return onNew(null, params);
+    public void onNew(Object... params) {
+        onNew(null, params);
     }
 
-    public C whenNew(Object... params) {
-        return onNew(params);
+    public void whenNew(Object... params) {
+        onNew(params);
     }
 
-    public C getNew(Object... params) {
-        return onNew(params);
+    public void getNew(Object... params) {
+        onNew(params);
     }
 
-    public C gotNew(Object... params) {
-        return onNew(params);
+    public void gotNew(Object... params) {
+        onNew(params);
     }
 
-    @SuppressWarnings("unchecked")
-    public C onNew(Class[] paramSignature, Object... params) {
+    public void onNew(Class[] paramSignature, Object... params) {
         Class interceptedClass = getInterception().getInterceptedClass();
         ConstructorAdapter constructor = MoxieUtils.guessConstructor(interceptedClass, paramSignature, params);
-        return (C) handleInvocation(constructor, params);
+        handleInvocation(constructor, params);
     }
 
-    public C whenNew(Class[] paramSignature, Object... params) {
-        return onNew(paramSignature,  params);
+    public void whenNew(Class[] paramSignature, Object... params) {
+        onNew(paramSignature,  params);
     }
 
-    public C getNew(Class[] paramSignature, Object... params) {
-        return onNew(paramSignature,  params);
+    public void getNew(Class[] paramSignature, Object... params) {
+        onNew(paramSignature,  params);
     }
 
-    public C gotNew(Class[] paramSignature, Object... params) {
-        return onNew(paramSignature,  params);
+    public void gotNew(Class[] paramSignature, Object... params) {
+        onNew(paramSignature,  params);
     }
 
     protected boolean isStatic() {

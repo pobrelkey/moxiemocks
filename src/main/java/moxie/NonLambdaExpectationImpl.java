@@ -35,29 +35,29 @@ abstract class NonLambdaExpectationImpl<E extends NonLambdaExpectationImpl<E, I>
 
     abstract protected boolean isStatic();
 
-    public Object on(String methodName, Object... params) {
-        return on(methodName, null, params);
+    public void on(String methodName, Object... params) {
+        on(methodName, null, params);
     }
 
-    public Object when(String methodName, Object... params) {
-        return on(methodName, params);
+    public void when(String methodName, Object... params) {
+        on(methodName, params);
     }
 
-    public Object will(String methodName, Object... params) {
-        return on(methodName, params);
+    public void will(String methodName, Object... params) {
+        on(methodName, params);
     }
 
-    public Object on(String methodName, Class[] paramSignature, Object... params) {
+    public void on(String methodName, Class[] paramSignature, Object... params) {
         checkMethodAndCardinality();
-        return handleInvocation(MoxieUtils.guessMethod(this.getInterception().getInterceptedClass(), methodName, isStatic(), paramSignature, params), params);
+        handleInvocation(MoxieUtils.guessMethod(this.getInterception().getInterceptedClass(), methodName, isStatic(), paramSignature, params), params);
     }
 
-    public Object when(String methodName, Class[] paramSignature, Object... params) {
-        return on(methodName, paramSignature, params);
+    public void when(String methodName, Class[] paramSignature, Object... params) {
+        on(methodName, paramSignature, params);
     }
 
-    public Object will(String methodName, Class[] paramSignature, Object... params) {
-        return on(methodName, paramSignature, params);
+    public void will(String methodName, Class[] paramSignature, Object... params) {
+        on(methodName, paramSignature, params);
     }
 
     @Override

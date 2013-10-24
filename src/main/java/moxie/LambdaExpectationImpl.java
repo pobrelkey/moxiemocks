@@ -22,7 +22,7 @@
 
 package moxie;
 
-class LambdaExpectationImpl extends ExpectationImpl<LambdaExpectationImpl, Interception> implements LambdaExpectation {
+class LambdaExpectationImpl<R> extends ExpectationImpl<LambdaExpectationImpl<R>, Interception> implements LambdaExpectation<R> {
 
     private Interception interception;
     private final MoxieControlImpl moxie;
@@ -31,28 +31,39 @@ class LambdaExpectationImpl extends ExpectationImpl<LambdaExpectationImpl, Inter
         this.moxie = moxie;
     }
 
-    public void on(Runnable lambda) {
+    public LambdaExpectationImpl<R> on(ThrowingRunnable lambda) {
         getMagicLambdaHelper().doInvoke(lambda, MagicLambdaHelper.RUNNABLE_METHOD);
+        return this;
     }
 
-    public void when(Runnable lambda) {
-        on(lambda);
+    public LambdaExpectationImpl<R> when(ThrowingRunnable lambda) {
+        return on(lambda);
     }
 
-    public void will(Runnable lambda) {
-        on(lambda);
+    public LambdaExpectationImpl<R> will(ThrowingRunnable lambda) {
+        return on(lambda);
     }
 
-    public void on(Supplier<?> lambda) {
+    public LambdaExpectationImpl<R> that(ThrowingRunnable lambda) {
+        return on(lambda);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <RR extends R> LambdaExpectationImpl<RR> on(ThrowingSupplier<RR> lambda) {
         getMagicLambdaHelper().doInvoke(lambda, MagicLambdaHelper.SUPPLIER_METHOD);
+        return (LambdaExpectationImpl<RR>) this;
     }
 
-    public void when(Supplier<?> lambda) {
-        on(lambda);
+    public <RR extends R> LambdaExpectationImpl<RR> when(ThrowingSupplier<RR> lambda) {
+        return on(lambda);
     }
 
-    public void will(Supplier<?> lambda) {
-        on(lambda);
+    public <RR extends R> LambdaExpectationImpl<RR> will(ThrowingSupplier<RR> lambda) {
+        return on(lambda);
+    }
+
+    public <RR extends R> LambdaExpectationImpl<RR> that(ThrowingSupplier<RR> lambda) {
+        return on(lambda);
     }
 
     private MagicLambdaHelper getMagicLambdaHelper() {

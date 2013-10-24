@@ -22,10 +22,6 @@
 
 package moxie;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Set;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -37,6 +33,11 @@ import javassist.bytecode.Descriptor;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.Opcode;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Set;
+
 abstract class MagicLambdaHelper {
 
     static Method RUNNABLE_METHOD;
@@ -44,8 +45,8 @@ abstract class MagicLambdaHelper {
 
     static {
         try {
-            RUNNABLE_METHOD = Runnable.class.getMethod("run");
-            SUPPLIER_METHOD = Supplier.class.getMethod("get");
+            RUNNABLE_METHOD = ThrowingRunnable.class.getMethod("run");
+            SUPPLIER_METHOD = ThrowingSupplier.class.getMethod("get");
         } catch (NoSuchMethodException e) {
             throw new MoxieUnexpectedError(e);
         }

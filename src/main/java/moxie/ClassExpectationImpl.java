@@ -27,31 +27,31 @@ class ClassExpectationImpl<T> extends NonLambdaExpectationImpl<ClassExpectationI
         super(interception);
     }
 
-    public T onNew(Object... params) {
-        return onNew(null, params);
+    public void onNew(Object... params) {
+        onNew(null, params);
     }
 
-    public T whenNew(Object... params) {
-        return onNew(params);
+    public void whenNew(Object... params) {
+        onNew(params);
     }
 
-    public T willNew(Object... params) {
-        return onNew(params);
+    public void willNew(Object... params) {
+        onNew(params);
     }
 
     @SuppressWarnings("unchecked")
-    public T onNew(Class[] paramSignature, Object... params) {
+    public void onNew(Class[] paramSignature, Object... params) {
         Class interceptedClass = getInterception().getInterceptedClass();
         ConstructorAdapter constructor = MoxieUtils.guessConstructor(interceptedClass, paramSignature, params);
-        return (T) handleInvocation(constructor, params);
+        handleInvocation(constructor, params);
     }
 
-    public T whenNew(Class[] paramSignature, Object... params) {
-        return onNew(paramSignature, params);
+    public void whenNew(Class[] paramSignature, Object... params) {
+        onNew(paramSignature, params);
     }
 
-    public T willNew(Class[] paramSignature, Object... params) {
-        return onNew(paramSignature, params);
+    public void willNew(Class[] paramSignature, Object... params) {
+        onNew(paramSignature, params);
     }
 
     @Override

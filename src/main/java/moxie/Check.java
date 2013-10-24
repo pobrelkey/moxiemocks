@@ -168,7 +168,7 @@ package moxie;
  * </ul>
  * </p>
  */
-public interface Check<C extends Check<C>> extends Cardinality<C>  {
+public interface Check<C extends Check<C, R>, R> extends Cardinality<C>  {
 
     /**
      * <p>
@@ -208,4 +208,72 @@ public interface Check<C extends Check<C>> extends Cardinality<C>  {
      * @return this object, for call chaining
      */
     C inGroup(Group... group);
+
+    /**
+     * <p>
+     * Check that the relevant method threw the given {@link Throwable}.
+     * </p>
+     * <p>
+     * Note that you can use the {@link moxie.MoxieMatchers matcher methods} to match on the exception object.
+     * </p>
+     * <p>
+     * Note also that that {@link #throwException(Throwable) throwException()} and {@link #threw(Throwable) threw()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param throwable the {@link Throwable} thrown, or a matcher invocation
+     * @return this object, for call chaining
+     */
+    C throwException(Throwable throwable);
+
+    /**
+     * <p>
+     * Check that the relevant method threw the given {@link Throwable}.
+     * </p>
+     * <p>
+     * Note that you can use the {@link moxie.MoxieMatchers matcher methods} to match on the exception object.
+     * </p>
+     * <p>
+     * Note also that that {@link #throwException(Throwable) throwException()} and {@link #threw(Throwable) threw()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param throwable the {@link Throwable} thrown, or a matcher invocation
+     * @return this object, for call chaining
+     */
+    C threw(Throwable throwable);
+
+    /**
+     * <p>
+     * Check that the relevant method returned the given value.
+     * </p>
+     * <p>
+     * Note that you can use the {@link moxie.MoxieMatchers matcher methods} to match on the return value.
+     * </p>
+     * <p>
+     * Note also that that {@link #returnValue(Object) returnValue()} and {@link #returned(Object) returned()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param returnValue the value returned, or a matcher invocation
+     * @return this object, for call chaining
+     */
+    C returnValue(R returnValue);
+
+    /**
+     * <p>
+     * Check that the relevant method returned the given value.
+     * </p>
+     * <p>
+     * Note that you can use the {@link moxie.MoxieMatchers matcher methods} to match on the return value.
+     * </p>
+     * <p>
+     * Note also that that {@link #returnValue(Object) returnValue()} and {@link #returned(Object) returned()}
+     * do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param returnValue the value returned, or a matcher invocation
+     * @return this object, for call chaining
+     */
+    C returned(R returnValue);
 }

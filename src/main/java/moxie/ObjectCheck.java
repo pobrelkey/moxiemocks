@@ -21,7 +21,7 @@
  */
 package moxie;
 
-/*
+/**
  * <p>
  * Interface containing domain-specific language methods called in "the middle bit" of statements that perform
  * post-invocation verifications on mock object instances.
@@ -32,75 +32,7 @@ package moxie;
  *
  * @param <T> Type of the mock object on which checks are being carried out.
  */
-public interface ObjectCheck<T> extends Check<ObjectCheck<T>>, Cardinality<ObjectCheck<T>> {
-
-    /**
-     * <p>
-     * Check that the relevant method threw the given {@link Throwable}.
-     * </p>
-     * <p>
-     * Note that you can use the {@link MoxieMatchers matcher methods} to match on the exception object.
-     * </p>
-     * <p>
-     * Note also that that {@link #throwException(Throwable) throwException()} and {@link #threw(Throwable) threw()}
-     * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @param throwable the {@link Throwable} thrown, or a matcher invocation
-     * @return this object, for call chaining
-     */
-    ObjectCheck<T> throwException(Throwable throwable);
-
-    /**
-     * <p>
-     * Check that the relevant method threw the given {@link Throwable}.
-     * </p>
-     * <p>
-     * Note that you can use the {@link MoxieMatchers matcher methods} to match on the exception object.
-     * </p>
-     * <p>
-     * Note also that that {@link #throwException(Throwable) throwException()} and {@link #threw(Throwable) threw()}
-     * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @param throwable the {@link Throwable} thrown, or a matcher invocation
-     * @return this object, for call chaining
-     */
-    ObjectCheck<T> threw(Throwable throwable);
-
-    /**
-     * <p>
-     * Check that the relevant method returned the given value.
-     * </p>
-     * <p>
-     * Note that you can use the {@link MoxieMatchers matcher methods} to match on the return value.
-     * </p>
-     * <p>
-     * Note also that that {@link #returnValue(Object) returnValue()} and {@link #returned(Object) returned()}
-     * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @param returnValue the value returned, or a matcher invocation
-     * @return this object, for call chaining
-     */
-    ObjectCheck<T> returnValue(Object returnValue);
-
-    /**
-     * <p>
-     * Check that the relevant method returned the given value.
-     * </p>
-     * <p>
-     * Note that you can use the {@link MoxieMatchers matcher methods} to match on the return value.
-     * </p>
-     * <p>
-     * Note also that that {@link #returnValue(Object) returnValue()} and {@link #returned(Object) returned()}
-     * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
-     *
-     * @param returnValue the value returned, or a matcher invocation
-     * @return this object, for call chaining
-     */
-    ObjectCheck<T> returned(Object returnValue);
+public interface ObjectCheck<T> extends Check<ObjectCheck<T>,Object>, Cardinality<ObjectCheck<T>> {
 
     /**
      * <p>
@@ -170,9 +102,8 @@ public interface ObjectCheck<T> extends Check<ObjectCheck<T>>, Cardinality<Objec
      *
      * @param methodName  The name of the method to be checked
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object on(String methodName, Object... params);
+    void on(String methodName, Object... params);
 
     /**
      * <p>
@@ -190,9 +121,8 @@ public interface ObjectCheck<T> extends Check<ObjectCheck<T>>, Cardinality<Objec
      *
      * @param methodName  The name of the method to be checked
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object when(String methodName, Object... params);
+    void when(String methodName, Object... params);
 
     /**
      * <p>
@@ -210,9 +140,8 @@ public interface ObjectCheck<T> extends Check<ObjectCheck<T>>, Cardinality<Objec
      *
      * @param methodName  The name of the method to be checked
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object get(String methodName, Object... params);
+    void get(String methodName, Object... params);
 
     /**
      * <p>
@@ -230,9 +159,8 @@ public interface ObjectCheck<T> extends Check<ObjectCheck<T>>, Cardinality<Objec
      *
      * @param methodName  The name of the method to be checked
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object got(String methodName, Object... params);
+    void got(String methodName, Object... params);
 
     /**
      * <p>
@@ -251,9 +179,8 @@ public interface ObjectCheck<T> extends Check<ObjectCheck<T>>, Cardinality<Objec
      * @param methodName      The name of the method to be checked
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object on(String methodName, Class[] paramSignature, Object... params);
+    void on(String methodName, Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -272,9 +199,8 @@ public interface ObjectCheck<T> extends Check<ObjectCheck<T>>, Cardinality<Objec
      * @param methodName      The name of the method to be checked
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object when(String methodName, Class[] paramSignature, Object... params);
+    void when(String methodName, Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -293,9 +219,8 @@ public interface ObjectCheck<T> extends Check<ObjectCheck<T>>, Cardinality<Objec
      * @param methodName      The name of the method to be checked
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object get(String methodName, Class[] paramSignature, Object... params);
+    void get(String methodName, Class[] paramSignature, Object... params);
 
     /**
      * <p>
@@ -314,7 +239,6 @@ public interface ObjectCheck<T> extends Check<ObjectCheck<T>>, Cardinality<Objec
      * @param methodName      The name of the method to be checked
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
      * @param params          Values or {@link MoxieMatchers} invocations matching the parameters to be verified
-     * @return a stub of the type returned by the method (for optional deep mocking), or <code>null</code> if a void method
      */
-    Object got(String methodName, Class[] paramSignature, Object... params);
+    void got(String methodName, Class[] paramSignature, Object... params);
 }

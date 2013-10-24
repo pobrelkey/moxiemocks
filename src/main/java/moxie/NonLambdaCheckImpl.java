@@ -24,7 +24,7 @@ package moxie;
 
 import java.util.List;
 
-abstract class NonLambdaCheckImpl<C extends NonLambdaCheckImpl<C,I>, I extends Interception> extends CheckImpl<C,I> {
+abstract class NonLambdaCheckImpl<C extends NonLambdaCheckImpl<C,I>, I extends Interception> extends CheckImpl<C,I,Object> {
 
     private final I interception;
 
@@ -34,38 +34,38 @@ abstract class NonLambdaCheckImpl<C extends NonLambdaCheckImpl<C,I>, I extends I
         this.interception = interception;
     }
 
-    public Object on(String methodName, Object... params) {
-        return handleInvocation(MoxieUtils.guessMethod(this.getInterception().getInterceptedClass(), methodName, isStatic(), null, params), params);
+    public void on(String methodName, Object... params) {
+        handleInvocation(MoxieUtils.guessMethod(this.getInterception().getInterceptedClass(), methodName, isStatic(), null, params), params);
     }
 
-    public Object when(String methodName, Object... params) {
-        return on(methodName, params);
+    public void when(String methodName, Object... params) {
+        on(methodName, params);
     }
 
-    public Object get(String methodName, Object... params) {
-        return on(methodName, params);
+    public void get(String methodName, Object... params) {
+        on(methodName, params);
     }
 
-    public Object got(String methodName, Object... params) {
-        return on(methodName, params);
+    public void got(String methodName, Object... params) {
+        on(methodName, params);
     }
 
-    public Object on(String methodName, Class[] paramSignature, Object... params) {
-        return handleInvocation(MoxieUtils.guessMethod(this.getInterception().getInterceptedClass(), methodName, isStatic(), paramSignature, params), params);
+    public void on(String methodName, Class[] paramSignature, Object... params) {
+        handleInvocation(MoxieUtils.guessMethod(this.getInterception().getInterceptedClass(), methodName, isStatic(), paramSignature, params), params);
     }
 
     protected abstract boolean isStatic();
 
-    public Object when(String methodName, Class[] paramSignature, Object... params) {
-        return on(methodName, paramSignature, params);
+    public void when(String methodName, Class[] paramSignature, Object... params) {
+        on(methodName, paramSignature, params);
     }
 
-    public Object get(String methodName, Class[] paramSignature, Object... params) {
-       return on(methodName, paramSignature, params);
+    public void get(String methodName, Class[] paramSignature, Object... params) {
+       on(methodName, paramSignature, params);
     }
 
-    public Object got(String methodName, Class[] paramSignature, Object... params) {
-        return on(methodName, paramSignature, params);
+    public void got(String methodName, Class[] paramSignature, Object... params) {
+        on(methodName, paramSignature, params);
     }
 
 

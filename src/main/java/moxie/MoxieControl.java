@@ -343,7 +343,7 @@ public interface MoxieControl {
      */
     <T> ClassExpectation<T> expect(Class<T> clazz, MoxieOptions... options);
 
-    LambdaExpectation expect();
+    LambdaExpectation<Object> expect();
 
     /**
      * <p>
@@ -373,7 +373,7 @@ public interface MoxieControl {
      */
     <T> ClassExpectation<T> stub(Class<T> clazz);
 
-    LambdaExpectation stub();
+    LambdaExpectation<Object> stub();
 
     /**
      * <p>

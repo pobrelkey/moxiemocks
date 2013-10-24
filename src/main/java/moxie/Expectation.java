@@ -198,7 +198,7 @@ import java.lang.reflect.InvocationHandler;
  * </ul>
  * </p>
  */
-public interface Expectation<E extends Expectation<E>> extends Cardinality<E> {
+public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality<E> {
 
     /**
      * Specifies that this expectation should comprise part of the given group(s).
@@ -233,7 +233,7 @@ public interface Expectation<E extends Expectation<E>> extends Cardinality<E> {
      * @param result the value to be returned
      * @return this object, for call chaining
      */
-    E willReturn(Object result);
+    E willReturn(R result);
 
     /**
      * <p>
@@ -247,7 +247,7 @@ public interface Expectation<E extends Expectation<E>> extends Cardinality<E> {
      * @param result the value to be returned
      * @return this object, for call chaining
      */
-    E andReturn(Object result);
+    E andReturn(R result);
 
     /**
      * <p>
@@ -261,7 +261,7 @@ public interface Expectation<E extends Expectation<E>> extends Cardinality<E> {
      * @param results the values to be returned
      * @return this object, for call chaining
      */
-    E willConsecutivelyReturn(Object... results);
+    E willConsecutivelyReturn(R... results);
 
     /**
      * <p>
@@ -275,7 +275,7 @@ public interface Expectation<E extends Expectation<E>> extends Cardinality<E> {
      * @param results the values to be returned
      * @return this object, for call chaining
      */
-    E andConsecutivelyReturn(Object... results);
+    E andConsecutivelyReturn(R... results);
 
     /**
      * <p>
@@ -289,7 +289,7 @@ public interface Expectation<E extends Expectation<E>> extends Cardinality<E> {
      * @param results the values to be returned
      * @return this object, for call chaining
      */
-    E willConsecutivelyReturn(Iterable results);
+    E willConsecutivelyReturn(Iterable<? super R> results);
 
     /**
      * <p>
@@ -303,7 +303,7 @@ public interface Expectation<E extends Expectation<E>> extends Cardinality<E> {
      * @param results the values to be returned
      * @return this object, for call chaining
      */
-    E andConsecutivelyReturn(Iterable results);
+    E andConsecutivelyReturn(Iterable<? super R> results);
 
     /**
      * <p>

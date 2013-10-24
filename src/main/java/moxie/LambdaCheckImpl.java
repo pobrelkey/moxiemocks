@@ -24,7 +24,7 @@ package moxie;
 
 import java.util.List;
 
-class LambdaCheckImpl extends CheckImpl<LambdaCheckImpl, Interception> implements LambdaCheck {
+class LambdaCheckImpl<R> extends CheckImpl<LambdaCheckImpl<R>, Interception, R> implements LambdaCheck<R> {
     private Interception interception;
     private final MoxieControlImpl moxie;
 
@@ -33,36 +33,47 @@ class LambdaCheckImpl extends CheckImpl<LambdaCheckImpl, Interception> implement
         this.moxie = moxie;
     }
 
-    public void on(Runnable lambda) {
+    public LambdaCheckImpl<R> on(ThrowingRunnable lambda) {
         getMagicLambdaHelper().doInvoke(lambda, MagicLambdaHelper.RUNNABLE_METHOD);
+        return this;
     }
 
-    public void when(Runnable lambda) {
-        on(lambda);
+    public LambdaCheckImpl<R> when(ThrowingRunnable lambda) {
+        return on(lambda);
     }
 
-    public void get(Runnable lambda) {
-        on(lambda);
+    public LambdaCheckImpl<R> get(ThrowingRunnable lambda) {
+        return on(lambda);
     }
 
-    public void got(Runnable lambda) {
-        on(lambda);
+    public LambdaCheckImpl<R> got(ThrowingRunnable lambda) {
+        return on(lambda);
     }
 
-    public void on(Supplier lambda) {
+    public LambdaCheckImpl<R> that(ThrowingRunnable lambda) {
+        return on(lambda);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <RR extends R> LambdaCheckImpl<RR> on(ThrowingSupplier<RR> lambda) {
         getMagicLambdaHelper().doInvoke(lambda, MagicLambdaHelper.SUPPLIER_METHOD);
+        return (LambdaCheckImpl<RR>) this;
     }
 
-    public void when(Supplier lambda) {
-        on(lambda);
+    public <RR extends R> LambdaCheckImpl<RR> when(ThrowingSupplier<RR> lambda) {
+        return on(lambda);
     }
 
-    public void get(Supplier lambda) {
-        on(lambda);
+    public <RR extends R> LambdaCheckImpl<RR> get(ThrowingSupplier<RR> lambda) {
+        return on(lambda);
     }
 
-    public void got(Supplier lambda) {
-        on(lambda);
+    public <RR extends R> LambdaCheckImpl<RR> got(ThrowingSupplier<RR> lambda) {
+        return on(lambda);
+    }
+
+    public <RR extends R> LambdaCheckImpl<RR> that(ThrowingSupplier<RR> lambda) {
+        return on(lambda);
     }
 
     private MagicLambdaHelper getMagicLambdaHelper() {
