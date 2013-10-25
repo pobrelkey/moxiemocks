@@ -51,6 +51,7 @@ public class StackOverflow6392946Test {
     @Mock(MoxieOptions.IGNORE_BACKGROUND_FAILURES)
     public XMLStreamWriter xmlStreamWriter;
 
+    // xmlStreamWriter gets invoked with strings which add up to "blah blah", so the test passes.
     @Test
     public void happyPathTest() throws XMLStreamException{
         PiecewiseStringMatcher matcher = new PiecewiseStringMatcher("blah blah");
@@ -62,6 +63,8 @@ public class StackOverflow6392946Test {
         Assert.assertTrue(matcher.hasMatchedEntirely());
     }
 
+    // xmlStreamWriter's parameters don't add up to "blah blah", so the test would fail without the catch clause.
+    // Also note that the final assert is false.
     @Test
     public void sadPathTest1() throws XMLStreamException{
         PiecewiseStringMatcher matcher = new PiecewiseStringMatcher("blah blah");
@@ -78,6 +81,8 @@ public class StackOverflow6392946Test {
         Assert.assertFalse(matcher.hasMatchedEntirely());
     }
 
+    // xmlStreamWriter's parameters add up to "blah bl", so the mock itself doesn't fail.
+    // However the final assertion fails, as the matcher didn't see the entire string "blah blah".
     @Test
     public void sadPathTest2() throws XMLStreamException{
         PiecewiseStringMatcher matcher = new PiecewiseStringMatcher("blah blah");
