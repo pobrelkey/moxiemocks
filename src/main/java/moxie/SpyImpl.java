@@ -29,6 +29,7 @@ import java.util.List;
 class SpyImpl<T> extends ObjectInterception<T> {
     private final T realObject;
 
+    @SuppressWarnings("unchecked")
     SpyImpl(T realObject, String name, MoxieFlags flags, List<Invocation> invocations) {
         super((Class<T>) realObject.getClass(), name, flags, instantiationStackTrace(name, flags), null, null);
         this.realObject = realObject;

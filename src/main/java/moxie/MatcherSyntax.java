@@ -69,11 +69,13 @@ class MatcherSyntax {
         return matcherListFragment(expectedParameterType, matchValues);
     }
 
+    @SuppressWarnings("unchecked")
     static List<Matcher> matcherListFragment(Class expectedParameterType, List matchValues) {
         List expectedParameterTypes = Collections.nCopies(matchValues.size(), expectedParameterType);
         return matcherListFragment(expectedParameterTypes, matchValues);
     }
 
+    @SuppressWarnings("unchecked")
     static List<Matcher> matcherListFragment(List<Class<?>> expectedParameterTypes, List matchValues) {
         LinkedList<MatcherReport> matcherReports = MoxieMatchers.getMatcherReports();
         List<Matcher> matchers = new ArrayList<Matcher>();
@@ -117,7 +119,8 @@ class MatcherSyntax {
     static List<Matcher> methodCall(InvocableAdapter invocable, Object[] params) throws IllegalArgumentException {
         LinkedList<MatcherReport> matcherReports = MoxieMatchers.getMatcherReports();
         List<Class<?>> paramTypes = new ArrayList<Class<?>>(Arrays.asList(invocable.getParameterTypes()));
-        List paramsList = params == null ? Collections.EMPTY_LIST : new ArrayList(Arrays.asList(params));
+        @SuppressWarnings("unchecked")
+        List paramsList = params == null ? Collections.emptyList() : new ArrayList(Arrays.asList(params));
         Matcher varargMatcher = null;
         if (invocable.isVarArgs()) {
             Class<?> paramType = paramTypes.remove(paramTypes.size() - 1);

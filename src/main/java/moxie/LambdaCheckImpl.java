@@ -33,24 +33,25 @@ class LambdaCheckImpl<R> extends CheckImpl<LambdaCheckImpl<R>, Interception, R> 
         this.moxie = moxie;
     }
 
-    public LambdaCheckImpl<R> on(ThrowingRunnable lambda) {
+    @SuppressWarnings("unchecked")
+    public LambdaCheckImpl<Void> on(ThrowingRunnable lambda) {
         getMagicLambdaHelper().doInvoke(lambda, MagicLambdaHelper.RUNNABLE_METHOD);
-        return this;
+        return (LambdaCheckImpl<Void>) this;
     }
 
-    public LambdaCheckImpl<R> when(ThrowingRunnable lambda) {
+    public LambdaCheckImpl<Void> when(ThrowingRunnable lambda) {
         return on(lambda);
     }
 
-    public LambdaCheckImpl<R> get(ThrowingRunnable lambda) {
+    public LambdaCheckImpl<Void> get(ThrowingRunnable lambda) {
         return on(lambda);
     }
 
-    public LambdaCheckImpl<R> got(ThrowingRunnable lambda) {
+    public LambdaCheckImpl<Void> got(ThrowingRunnable lambda) {
         return on(lambda);
     }
 
-    public LambdaCheckImpl<R> that(ThrowingRunnable lambda) {
+    public LambdaCheckImpl<Void> that(ThrowingRunnable lambda) {
         return on(lambda);
     }
 

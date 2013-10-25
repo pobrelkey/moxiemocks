@@ -62,7 +62,7 @@ class SimpleDescription implements Description {
     }
 
     public <T> Description appendValueList(String start, String separator, String end, T... values) {
-        return appendValueList(start, separator, end, values != null ? Arrays.asList(values) : Collections.EMPTY_LIST);
+        return appendValueList(start, separator, end, values != null ? Arrays.asList(values) : Collections.emptyList());
     }
 
     public <T> Description appendValueList(String start, String separator, String end, Iterable<T> values) {

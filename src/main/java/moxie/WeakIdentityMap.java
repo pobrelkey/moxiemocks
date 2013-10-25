@@ -145,6 +145,7 @@ class WeakIdentityMap<K,V> extends AbstractMap<K,V> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void purge() {
         KeyWeakReference<K> ref = null;
         while ((ref = (KeyWeakReference<K>) referenceQueue.poll()) != null) {

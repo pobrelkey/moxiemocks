@@ -58,13 +58,151 @@ package moxie;
  * @param <R> Return type of the method being checked, or an ancestor type thereof.
  */
 public interface LambdaExpectation<R> extends Expectation<LambdaExpectation<R>,R> {
-    // TODO javadoc
+    /**
+     * <p>
+     * Specifies the method that this expectation should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @return this object, for call chaining
+     */
     LambdaExpectation<Void> that(ThrowingRunnable lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this expectation should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @return this object, for call chaining
+     */
     LambdaExpectation<Void> on(ThrowingRunnable lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this expectation should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @return this object, for call chaining
+     */
     LambdaExpectation<Void> when(ThrowingRunnable lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this expectation should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @return this object, for call chaining
+     */
     LambdaExpectation<Void> will(ThrowingRunnable lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this expectation should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @param <RR> return type of the method to be checked
+     * @return this object, for call chaining
+     */
     <RR extends R> LambdaExpectation<RR> that(ThrowingSupplier<RR> lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this expectation should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @param <RR> return type of the method to be checked
+     * @return this object, for call chaining
+     */
     <RR extends R> LambdaExpectation<RR> on(ThrowingSupplier<RR> lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this expectation should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @param <RR> return type of the method to be checked
+     * @return this object, for call chaining
+     */
     <RR extends R> LambdaExpectation<RR> when(ThrowingSupplier<RR> lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this expectation should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @param <RR> return type of the method to be checked
+     * @return this object, for call chaining
+     */
     <RR extends R> LambdaExpectation<RR> will(ThrowingSupplier<RR> lambda);
 }

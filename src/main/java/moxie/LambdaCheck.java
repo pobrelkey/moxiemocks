@@ -58,15 +58,188 @@ package moxie;
  * @param <R> Return type of the method being checked, or an ancestor type thereof.
  */
 public interface LambdaCheck<R> extends Check<LambdaCheck<R>, R> {
-    // TODO javadoc
-    LambdaCheck<R> that(ThrowingRunnable lambda);
-    LambdaCheck<R> on(ThrowingRunnable lambda);
-    LambdaCheck<R> when(ThrowingRunnable lambda);
-    LambdaCheck<R> get(ThrowingRunnable lambda);
-    LambdaCheck<R> got(ThrowingRunnable lambda);
+    /**
+     * <p>
+     * Specifies the method that this check should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #get(ThrowingRunnable) get()}, {@link #got(ThrowingRunnable) got()} and {@link #that(ThrowingRunnable) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @return this object, for call chaining
+     */
+    LambdaCheck<Void> that(ThrowingRunnable lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this check should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #get(ThrowingRunnable) get()}, {@link #got(ThrowingRunnable) got()} and {@link #that(ThrowingRunnable) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @return this object, for call chaining
+     */
+    LambdaCheck<Void> on(ThrowingRunnable lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this check should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #get(ThrowingRunnable) get()}, {@link #got(ThrowingRunnable) got()} and {@link #that(ThrowingRunnable) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @return this object, for call chaining
+     */
+    LambdaCheck<Void> when(ThrowingRunnable lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this check should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #get(ThrowingRunnable) get()}, {@link #got(ThrowingRunnable) got()} and {@link #that(ThrowingRunnable) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @return this object, for call chaining
+     */
+    LambdaCheck<Void> get(ThrowingRunnable lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this check should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #get(ThrowingRunnable) get()}, {@link #got(ThrowingRunnable) got()} and {@link #that(ThrowingRunnable) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @return this object, for call chaining
+     */
+    LambdaCheck<Void> got(ThrowingRunnable lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this check should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingSupplier) on()}, {@link #when(ThrowingSupplier) when()}, {@link #get(ThrowingSupplier) get()}, {@link #got(ThrowingSupplier) got()} and {@link #that(ThrowingSupplier) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @param <RR> return type of the method to be checked
+     * @return this object, for call chaining
+     */
     <RR extends R> LambdaCheck<RR> that(ThrowingSupplier<RR> lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this check should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingSupplier) on()}, {@link #when(ThrowingSupplier) when()}, {@link #get(ThrowingSupplier) get()}, {@link #got(ThrowingSupplier) got()} and {@link #that(ThrowingSupplier) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @param <RR> return type of the method to be checked
+     * @return this object, for call chaining
+     */
     <RR extends R> LambdaCheck<RR> on(ThrowingSupplier<RR> lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this check should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingSupplier) on()}, {@link #when(ThrowingSupplier) when()}, {@link #get(ThrowingSupplier) get()}, {@link #got(ThrowingSupplier) got()} and {@link #that(ThrowingSupplier) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @param <RR> return type of the method to be checked
+     * @return this object, for call chaining
+     */
     <RR extends R> LambdaCheck<RR> when(ThrowingSupplier<RR> lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this check should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingSupplier) on()}, {@link #when(ThrowingSupplier) when()}, {@link #get(ThrowingSupplier) get()}, {@link #got(ThrowingSupplier) got()} and {@link #that(ThrowingSupplier) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @param <RR> return type of the method to be checked
+     * @return this object, for call chaining
+     */
     <RR extends R> LambdaCheck<RR> get(ThrowingSupplier<RR> lambda);
+
+    /**
+     * <p>
+     * Specifies the method that this check should match using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The lambda expression should consist solely of a call to a single method/constructor to be matched,
+     * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
+     * </p>
+     * <p>
+     * Note that {@link #on(ThrowingSupplier) on()}, {@link #when(ThrowingSupplier) when()}, {@link #get(ThrowingSupplier) get()}, {@link #got(ThrowingSupplier) got()} and {@link #that(ThrowingSupplier) that()}
+     * all do exactly the same thing - use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked
+     * @param <RR> return type of the method to be checked
+     * @return this object, for call chaining
+     */
     <RR extends R> LambdaCheck<RR> got(ThrowingSupplier<RR> lambda);
 }

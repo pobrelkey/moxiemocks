@@ -289,7 +289,7 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
      * @param results the values to be returned
      * @return this object, for call chaining
      */
-    E willConsecutivelyReturn(Iterable<? super R> results);
+    E willConsecutivelyReturn(Iterable results);
 
     /**
      * <p>
@@ -303,7 +303,7 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
      * @param results the values to be returned
      * @return this object, for call chaining
      */
-    E andConsecutivelyReturn(Iterable<? super R> results);
+    E andConsecutivelyReturn(Iterable results);
 
     /**
      * <p>
