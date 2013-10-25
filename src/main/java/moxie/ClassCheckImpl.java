@@ -25,7 +25,7 @@ package moxie;
 import java.util.List;
 
 class ClassCheckImpl<C> extends NonLambdaCheckImpl<ClassCheckImpl<C>, ClassInterception> implements ClassCheck<C> {
-    ClassCheckImpl(ClassInterception interception, List<Invocation> invocations) {
+    ClassCheckImpl(ClassInterception<C> interception, List<Invocation> invocations) {
         super(interception, invocations);
     }
 

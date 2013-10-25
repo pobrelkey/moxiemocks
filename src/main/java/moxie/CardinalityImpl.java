@@ -40,6 +40,7 @@ class CardinalityImpl<T> implements Cardinality<T> {
         this.returnValue = returnValue;
     }
 
+    @SuppressWarnings("unchecked")
     CardinalityImpl() {
         this.returnValue = (T) this;
     }

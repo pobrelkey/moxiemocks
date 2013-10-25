@@ -120,6 +120,7 @@ class GroupImpl implements Group, Verifiable {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public ExpectationImpl match(InvocableAdapter invocable, Object[] args, MethodBehavior behavior) {
         ExpectationImpl result = null;
         for (ExpectationImpl expectation : unorderedExpectations) {

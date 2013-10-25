@@ -31,6 +31,7 @@ class PowermockConstructorHandler implements NewInvocationControl {
         this.proxyIntercepts = proxyIntercepts;
     }
 
+    @SuppressWarnings("unchecked")
     public Object invoke(Class type, Object[] args, Class[] sig) throws Exception {
         try {
             return proxyIntercepts.getClassIntercept(type).intercept(type, new ConstructorAdapter(type.getDeclaredConstructor(sig)), args, ZOMBIE_CONSTRUCTOR_SUPER_INVOKER);

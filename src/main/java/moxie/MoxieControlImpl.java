@@ -151,7 +151,15 @@ class MoxieControlImpl implements MoxieControl {
     }
 
     public LambdaExpectation<Object> expect() {
-        return new LambdaExpectationImpl(this);
+        return new LambdaExpectationImpl<Object>(this);
+    }
+
+    public LambdaExpectation<Void> expect(ThrowingRunnable lambda) {
+        return expect().that(lambda);
+    }
+
+    public <R> LambdaExpectation<R> expect(ThrowingSupplier<R> lambda) {
+        return expect().that(lambda);
     }
 
     public <T> ObjectExpectation<T> stub(T mockObject) {
@@ -166,6 +174,14 @@ class MoxieControlImpl implements MoxieControl {
         return expect().anyTimes().atAnyTime();
     }
 
+    public LambdaExpectation<Void> stub(ThrowingRunnable lambda) {
+        return stub().that(lambda);
+    }
+
+    public <R> LambdaExpectation<R> stub(ThrowingSupplier<R> lambda) {
+        return stub().that(lambda);
+    }
+
     @SuppressWarnings("unchecked")
     public <T> ObjectCheck<T> check(T mockObject) {
         return ((ObjectInterception<T>) getInterceptionFromProxy(mockObject)).check();
@@ -176,8 +192,16 @@ class MoxieControlImpl implements MoxieControl {
         return getInterceptionFromClass(clazz).check();
     }
 
-    public LambdaCheck check() {
-        return new LambdaCheckImpl(this, invocations);
+    public LambdaCheck<Object> check() {
+        return new LambdaCheckImpl<Object>(this, invocations);
+    }
+
+    public LambdaCheck<Void> check(ThrowingRunnable lambda) {
+        return check().that(lambda);
+    }
+
+    public <R> LambdaCheck<R> check(ThrowingSupplier<R> lambda) {
+        return check().that(lambda);
     }
 
     public void checkNothingElseHappened(Object... mockObjects) {
@@ -325,6 +349,7 @@ class MoxieControlImpl implements MoxieControl {
             PrintWriter pw = new PrintWriter(sw);
             pw.append("The following mocks/sequences were not verified:\n");
             for (Verifiable v : mocksAndGroups.values()) {
+                @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
                 Throwable whereInstantiated = v.getWhereInstantiated();
                 if (whereInstantiated != null) {
                     whereInstantiated.printStackTrace(pw);

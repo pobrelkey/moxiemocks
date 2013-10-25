@@ -433,8 +433,58 @@ public abstract class Moxie extends MoxieMatchers {
         return instance.expect(clazz);
     }
 
+    /**
+     * <p>
+     * Domain-specific language method - starts a clause in which an expectation is set using Java 8 lambda syntax.
+     * </p>
+     * <p>
+     * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
+     * </p>
+     *
+     * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to expect
+     * @see MoxieControl#expect()
+     */
     static public LambdaExpectation<Object> expect() {
         return instance.expect();
+    }
+
+    /**
+     * <p>
+     * Domain-specific language method - starts a clause in which an expectation is set using Java 8 lambda syntax.
+     * </p>
+     * <p>
+     * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
+     * </p>
+     * <p>
+     * This method is a synonym for <code>expect().that(lambda)</code>.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be mocked, using {@link MoxieMatchers parameter matchers} as necessary
+     * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to expect
+     * @see MoxieControl#expect(ThrowingRunnable)
+     */
+    static public LambdaExpectation<Void> expect(ThrowingRunnable lambda) {
+        return instance.expect(lambda);
+    }
+
+    /**
+     * <p>
+     * Domain-specific language method - starts a clause in which an expectation is set using Java 8 lambda syntax.
+     * </p>
+     * <p>
+     * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
+     * </p>
+     * <p>
+     * This method is a synonym for <code>expect().that(lambda)</code>.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be mocked, using {@link MoxieMatchers parameter matchers} as necessary
+     * @param <R> return type of the method/constructor to be mocked
+     * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to expect
+     * @see MoxieControl#expect(ThrowingSupplier)
+     */
+    static public <R> LambdaExpectation<R> expect(ThrowingSupplier<R> lambda) {
+        return instance.expect(lambda);
     }
 
     /**
@@ -465,13 +515,66 @@ public abstract class Moxie extends MoxieMatchers {
      * @param clazz the class on which the expectation is to be set
      * @return a {@link ClassExpectation} whose methods can be used to give details of what behavior to expect
      * @see MoxieControl#stub(Class)
-          */
-    static public ClassExpectation stub(Class clazz) {
+     */
+    static public <T> ClassExpectation<T> stub(Class<T> clazz) {
         return instance.stub(clazz);
     }
 
+    /**
+     * <p>
+     * Domain-specific language method - starts a clause in which a stub expectation is set using Java 8 lambda syntax.
+     * </p>
+     * <p>
+     * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
+     * </p>
+     * <p>
+     * This method is a synonym for <code>expect().anyTimes().atAnyTime()</code>.
+     * </p>
+     *
+     * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to perform
+     * @see MoxieControl#stub()
+     */
     static public LambdaExpectation<Object> stub() {
         return instance.stub();
+    }
+
+    /**
+     * <p>
+     * Domain-specific language method - starts a clause in which a stub expectation is set using Java 8 lambda syntax.
+     * </p>
+     * <p>
+     * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
+     * </p>
+     * <p>
+     * This method is a synonym for <code>expect().anyTimes().atAnyTime().that(lambda)</code>.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be stubbed, using {@link MoxieMatchers parameter matchers} as necessary
+     * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to perform
+     * @see MoxieControl#stub(ThrowingRunnable)
+     */
+    static public LambdaExpectation<Void> stub(ThrowingRunnable lambda) {
+        return instance.stub(lambda);
+    }
+
+    /**
+     * <p>
+     * Domain-specific language method - starts a clause in which a stub expectation is set using Java 8 lambda syntax.
+     * </p>
+     * <p>
+     * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
+     * </p>
+     * <p>
+     * This method is a synonym for <code>expect().anyTimes().atAnyTime().that(lambda)</code>.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be stubbed, using {@link MoxieMatchers parameter matchers} as necessary
+     * @param <R> return type of the method/constructor to be stubbed
+     * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to perform
+     * @see MoxieControl#stub(ThrowingSupplier)
+     */
+    static public <R> LambdaExpectation<R> stub(ThrowingSupplier<R> lambda) {
+        return instance.stub(lambda);
     }
 
     /**
@@ -493,7 +596,7 @@ public abstract class Moxie extends MoxieMatchers {
 
     /**
      * <p>
-     * Domain-specific language method - starts a clause in which a check is performed a static method or constructor of a class after use.
+     * Domain-specific language method - starts a clause in which a check is performed on a static method or constructor of a class after use.
      * </p>
      * <p>
      * See the discussion in the summary javadoc for the {@link Check} interface for more details.
@@ -507,8 +610,58 @@ public abstract class Moxie extends MoxieMatchers {
         return instance.check(clazz);
     }
 
-    static public LambdaCheck check() {
+    /**
+     * <p>
+     * Domain-specific language method - starts a clause in which a check is performed, as specified using Java 8 lambda syntax.
+     * </p>
+     * <p>
+     * See the discussion in the summary javadoc for the {@link Check} interface for more details.
+     * </p>
+     *
+     * @return a {@link LambdaCheck} whose methods can be used to give details of what should have occurred
+     * @see MoxieControl#check()
+     */
+    static public LambdaCheck<Object> check() {
         return instance.check();
+    }
+
+    /**
+     * <p>
+     * Domain-specific language method - starts a clause in which a check is performed, as specified using Java 8 lambda syntax.
+     * </p>
+     * <p>
+     * See the discussion in the summary javadoc for the {@link Check} interface for more details.
+     * </p>
+     * <p>
+     * This method is a synonym for <code>check().that(lambda)</code>.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked, using {@link MoxieMatchers parameter matchers} as necessary
+     * @return a {@link LambdaCheck} whose methods can be used to give details of what should have occurred
+     * @see MoxieControl#check(ThrowingRunnable)
+     */
+    static public LambdaCheck<Void> check(ThrowingRunnable lambda) {
+        return instance.check(lambda);
+    }
+
+    /**
+     * <p>
+     * Domain-specific language method - starts a clause in which a check is performed, as specified using Java 8 lambda syntax.
+     * </p>
+     * <p>
+     * See the discussion in the summary javadoc for the {@link Check} interface for more details.
+     * </p>
+     * <p>
+     * This method is a synonym for <code>check().that(lambda)</code>.
+     * </p>
+     *
+     * @param lambda a lambda expression invoking the method to be checked, using {@link MoxieMatchers parameter matchers} as necessary
+     * @param <R> return type of the method/constructor to be checked
+     * @return a {@link LambdaCheck} whose methods can be used to give details of what should have occurred
+     * @see MoxieControl#check(ThrowingSupplier)
+     */
+    static public <R> LambdaCheck<R> check(ThrowingSupplier<R> lambda) {
+        return instance.check(lambda);
     }
 
     /**

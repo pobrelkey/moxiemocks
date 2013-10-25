@@ -29,12 +29,12 @@ class ClassInterception<T> extends Interception {
         ProxyIntercepts.getInstance().registerClassIntercept(this.getInterceptedClass(), this);
     }
 
-    ClassExpectationImpl expect() {
-        return new ClassExpectationImpl(this);
+    ClassExpectationImpl<T> expect() {
+        return new ClassExpectationImpl<T>(this);
     }
 
-    ClassCheckImpl check() {
-        return new ClassCheckImpl(this, invocations);
+    ClassCheckImpl<T> check() {
+        return new ClassCheckImpl<T>(this, invocations);
     }
 
     @Override

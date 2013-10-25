@@ -23,7 +23,7 @@
 package moxie;
 
 class ClassExpectationImpl<T> extends NonLambdaExpectationImpl<ClassExpectationImpl<T>, ClassInterception> implements ClassExpectation<T> {
-    protected ClassExpectationImpl(ClassInterception interception) {
+    protected ClassExpectationImpl(ClassInterception<T> interception) {
         super(interception);
     }
 

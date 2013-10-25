@@ -237,6 +237,7 @@ abstract class MoxieUtils {
         return likelyMatches.get(0);
     }
 
+    @SuppressWarnings("unchecked")
     private static <T extends InvocableAdapter> List<T> guessInvocable(Class[] paramSignature, Object[] params, Iterable<T> candidates) {
         if (paramSignature == null) {
             paramSignature = new Class[params.length];
