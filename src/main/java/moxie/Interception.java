@@ -107,7 +107,7 @@ abstract class Interception implements MethodIntercept, Verifiable {
                     throw t;
                 }
             }
-        } else if (!flags.isAutoStubbing()
+        } else if (!MoxieUtils.unbox(flags.isAutoStubbing(), false)
                 && !EQUALS.matches(invocable)
                 && !HASH_CODE.matches(invocable)
                 && !TO_STRING.matches(invocable)
