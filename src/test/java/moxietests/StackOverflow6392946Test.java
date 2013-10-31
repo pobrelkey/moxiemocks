@@ -46,9 +46,7 @@ public class StackOverflow6392946Test {
     @Rule
     public MoxieRule moxie = new MoxieRule();
 
-    // We've specified the deprecated IGNORE_BACKGROUND_FAILURES option as otherwise Moxie works very hard to ensure
-    // that unexpected invocations can't get silently swallowed (so in particular sadPathTest1 will fail).
-    @Mock(MoxieOptions.IGNORE_BACKGROUND_FAILURES)
+    @Mock
     public XMLStreamWriter xmlStreamWriter;
 
     // xmlStreamWriter gets invoked with strings which add up to "blah blah", so the test passes.
@@ -67,6 +65,10 @@ public class StackOverflow6392946Test {
     // Also note that the final assert is false.
     @Test
     public void sadPathTest1() throws XMLStreamException{
+        // We've specified the deprecated IGNORE_BACKGROUND_FAILURES option as otherwise Moxie works very hard
+        // to ensure that unexpected invocations can't get silently swallowed (so this test will fail).
+        Moxie.reset(xmlStreamWriter, MoxieOptions.IGNORE_BACKGROUND_FAILURES);
+
         PiecewiseStringMatcher matcher = new PiecewiseStringMatcher("blah blah");
         Moxie.expect(xmlStreamWriter).anyTimes().on().writeCharacters(Moxie.reportMatcher(matcher, String.class));
 

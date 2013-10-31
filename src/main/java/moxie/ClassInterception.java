@@ -45,7 +45,7 @@ class ClassInterception<T> extends Interception {
                     // Whenever mocking a constructor, default behavior should be to return a new instance
                     // of that type.  (Put another way, we can't have constructors returning null!)
                     return ConcreteTypeProxyFactory.objenesis.newInstance(invocable.getReturnType());
-                } else if (flags.isAutoStubbing()) {
+                } else if (MoxieUtils.unbox(flags.isAutoStubbing(), false)) {
                     return MoxieUtils.defaultValue(invocable.getReturnType());
                 }
                 // TODO: clearer error message
