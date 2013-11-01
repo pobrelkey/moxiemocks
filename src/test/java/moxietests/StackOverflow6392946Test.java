@@ -52,13 +52,13 @@ public class StackOverflow6392946Test {
     // xmlStreamWriter gets invoked with strings which add up to "blah blah", so the test passes.
     @Test
     public void happyPathTest() throws XMLStreamException{
-        PiecewiseStringMatcher matcher = new PiecewiseStringMatcher("blah blah");
-        Moxie.expect(xmlStreamWriter).anyTimes().on().writeCharacters(Moxie.reportMatcher(matcher, String.class));
+        PiecewiseStringMatcher addsUpToBlahBlah = new PiecewiseStringMatcher("blah blah");
+        Moxie.expect(xmlStreamWriter).anyTimes().on().writeCharacters(Moxie.argThat(addsUpToBlahBlah));
 
         xmlStreamWriter.writeCharacters("blah ");
         xmlStreamWriter.writeCharacters("blah");
 
-        Assert.assertTrue(matcher.hasMatchedEntirely());
+        Assert.assertTrue(addsUpToBlahBlah.hasMatchedEntirely());
     }
 
     // xmlStreamWriter's parameters don't add up to "blah blah", so the test would fail without the catch clause.
@@ -69,8 +69,8 @@ public class StackOverflow6392946Test {
         // to ensure that unexpected invocations can't get silently swallowed (so this test will fail).
         Moxie.reset(xmlStreamWriter, MoxieOptions.IGNORE_BACKGROUND_FAILURES);
 
-        PiecewiseStringMatcher matcher = new PiecewiseStringMatcher("blah blah");
-        Moxie.expect(xmlStreamWriter).anyTimes().on().writeCharacters(Moxie.reportMatcher(matcher, String.class));
+        PiecewiseStringMatcher addsUpToBlahBlah = new PiecewiseStringMatcher("blah blah");
+        Moxie.expect(xmlStreamWriter).anyTimes().on().writeCharacters(Moxie.argThat(addsUpToBlahBlah));
 
         xmlStreamWriter.writeCharacters("blah ");
         try {
@@ -80,19 +80,23 @@ public class StackOverflow6392946Test {
             // as expected
         }
 
-        Assert.assertFalse(matcher.hasMatchedEntirely());
+        // In a normal test we'd assert true here.
+        // Here we assert false to verify that the behavior we're looking for has NOT occurred.
+        Assert.assertFalse(addsUpToBlahBlah.hasMatchedEntirely());
     }
 
     // xmlStreamWriter's parameters add up to "blah bl", so the mock itself doesn't fail.
     // However the final assertion fails, as the matcher didn't see the entire string "blah blah".
     @Test
     public void sadPathTest2() throws XMLStreamException{
-        PiecewiseStringMatcher matcher = new PiecewiseStringMatcher("blah blah");
-        Moxie.expect(xmlStreamWriter).anyTimes().on().writeCharacters(Moxie.reportMatcher(matcher, String.class));
+        PiecewiseStringMatcher addsUpToBlahBlah = new PiecewiseStringMatcher("blah blah");
+        Moxie.expect(xmlStreamWriter).anyTimes().on().writeCharacters(Moxie.argThat(addsUpToBlahBlah));
 
         xmlStreamWriter.writeCharacters("blah ");
         xmlStreamWriter.writeCharacters("bl");
 
-        Assert.assertFalse(matcher.hasMatchedEntirely());
+        // In a normal test we'd assert true here.
+        // Here we assert false to verify that the behavior we're looking for has NOT occurred.
+        Assert.assertFalse(addsUpToBlahBlah.hasMatchedEntirely());
     }
 }
