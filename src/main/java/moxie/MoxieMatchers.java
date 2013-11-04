@@ -22,10 +22,22 @@
 
 package moxie;
 
+import moxie.hamcrest.IsArray;
+import moxie.hamcrest.IsArrayContaining;
+import moxie.hamcrest.IsArrayWithSize;
+import moxie.hamcrest.IsCloseTo;
+import moxie.hamcrest.IsCollectionWithSize;
+import moxie.hamcrest.IsInstanceOfArray;
+import moxie.hamcrest.IsMapWithSize;
+import moxie.hamcrest.LambdaMatcher;
+import moxie.hamcrest.MatchesRegexp;
+import moxie.hamcrest.OrderingComparison;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
+import org.hamcrest.collection.IsIterableContainingInOrder;
+import org.hamcrest.collection.IsIterableWithSize;
 import org.hamcrest.core.AllOf;
 import org.hamcrest.core.AnyOf;
 import org.hamcrest.core.IsEqual;
@@ -35,7 +47,6 @@ import org.hamcrest.core.IsNull;
 import org.hamcrest.core.IsSame;
 import org.hamcrest.text.IsEqualIgnoringCase;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -97,15 +108,6 @@ import java.util.regex.Pattern;
  * </ul>
  */
 public abstract class MoxieMatchers {
-    private static final BaseMatcher ANY_ARRAY_MATCHER = new BaseMatcher() {
-        public boolean matches(Object o) {
-            return o != null && o.getClass().isArray();
-        }
-
-        public void describeTo(Description description) {
-            description.appendText("any array");
-        }
-    };
 
     private static ThreadLocal<LinkedList<MatcherReport>> matchers = new ThreadLocal<LinkedList<MatcherReport>>();
 
@@ -120,7 +122,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T> T[] anyArray() {
-        return (T[]) reportMatcher(new AnyOf(Arrays.asList(new IsNull(), ANY_ARRAY_MATCHER)), Object[].class);
+        return (T[]) argThat(Object[].class, AnyOf.anyOf(new IsNull(), IsInstanceOfArray.instanceOfArray()));
     }
 
     /**
@@ -231,7 +233,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T> T any(Class<T> clazz) {
-        return reportMatcher(new AnyOf(Arrays.asList(new IsNull(), new IsInstanceOf(MoxieUtils.toNonPrimitive(clazz)))), clazz);
+        return (T) argThat(clazz, AnyOf.anyOf(new IsNull(), new IsInstanceOf(MoxieUtils.toNonPrimitive(clazz))));
     }
 
     /**
@@ -241,8 +243,8 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    static public <T> T argThat(Matcher<? super T> matcher) {
-        return (T) argThat((Class<T>) null, matcher);
+    static public <T> T argThat(Matcher<T> matcher) {
+        return (T) argThat(null, matcher);
     }
 
     /**
@@ -260,7 +262,8 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T> T argThat(Class<T> clazz, Matcher<? super T> matcher) {
-        return reportMatcher(matcher, clazz);
+        getMatcherReports().add(new MatcherReport(matcher, clazz));
+        return MoxieUtils.defaultValue(clazz);
     }
 
     /**
@@ -270,7 +273,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    static public <T> T[] arrayThat(Matcher<? super T> matcher) {
+    static public <T> T[] arrayThat(Matcher<T[]> matcher) {
         return (T[]) arrayThat(Object.class, (Matcher) matcher);
     }
 
@@ -287,8 +290,8 @@ public abstract class MoxieMatchers {
      * @param matcher A <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
      * @return <code>null</code>
      */
-    static public <T> T[] arrayThat(Class<T> clazz, Matcher<? super T> matcher) {
-        return reportMatcher(matcher, MoxieUtils.arrayClassFor(clazz));
+    static public <T> T[] arrayThat(Class<T> clazz, Matcher<? super T[]> matcher) {
+        return argThat(MoxieUtils.arrayClassFor(clazz), matcher);
     }
 
     /**
@@ -298,7 +301,7 @@ public abstract class MoxieMatchers {
      * @return <code>false</code>
      */
     static public boolean booleanThat(Matcher<? super Boolean> matcher) {
-        return reportMatcher(matcher, Boolean.TYPE);
+        return argThat(Boolean.TYPE, matcher);
     }
 
     /**
@@ -308,7 +311,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public byte byteThat(Matcher<? super Byte> matcher) {
-        return reportMatcher(matcher, Byte.TYPE);
+        return argThat(Byte.TYPE, matcher);
     }
 
     /**
@@ -318,7 +321,7 @@ public abstract class MoxieMatchers {
      * @return <code>'\0'</code>
      */
     static public char charThat(Matcher<? super Character> matcher) {
-        return reportMatcher(matcher, Character.TYPE);
+        return argThat(Character.TYPE, matcher);
     }
 
     /**
@@ -328,7 +331,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public double doubleThat(Matcher<? super Double> matcher) {
-        return reportMatcher(matcher, Double.TYPE);
+        return argThat(Double.TYPE, matcher);
     }
 
     /**
@@ -338,7 +341,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public float floatThat(Matcher<? super Float> matcher) {
-        return reportMatcher(matcher, Float.TYPE);
+        return argThat(Float.TYPE, matcher);
     }
 
     /**
@@ -348,7 +351,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public int intThat(Matcher<? super Integer> matcher) {
-        return reportMatcher(matcher, Integer.TYPE);
+        return argThat(Integer.TYPE, matcher);
     }
 
     /**
@@ -358,7 +361,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public long longThat(Matcher<? super Long> matcher) {
-        return reportMatcher(matcher, Long.TYPE);
+        return argThat(Long.TYPE, matcher);
     }
 
     /**
@@ -368,8 +371,155 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public short shortThat(Matcher<? super Short> matcher) {
-        return reportMatcher(matcher, Short.TYPE);
+        return argThat(Short.TYPE, matcher);
     }
+
+    /**
+     * Matches an object parameter using a Java 8 lambda expression.
+     *
+     * @param lambda a {@link Predicate} to which the argument will be passed
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public <T> T argWhere(Predicate<T> lambda) {
+        return (T) argWhere(null, lambda);
+    }
+
+    /**
+     * <p>
+     * Matches an object parameter using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
+     *
+     * @param clazz   Type of the parameter to be matched
+     * @param lambda a {@link Predicate} to which the argument will be passed
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public <T> T argWhere(Class<T> clazz, Predicate<? super T> lambda) {
+        return (T) argThat(clazz, new LambdaMatcher(lambda));
+    }
+
+    /**
+     * Matches an array parameter or varargs array using a Java 8 lambda expression.
+     *
+     * @param lambda a {@link Predicate} to which the argument will be passed
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public <T> T[] arrayWhere(Predicate<T[]> lambda) {
+        return (T[]) arrayWhere(null, lambda);
+    }
+
+    /**
+     * <p>
+     * Matches an array parameter or varargs array using a Java 8 lambda expression.
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
+     *
+     * @param clazz   Constituent type of the array
+     * @param lambda a {@link Predicate} to which the argument will be passed
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public <T> T[] arrayWhere(Class<T> clazz, Predicate<? super T[]> lambda) {
+        return (T[]) arrayThat(clazz, new LambdaMatcher(lambda));
+    }
+
+    /**
+     * Matches a <code>boolean</code> parameter using a Java 8 lambda expression.
+     *
+     * @param lambda a {@link Predicate} to which the argument will be passed
+     * @return <code>false</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public boolean booleanWhere(Predicate<? super Boolean> lambda) {
+        return argThat(Boolean.TYPE, new LambdaMatcher(lambda));
+    }
+
+    /**
+     * Matches a <code>byte</code> parameter using a Java 8 lambda expression.
+     *
+     * @param lambda a {@link Predicate} to which the argument will be passed
+     * @return <code>0</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public byte byteWhere(Predicate<? super Byte> lambda) {
+        return argThat(Byte.TYPE, new LambdaMatcher(lambda));
+    }
+
+    /**
+     * Matches a <code>char</code> parameter using a Java 8 lambda expression.
+     *
+     * @param lambda a {@link Predicate} to which the argument will be passed
+     * @return <code>'\0'</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public char charWhere(Predicate<? super Character> lambda) {
+        return argThat(Character.TYPE, new LambdaMatcher(lambda));
+    }
+
+    /**
+     * Matches a <code>double</code> parameter using a Java 8 lambda expression.
+     *
+     * @param lambda a {@link Predicate} to which the argument will be passed
+     * @return <code>0</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public double doubleWhere(Predicate<? super Double> lambda) {
+        return argThat(Double.TYPE, new LambdaMatcher(lambda));
+    }
+
+    /**
+     * Matches a <code>float</code> parameter using a Java 8 lambda expression.
+     *
+     * @param lambda a {@link Predicate} to which the argument will be passed
+     * @return <code>0</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public float floatWhere(Predicate<? super Float> lambda) {
+        return argThat(Float.TYPE, new LambdaMatcher(lambda));
+    }
+
+    /**
+     * Matches an <code>int</code> parameter using a Java 8 lambda expression.
+     *
+     * @param lambda a {@link Predicate} to which the argument will be passed
+     * @return <code>0</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public int intWhere(Predicate<? super Integer> lambda) {
+        return argThat(Integer.TYPE, new LambdaMatcher(lambda));
+    }
+
+    /**
+     * Matches a <code>long</code> parameter using a Java 8 lambda expression.
+     *
+     * @param lambda a {@link Predicate} to which the argument will be passed
+     * @return <code>0</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public long longWhere(Predicate<? super Long> lambda) {
+        return argThat(Long.TYPE, new LambdaMatcher(lambda));
+    }
+
+    /**
+     * Matches a <code>short</code> parameter using a Java 8 lambda expression.
+     *
+     * @param lambda a {@link Predicate} to which the argument will be passed
+     * @return <code>0</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public short shortWhere(Predicate<? super Short> lambda) {
+        return argThat(Short.TYPE, new LambdaMatcher(lambda));
+    }
+
 
     /**
      * Matches a <code>boolean</code> parameter equal to the given value.
@@ -378,7 +528,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public boolean eq(boolean value) {
-        return reportMatcher(new IsEqual(value), Boolean.TYPE);
+        return argThat(Boolean.TYPE, IsEqual.equalTo(value));
     }
 
     /**
@@ -388,7 +538,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public byte eq(byte value) {
-        return reportMatcher(new IsEqual(value), Byte.TYPE);
+        return argThat(Byte.TYPE, IsEqual.equalTo(value));
     }
 
     /**
@@ -398,7 +548,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public char eq(char value) {
-        return reportMatcher(new IsEqual(value), Character.TYPE);
+        return argThat(Character.TYPE, IsEqual.equalTo(value));
     }
 
     /**
@@ -408,7 +558,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public double eq(double value) {
-        return reportMatcher(new IsEqual(value), Double.TYPE);
+        return argThat(Double.TYPE, IsEqual.equalTo(value));
     }
 
     /**
@@ -418,7 +568,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public float eq(float value) {
-        return reportMatcher(new IsEqual(value), Float.TYPE);
+        return argThat(Float.TYPE, IsEqual.equalTo(value));
     }
 
     /**
@@ -428,7 +578,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public int eq(int value) {
-        return reportMatcher(new IsEqual(value), Integer.TYPE);
+        return argThat(Integer.TYPE, IsEqual.equalTo(value));
     }
 
     /**
@@ -438,7 +588,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public long eq(long value) {
-        return reportMatcher(new IsEqual(value), Long.TYPE);
+        return argThat(Long.TYPE, IsEqual.equalTo(value));
     }
 
     /**
@@ -448,7 +598,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public short eq(short value) {
-        return reportMatcher(new IsEqual(value), Short.TYPE);
+        return argThat(Short.TYPE, IsEqual.equalTo(value));
     }
 
     /**
@@ -458,7 +608,8 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T> T eq(T value) {
-        return (T) reportMatcher(new IsEqual(value), (value != null ? value.getClass() : null));
+        Class<T> expectedType = (Class<T>) (value != null ? value.getClass() : null);
+        return argThat(expectedType, IsEqual.equalTo(value));
     }
 
     /**
@@ -467,7 +618,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T isA(Class<T> clazz) {
-        return (T) reportMatcher(new IsInstanceOf(MoxieUtils.toNonPrimitive(clazz)), clazz);
+        return (T) argThat(clazz, IsInstanceOf.instanceOf(MoxieUtils.toNonPrimitive(clazz)));
     }
 
     /**
@@ -492,7 +643,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T isNotNull(Class<T> clazz) {
-        return reportMatcher(new IsNot<T>(new IsNull<T>()), clazz);
+        return argThat(clazz, IsNull.notNullValue());
     }
 
     /**
@@ -517,7 +668,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T isNull(Class<T> clazz) {
-        return reportMatcher(new IsNull<T>(), clazz);
+        return argThat(clazz, IsNull.nullValue());
     }
 
     /**
@@ -551,7 +702,8 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T> T same(T value) {
-        return (T) reportMatcher(new IsSame(value), (value != null ? value.getClass() : null));
+        Class<T> expectedType = (Class<T>) (value != null ? value.getClass() :null);
+        return argThat(expectedType, IsSame.sameInstance(value));
     }
 
     /**
@@ -560,7 +712,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public String hasSubstring(String substring) {
-        return reportMatcher(Matchers.containsString(substring), String.class);
+        return argThat(String.class, Matchers.containsString(substring));
     }
 
     /**
@@ -569,7 +721,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public String endsWith(String suffix) {
-        return reportMatcher(Matchers.endsWith(suffix), String.class);
+        return argThat(String.class, Matchers.endsWith(suffix));
     }
 
     /**
@@ -578,7 +730,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public String startsWith(String prefix) {
-        return reportMatcher(Matchers.startsWith(prefix), String.class);
+        return argThat(String.class, Matchers.startsWith(prefix));
     }
 
     /**
@@ -856,19 +1008,19 @@ public abstract class MoxieMatchers {
     @SuppressWarnings("unchecked")
     private static <T> T reportAnd(Object matchValuesArray, Class<T> clazz) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(clazz, matchValuesArray);
-        return reportMatcher(new AllOf(matchers), clazz);
+        return (T) argThat(clazz, new AllOf(matchers));
     }
 
     @SuppressWarnings("unchecked")
     private static <T> T reportOr(Object matchValuesArray, Class<T> clazz) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(clazz, matchValuesArray);
-        return reportMatcher(new AnyOf(matchers), clazz);
+        return (T) argThat(clazz, new AnyOf(matchers));
     }
 
     @SuppressWarnings("unchecked")
     private static <T> T reportNot(T matchValue, Class<T> clazz) {
         Matcher matcher = MatcherSyntax.singleMatcherFragment(clazz, matchValue);
-        return reportMatcher(new IsNot(matcher), clazz);
+        return (T) argThat(clazz, IsNot.not(matcher));
     }
 
     /**
@@ -877,7 +1029,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public String eqIgnoreCase(String value) {
-        return reportMatcher(new IsEqualIgnoringCase(value), String.class);
+        return argThat(String.class, IsEqualIgnoringCase.equalToIgnoringCase(value));
     }
 
     /**
@@ -904,7 +1056,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T matchesRegexp(Class<T> clazz, String pattern) {
-        return matchesRegexp(clazz, Pattern.compile(pattern));
+        return argThat(clazz, MatchesRegexp.matchesRegexp(pattern));
     }
 
     /**
@@ -930,15 +1082,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T matchesRegexp(Class<T> clazz, final Pattern pattern) {
-        return reportMatcher(new BaseMatcher() {
-            public boolean matches(Object o) {
-                return (o != null) && pattern.matcher(o.toString()).matches();
-            }
-
-            public void describeTo(Description description) {
-                description.appendText("matches /" + pattern.pattern() + '/');
-            }
-        }, (Class<T>) null);
+        return argThat((Class<T>) clazz, MatchesRegexp.matchesRegexp(pattern));
     }
 
     /**
@@ -947,7 +1091,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public double eq(double value, double delta) {
-        return reportMatcher(isCloseMatcher(value, delta), Double.TYPE);
+        return argThat(Double.TYPE, IsCloseTo.closeTo(value, delta));
     }
 
     /**
@@ -956,7 +1100,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public float eq(float value, float delta) {
-        return reportMatcher(isCloseMatcher(value, delta), Float.TYPE);
+        return argThat(Float.TYPE, IsCloseTo.closeTo(value, delta));
     }
 
     /**
@@ -965,7 +1109,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public byte geq(byte value) {
-        return reportMatcher(greaterThanOrEqualTo(value), Byte.TYPE);
+        return argThat(Byte.TYPE, OrderingComparison.greaterThanOrEqualTo(value));
     }
 
     /**
@@ -974,7 +1118,7 @@ public abstract class MoxieMatchers {
      * @return <code>'\0'</code>
      */
     static public char geq(char value) {
-        return reportMatcher(greaterThanOrEqualTo(value), Character.TYPE);
+        return argThat(Character.TYPE, OrderingComparison.greaterThanOrEqualTo(value));
     }
 
     /**
@@ -984,7 +1128,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T extends Comparable<T>> T geq(T value) {
-        return (T) reportMatcher(greaterThanOrEqualTo(value), Comparable.class);
+        return (T) argThat(Comparable.class, OrderingComparison.<Comparable>greaterThanOrEqualTo(value));
     }
 
     /**
@@ -993,7 +1137,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public double geq(double value) {
-        return reportMatcher(greaterThanOrEqualTo(value), Double.TYPE);
+        return argThat(Double.TYPE, OrderingComparison.greaterThanOrEqualTo(value));
     }
 
     /**
@@ -1002,7 +1146,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public float geq(float value) {
-        return reportMatcher(greaterThanOrEqualTo(value), Float.TYPE);
+        return argThat(Float.TYPE, OrderingComparison.greaterThanOrEqualTo(value));
     }
 
     /**
@@ -1011,7 +1155,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public int geq(int value) {
-        return reportMatcher(greaterThanOrEqualTo(value), Integer.TYPE);
+        return argThat(Integer.TYPE, OrderingComparison.greaterThanOrEqualTo(value));
     }
 
     /**
@@ -1020,7 +1164,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public long geq(long value) {
-        return reportMatcher(greaterThanOrEqualTo(value), Long.TYPE);
+        return argThat(Long.TYPE, OrderingComparison.greaterThanOrEqualTo(value));
     }
 
     /**
@@ -1029,7 +1173,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public short geq(short value) {
-        return reportMatcher(greaterThanOrEqualTo(value), Short.TYPE);
+        return argThat(Short.TYPE, OrderingComparison.greaterThanOrEqualTo(value));
     }
 
     /**
@@ -1038,7 +1182,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public byte gt(byte value) {
-        return reportMatcher(greaterThan(value), Byte.TYPE);
+        return argThat(Byte.TYPE, OrderingComparison.greaterThan(value));
     }
 
     /**
@@ -1047,7 +1191,7 @@ public abstract class MoxieMatchers {
      * @return <code>'\0'</code>
      */
     static public char gt(char value) {
-        return reportMatcher(greaterThan(value), Character.TYPE);
+        return argThat(Character.TYPE, OrderingComparison.greaterThan(value));
     }
 
     /**
@@ -1057,7 +1201,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T extends Comparable<T>> T gt(T value) {
-        return (T) reportMatcher(greaterThan(value), Comparable.class);
+        return (T) argThat(Comparable.class, OrderingComparison.<Comparable>greaterThan(value));
     }
 
     /**
@@ -1066,7 +1210,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public double gt(double value) {
-        return reportMatcher(greaterThan(value), Double.TYPE);
+        return argThat(Double.TYPE, OrderingComparison.greaterThan(value));
     }
 
     /**
@@ -1075,7 +1219,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public float gt(float value) {
-        return reportMatcher(greaterThan(value), Float.TYPE);
+        return argThat(Float.TYPE, OrderingComparison.greaterThan(value));
     }
 
     /**
@@ -1084,7 +1228,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public int gt(int value) {
-        return reportMatcher(greaterThan(value), Integer.TYPE);
+        return argThat(Integer.TYPE, OrderingComparison.greaterThan(value));
     }
 
     /**
@@ -1093,7 +1237,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public long gt(long value) {
-        return reportMatcher(greaterThan(value), Long.TYPE);
+        return argThat(Long.TYPE, OrderingComparison.greaterThan(value));
     }
 
     /**
@@ -1102,7 +1246,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public short gt(short value) {
-        return reportMatcher(greaterThan(value), Short.TYPE);
+        return argThat(Short.TYPE, OrderingComparison.greaterThan(value));
     }
 
     /**
@@ -1111,7 +1255,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public byte leq(byte value) {
-        return reportMatcher(lessThanOrEqualTo(value), Byte.TYPE);
+        return argThat(Byte.TYPE, OrderingComparison.lessThanOrEqualTo(value));
     }
 
     /**
@@ -1120,7 +1264,7 @@ public abstract class MoxieMatchers {
      * @return <code>'\0'</code>
      */
     static public char leq(char value) {
-        return reportMatcher(lessThanOrEqualTo(value), Character.TYPE);
+        return argThat(Character.TYPE, OrderingComparison.lessThanOrEqualTo(value));
     }
 
     /**
@@ -1130,7 +1274,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T extends Comparable<T>> T leq(T value) {
-        return (T) reportMatcher(lessThanOrEqualTo(value), Comparable.class);
+        return (T) argThat(Comparable.class, OrderingComparison.<Comparable>lessThanOrEqualTo(value));
     }
 
     /**
@@ -1139,7 +1283,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public double leq(double value) {
-        return reportMatcher(lessThanOrEqualTo(value), Double.TYPE);
+        return argThat(Double.TYPE, OrderingComparison.lessThanOrEqualTo(value));
     }
 
     /**
@@ -1148,7 +1292,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public float leq(float value) {
-        return reportMatcher(lessThanOrEqualTo(value), Float.TYPE);
+        return argThat(Float.TYPE, OrderingComparison.lessThanOrEqualTo(value));
     }
 
     /**
@@ -1157,7 +1301,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public int leq(int value) {
-        return reportMatcher(lessThanOrEqualTo(value), Integer.TYPE);
+        return argThat(Integer.TYPE, OrderingComparison.lessThanOrEqualTo(value));
     }
 
     /**
@@ -1166,7 +1310,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public long leq(long value) {
-        return reportMatcher(lessThanOrEqualTo(value), Long.TYPE);
+        return argThat(Long.TYPE, OrderingComparison.lessThanOrEqualTo(value));
     }
 
     /**
@@ -1175,7 +1319,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public short leq(short value) {
-        return reportMatcher(lessThanOrEqualTo(value), Short.TYPE);
+        return argThat(Short.TYPE, OrderingComparison.lessThanOrEqualTo(value));
     }
 
     /**
@@ -1184,7 +1328,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public byte lt(byte value) {
-        return reportMatcher(lessThan(value), Byte.TYPE);
+        return argThat(Byte.TYPE, OrderingComparison.lessThan(value));
     }
 
     /**
@@ -1193,7 +1337,7 @@ public abstract class MoxieMatchers {
      * @return <code>'\0'</code>
      */
     static public char lt(char value) {
-        return reportMatcher(lessThan(value), Character.TYPE);
+        return argThat(Character.TYPE, OrderingComparison.lessThan(value));
     }
 
     /**
@@ -1203,7 +1347,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T extends Comparable<T>> T lt(T value) {
-        return (T) reportMatcher(lessThan(value), Comparable.class);
+        return (T) argThat(Comparable.class, OrderingComparison.<Comparable>lessThan(value));
     }
 
     /**
@@ -1212,7 +1356,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public double lt(double value) {
-        return reportMatcher(lessThan(value), Double.TYPE);
+        return argThat(Double.TYPE, OrderingComparison.lessThan(value));
     }
 
     /**
@@ -1221,7 +1365,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public float lt(float value) {
-        return reportMatcher(lessThan(value), Float.TYPE);
+        return argThat(Float.TYPE, OrderingComparison.lessThan(value));
     }
 
     /**
@@ -1230,7 +1374,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public int lt(int value) {
-        return reportMatcher(lessThan(value), Integer.TYPE);
+        return argThat(Integer.TYPE, OrderingComparison.lessThan(value));
     }
 
     /**
@@ -1239,7 +1383,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public long lt(long value) {
-        return reportMatcher(lessThan(value), Long.TYPE);
+        return argThat(Long.TYPE, OrderingComparison.lessThan(value));
     }
 
     /**
@@ -1248,7 +1392,7 @@ public abstract class MoxieMatchers {
      * @return <code>0</code>
      */
     static public short lt(short value) {
-        return reportMatcher(lessThan(value), Short.TYPE);
+        return argThat(Short.TYPE, OrderingComparison.lessThan(value));
     }
 
 
@@ -1264,7 +1408,7 @@ public abstract class MoxieMatchers {
      */
     static public boolean[] array(boolean... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Boolean.TYPE, value);
-        return reportMatcher(isArrayMatcher(matchers), boolean[].class);
+        return argThat(boolean[].class, new IsArray<boolean[]>(matchers));
     }
 
     /**
@@ -1279,7 +1423,7 @@ public abstract class MoxieMatchers {
      */
     static public byte[] array(byte... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Byte.TYPE, value);
-        return reportMatcher(isArrayMatcher(matchers), byte[].class);
+        return argThat(byte[].class, new IsArray<byte[]>(matchers));
     }
 
     /**
@@ -1294,7 +1438,7 @@ public abstract class MoxieMatchers {
      */
     static public char[] array(char... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Character.TYPE, value);
-        return reportMatcher(isArrayMatcher(matchers), char[].class);
+        return argThat(char[].class, new IsArray<char[]>(matchers));
     }
 
     /**
@@ -1309,7 +1453,7 @@ public abstract class MoxieMatchers {
      */
     static public double[] array(double... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Double.TYPE, value);
-        return reportMatcher(isArrayMatcher(matchers), double[].class);
+        return argThat(double[].class, new IsArray<double[]>(matchers));
     }
 
     /**
@@ -1324,7 +1468,7 @@ public abstract class MoxieMatchers {
      */
     static public float[] array(float... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Float.TYPE, value);
-        return reportMatcher(isArrayMatcher(matchers), float[].class);
+        return argThat(float[].class, new IsArray<float[]>(matchers));
     }
 
     /**
@@ -1339,7 +1483,7 @@ public abstract class MoxieMatchers {
      */
     static public int[] array(int... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Integer.TYPE, value);
-        return reportMatcher(isArrayMatcher(matchers), int[].class);
+        return argThat(int[].class, new IsArray<int[]>(matchers));
     }
 
     /**
@@ -1354,7 +1498,7 @@ public abstract class MoxieMatchers {
      */
     static public long[] array(long... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Long.TYPE, value);
-        return reportMatcher(isArrayMatcher(matchers), long[].class);
+        return argThat(long[].class, new IsArray<long[]>(matchers));
     }
 
     /**
@@ -1369,7 +1513,7 @@ public abstract class MoxieMatchers {
      */
     static public short[] array(short... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Short.TYPE, value);
-        return reportMatcher(isArrayMatcher(matchers), short[].class);
+        return argThat(short[].class, new IsArray<short[]>(matchers));
     }
 
     /**
@@ -1385,7 +1529,7 @@ public abstract class MoxieMatchers {
     @SuppressWarnings("unchecked")
     static public <T> T[] array(T... value) {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(null, value);
-        return (T[]) reportMatcher(isArrayMatcher(matchers), Object[].class);
+        return (T[]) argThat(Object[].class, new IsArray(matchers));
     }
 
     /**
@@ -1399,7 +1543,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public boolean[] aryEq(boolean... value) {
-        return reportMatcher(arrayEqualsMatcher(value), boolean[].class);
+        return argThat(boolean[].class, IsArray.booleanArrayEqualTo(value));
     }
 
     /**
@@ -1413,7 +1557,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public byte[] aryEq(byte... value) {
-        return reportMatcher(arrayEqualsMatcher(value), byte[].class);
+        return argThat(byte[].class, IsArray.byteArrayEqualTo(value));
     }
 
     /**
@@ -1427,7 +1571,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public char[] aryEq(char... value) {
-        return reportMatcher(arrayEqualsMatcher(value), char[].class);
+        return argThat(char[].class, IsArray.charArrayEqualTo(value));
     }
 
     /**
@@ -1441,7 +1585,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public double[] aryEq(double... value) {
-        return reportMatcher(arrayEqualsMatcher(value), double[].class);
+        return argThat(double[].class, IsArray.doubleArrayEqualTo(value));
     }
 
     /**
@@ -1455,7 +1599,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public float[] aryEq(float... value) {
-        return reportMatcher(arrayEqualsMatcher(value), float[].class);
+        return argThat(float[].class, IsArray.floatArrayEqualTo(value));
     }
 
     /**
@@ -1469,7 +1613,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public int[] aryEq(int... value) {
-        return reportMatcher(arrayEqualsMatcher(value), int[].class);
+        return argThat(int[].class, IsArray.intArrayEqualTo(value));
     }
 
     /**
@@ -1483,7 +1627,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public long[] aryEq(long... value) {
-        return reportMatcher(arrayEqualsMatcher(value), long[].class);
+        return argThat(long[].class, IsArray.longArrayEqualTo(value));
     }
 
     /**
@@ -1497,7 +1641,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public short[] aryEq(short... value) {
-        return reportMatcher(arrayEqualsMatcher(value), short[].class);
+        return argThat(short[].class, IsArray.shortArrayEqualTo(value));
     }
 
     /**
@@ -1512,7 +1656,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T> T[] aryEq(T... value) {
-        return (T[]) reportMatcher(arrayEqualsMatcher(value), Object[].class);
+        return (T[]) argThat(Object[].class, IsArray.<Object>arrayEqualTo(value));
     }
 
     /**
@@ -1523,7 +1667,7 @@ public abstract class MoxieMatchers {
     @SuppressWarnings("unchecked")
     static public <T> T[] arrayWith(T item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(Object.class, item);
-        return (T[]) reportMatcher(isArrayContainingMatcher(itemMatcher), Object[].class);
+        return (T[]) argThat(Object[].class, IsArrayContaining.hasItemInArray(itemMatcher));
     }
 
     /**
@@ -1542,9 +1686,9 @@ public abstract class MoxieMatchers {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
-            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+            arrayMatchers.add(IsArrayContaining.hasItemInArray(itemMatcher));
         }
-        return (T[]) reportMatcher(new AllOf(arrayMatchers), Object[].class);
+        return (T[]) argThat(Object[].class, new AllOf(arrayMatchers));
     }
 
     /**
@@ -1552,9 +1696,10 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public boolean[] booleanArrayWith(boolean item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(boolean.class, item);
-        return reportMatcher(isArrayContainingMatcher(itemMatcher), boolean[].class);
+        return argThat(boolean[].class, IsArrayContaining.hasItemInArray(itemMatcher));
     }
 
     /**
@@ -1573,9 +1718,9 @@ public abstract class MoxieMatchers {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(boolean.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
-            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+            arrayMatchers.add(IsArrayContaining.hasItemInArray(itemMatcher));
         }
-        return reportMatcher(new AllOf(arrayMatchers), boolean[].class);
+        return argThat(boolean[].class, new AllOf(arrayMatchers));
     }
 
     /**
@@ -1583,9 +1728,10 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public byte[] byteArrayWith(byte item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(byte.class, item);
-        return reportMatcher(isArrayContainingMatcher(itemMatcher), byte[].class);
+        return argThat(byte[].class, IsArrayContaining.hasItemInArray(itemMatcher));
     }
 
     /**
@@ -1604,9 +1750,9 @@ public abstract class MoxieMatchers {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(byte.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
-            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+            arrayMatchers.add(IsArrayContaining.hasItemInArray(itemMatcher));
         }
-        return reportMatcher(new AllOf(arrayMatchers), byte[].class);
+        return argThat(byte[].class, new AllOf(arrayMatchers));
     }
 
     /**
@@ -1614,9 +1760,10 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public char[] charArrayWith(char item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(char.class, item);
-        return reportMatcher(isArrayContainingMatcher(itemMatcher), char[].class);
+        return argThat(char[].class, IsArrayContaining.hasItemInArray(itemMatcher));
     }
 
     /**
@@ -1635,9 +1782,9 @@ public abstract class MoxieMatchers {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(char.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
-            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+            arrayMatchers.add(IsArrayContaining.hasItemInArray(itemMatcher));
         }
-        return reportMatcher(new AllOf(arrayMatchers), char[].class);
+        return argThat(char[].class, new AllOf(arrayMatchers));
     }
 
     /**
@@ -1645,9 +1792,10 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public short[] shortArrayWith(short item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(short.class, item);
-        return reportMatcher(isArrayContainingMatcher(itemMatcher), short[].class);
+        return argThat(short[].class, IsArrayContaining.hasItemInArray(itemMatcher));
     }
 
     /**
@@ -1666,9 +1814,9 @@ public abstract class MoxieMatchers {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(short.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
-            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+            arrayMatchers.add(IsArrayContaining.hasItemInArray(itemMatcher));
         }
-        return reportMatcher(new AllOf(arrayMatchers), short[].class);
+        return argThat(short[].class, new AllOf(arrayMatchers));
     }
 
     /**
@@ -1676,9 +1824,10 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public int[] intArrayWith(int item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(int.class, item);
-        return reportMatcher(isArrayContainingMatcher(itemMatcher), int[].class);
+        return argThat(int[].class, IsArrayContaining.hasItemInArray(itemMatcher));
     }
 
     /**
@@ -1697,9 +1846,9 @@ public abstract class MoxieMatchers {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(int.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
-            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+            arrayMatchers.add(IsArrayContaining.hasItemInArray(itemMatcher));
         }
-        return reportMatcher(new AllOf(arrayMatchers), int[].class);
+        return argThat(int[].class, new AllOf(arrayMatchers));
     }
 
     /**
@@ -1707,9 +1856,10 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public long[] longArrayWith(long item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(long.class, item);
-        return reportMatcher(isArrayContainingMatcher(itemMatcher), long[].class);
+        return argThat(long[].class, IsArrayContaining.hasItemInArray(itemMatcher));
     }
 
     /**
@@ -1728,9 +1878,9 @@ public abstract class MoxieMatchers {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(long.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
-            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+            arrayMatchers.add(IsArrayContaining.hasItemInArray(itemMatcher));
         }
-        return reportMatcher(new AllOf(arrayMatchers), long[].class);
+        return argThat(long[].class, new AllOf(arrayMatchers));
     }
 
     /**
@@ -1738,9 +1888,10 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public float[] floatArrayWith(float item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(float.class, item);
-        return reportMatcher(isArrayContainingMatcher(itemMatcher), float[].class);
+        return argThat(float[].class, IsArrayContaining.hasItemInArray(itemMatcher));
     }
 
     /**
@@ -1759,9 +1910,9 @@ public abstract class MoxieMatchers {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(float.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
-            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+            arrayMatchers.add(IsArrayContaining.hasItemInArray(itemMatcher));
         }
-        return reportMatcher(new AllOf(arrayMatchers), float[].class);
+        return argThat(float[].class, new AllOf(arrayMatchers));
     }
 
     /**
@@ -1769,9 +1920,10 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public double[] doubleArrayWith(double item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(double.class, item);
-        return reportMatcher(isArrayContainingMatcher(itemMatcher), double[].class);
+        return argThat(double[].class, IsArrayContaining.hasItemInArray(itemMatcher));
     }
 
     /**
@@ -1790,9 +1942,9 @@ public abstract class MoxieMatchers {
         List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(double.class, items);
         List<Matcher> arrayMatchers = new ArrayList<Matcher>();
         for (Matcher itemMatcher : itemMatchers) {
-            arrayMatchers.add(isArrayContainingMatcher(itemMatcher));
+            arrayMatchers.add(IsArrayContaining.hasItemInArray(itemMatcher));
         }
-        return reportMatcher(new AllOf(arrayMatchers), double[].class);
+        return argThat(double[].class, new AllOf(arrayMatchers));
     }
 
     /**
@@ -1822,7 +1974,7 @@ public abstract class MoxieMatchers {
     @SuppressWarnings("unchecked")
     static public <T extends Iterable> T collectionWith(Class<T> collectionClass, Object item) {
         Matcher itemMatcher = MatcherSyntax.singleMatcherFragment(Object.class, item);
-        return reportMatcher(Matchers.hasItem(itemMatcher), collectionClass);
+        return (T) argThat(collectionClass, (Matcher) Matchers.hasItem(itemMatcher));
     }
 
     /**
@@ -1865,7 +2017,7 @@ public abstract class MoxieMatchers {
         for (Matcher itemMatcher : itemMatchers) {
             arrayMatchers.add(Matchers.hasItem(itemMatcher));
         }
-        return reportMatcher(new AllOf(arrayMatchers), collectionClass);
+        return (T) argThat(collectionClass, (Matcher) new AllOf(arrayMatchers));
     }
 
     /**
@@ -1894,25 +2046,10 @@ public abstract class MoxieMatchers {
      * @param items            Values to be found in the collection (raw values or {@link MoxieMatchers} invocations)
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T extends Iterable> T collection(Class<T> collectionClass, Object... items) {
         final List<Matcher> itemMatchers = MatcherSyntax.matcherListFragment(Object.class, items);
-        return reportMatcher(new BaseMatcher() {
-            public boolean matches(Object o) {
-                @SuppressWarnings("unchecked")
-                Iterator<T> itemsIter = ((Iterable<T>) o).iterator();
-                Iterator<Matcher> matchersIter = itemMatchers.iterator();
-                while (itemsIter.hasNext() && matchersIter.hasNext()) {
-                    if (!matchersIter.next().matches(itemsIter.next())) {
-                        return false;
-                    }
-                }
-                return itemsIter.hasNext() == matchersIter.hasNext();
-            }
-
-            public void describeTo(Description description) {
-                description.appendList("a collection with elements matching: [", ", ", "]", itemMatchers);
-            }
-        }, collectionClass);
+        return (T) argThat(collectionClass, new IsIterableContainingInOrder(itemMatchers));
     }
 
     /**
@@ -1946,7 +2083,7 @@ public abstract class MoxieMatchers {
         List<Matcher> matchers = MatcherSyntax.matcherListFragment(Object.class, Arrays.asList(key, value));
         Matcher keyMatcher = matchers.remove(0);
         Matcher valueMatcher = matchers.remove(0);
-        return reportMatcher(Matchers.hasEntry(keyMatcher, valueMatcher), mapClass);
+        return (M) argThat(mapClass, Matchers.hasEntry(keyMatcher, valueMatcher));
     }
 
     /**
@@ -1976,7 +2113,7 @@ public abstract class MoxieMatchers {
     @SuppressWarnings("unchecked")
     static public <M extends Map> M mapWithKey(Class<M> mapClass, Object key) {
         Matcher keyMatcher = MatcherSyntax.singleMatcherFragment(Object.class, key);
-        return reportMatcher(Matchers.hasKey(keyMatcher), mapClass);
+        return (M) argThat(mapClass, Matchers.hasKey(keyMatcher));
     }
 
     /**
@@ -2006,7 +2143,7 @@ public abstract class MoxieMatchers {
     @SuppressWarnings("unchecked")
     static public <M extends Map> M mapWithValue(Class<M> mapClass, Object value) {
         Matcher valueMatcher = MatcherSyntax.singleMatcherFragment(Object.class, value);
-        return reportMatcher(Matchers.hasValue(valueMatcher), mapClass);
+        return (M) argThat(mapClass, Matchers.hasValue(valueMatcher));
     }
 
 
@@ -2038,7 +2175,7 @@ public abstract class MoxieMatchers {
      */
     static public <T> T hasProperty(Class<T> clazz, String propertyName, Object value) {
         Matcher valueMatcher = MatcherSyntax.singleMatcherFragment(Object.class, value);
-        return reportMatcher(Matchers.hasProperty(propertyName, valueMatcher), clazz);
+        return argThat(clazz, Matchers.hasProperty(propertyName, valueMatcher));
     }
 
     /**
@@ -2047,7 +2184,7 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public String eqIgnoreWhiteSpace(String value) {
-        return reportMatcher(Matchers.equalToIgnoringWhiteSpace(value), String.class);
+        return argThat(String.class, Matchers.equalToIgnoringWhiteSpace(value));
     }
 
     /**
@@ -2143,7 +2280,7 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * Matches a {@link Collection} of the specified size.  (The length may be a {@link MoxieMatchers} invocation.)
+     * Matches a {@link Collection} of the specified size.  (The size may be a {@link MoxieMatchers} invocation.)
      *
      * @param size             Desired size of the collection (raw value or {@link MoxieMatchers} invocation)
      * @return <code>null</code>
@@ -2155,7 +2292,7 @@ public abstract class MoxieMatchers {
 
     /**
      * <p>
-     * Matches a {@link Collection} of the specified size.  (The length may be a {@link MoxieMatchers} invocation.)
+     * Matches a {@link Collection} of the specified size.  (The size may be a {@link MoxieMatchers} invocation.)
      * </p>
      * <p>
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
@@ -2167,21 +2304,42 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <C extends Collection> C collectionSize(Class<C> collectionClass, int size) {
-        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
-        return reportMatcher(new BaseMatcher() {
-            public boolean matches(Object o) {
-                return o != null && sizeMatcher.matches(((Collection) o).size());
-            }
-
-            public void describeTo(Description description) {
-                description.appendText("a collection with size ");
-                sizeMatcher.describeTo(description);
-            }
-        }, collectionClass);
+        final Matcher<Integer> sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return argThat(collectionClass, IsCollectionWithSize.collectionWithSize(sizeMatcher));
     }
 
     /**
-     * Matches a {@link Map} of the specified size.  (The length may be a {@link MoxieMatchers} invocation.)
+     * Matches an {@link Iterable} of the specified size.  (The size may be a {@link MoxieMatchers} invocation.)
+     *
+     * @param size             Desired size of the collection (raw value or {@link MoxieMatchers} invocation)
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public <I extends Iterable> I iterableSize(int size) {
+        return (I) iterableSize(Iterable.class, size);
+    }
+
+    /**
+     * <p>
+     * Matches an {@link Iterable} of the specified size.  (The size may be a {@link MoxieMatchers} invocation.)
+     * </p>
+     * <p>
+     * The class argument to this method is not matched against the value passed to the mocked method; it is provided
+     * as a convenient way of specifying the type parameter for those who wish to statically import this method.
+     * </p>
+     *
+     * @param iterableClass  Type of the expected iterable
+     * @param size           Desired size of the iterable (raw value or {@link MoxieMatchers} invocation)
+     * @return <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    static public <I extends Iterable> I iterableSize(Class<I> iterableClass, int size) {
+        final Matcher<Integer> sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return (I) argThat(iterableClass, new IsIterableWithSize(sizeMatcher));
+    }
+
+    /**
+     * Matches a {@link Map} of the specified size.  (The size may be a {@link MoxieMatchers} invocation.)
      *
      * @param size      Desired size of the map (raw value or {@link MoxieMatchers} invocation)
      * @return <code>null</code>
@@ -2193,7 +2351,7 @@ public abstract class MoxieMatchers {
 
     /**
      * <p>
-     * Matches a {@link Map} of the specified size.  (The length may be a {@link MoxieMatchers} invocation.)
+     * Matches a {@link Map} of the specified size.  (The size may be a {@link MoxieMatchers} invocation.)
      * </p>
      * <p>
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
@@ -2205,17 +2363,8 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <M extends Map> M mapSize(Class<M> mapClass, int size) {
-        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
-        return reportMatcher(new BaseMatcher() {
-            public boolean matches(Object o) {
-                return o != null && sizeMatcher.matches(((Map) o).size());
-            }
-
-            public void describeTo(Description description) {
-                description.appendText("a map with size ");
-                sizeMatcher.describeTo(description);
-            }
-        }, mapClass);
+        final Matcher<Integer> sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return argThat(mapClass, IsMapWithSize.mapWithSize(sizeMatcher));
     }
 
     /**
@@ -2242,8 +2391,8 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public <T> T[] arrayLength(Class<T> clazz, int size) {
-        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
-        return reportMatcher(arraySizeMatcher(sizeMatcher), MoxieUtils.arrayClassFor(clazz));
+        final Matcher<Integer> sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return argThat(MoxieUtils.arrayClassFor(clazz), IsArrayWithSize.arrayWithSize(sizeMatcher));
     }
 
     /**
@@ -2252,8 +2401,8 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public boolean[] booleanArrayLength(int size) {
-        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
-        return reportMatcher(arraySizeMatcher(sizeMatcher), boolean[].class);
+        final Matcher<Integer> sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return argThat(boolean[].class, IsArrayWithSize.booleanArrayWithSize(sizeMatcher));
     }
 
     /**
@@ -2262,8 +2411,8 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public byte[] byteArrayLength(int size) {
-        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
-        return reportMatcher(arraySizeMatcher(sizeMatcher), byte[].class);
+        final Matcher<Integer> sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return argThat(byte[].class, IsArrayWithSize.byteArrayWithSize(sizeMatcher));
     }
 
     /**
@@ -2272,8 +2421,8 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public char[] charArrayLength(int size) {
-        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
-        return reportMatcher(arraySizeMatcher(sizeMatcher), char[].class);
+        final Matcher<Integer> sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return argThat(char[].class, IsArrayWithSize.charArrayWithSize(sizeMatcher));
     }
 
     /**
@@ -2282,8 +2431,8 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public short[] shortArrayLength(int size) {
-        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
-        return reportMatcher(arraySizeMatcher(sizeMatcher), short[].class);
+        final Matcher<Integer> sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return argThat(short[].class, IsArrayWithSize.shortArrayWithSize(sizeMatcher));
     }
 
     /**
@@ -2292,8 +2441,8 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public int[] intArrayLength(int size) {
-        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
-        return reportMatcher(arraySizeMatcher(sizeMatcher), int[].class);
+        final Matcher<Integer> sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return argThat(int[].class, IsArrayWithSize.intArrayWithSize(sizeMatcher));
     }
 
     /**
@@ -2302,8 +2451,8 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public long[] longArrayLength(int size) {
-        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
-        return reportMatcher(arraySizeMatcher(sizeMatcher), long[].class);
+        final Matcher<Integer> sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return argThat(long[].class, IsArrayWithSize.longArrayWithSize(sizeMatcher));
     }
 
     /**
@@ -2312,8 +2461,8 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public float[] floatArrayLength(int size) {
-        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
-        return reportMatcher(arraySizeMatcher(sizeMatcher), float[].class);
+        final Matcher<Integer> sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return argThat(float[].class, IsArrayWithSize.floatArrayWithSize(sizeMatcher));
     }
 
     /**
@@ -2322,8 +2471,8 @@ public abstract class MoxieMatchers {
      * @return <code>null</code>
      */
     static public double[] doubleArrayLength(int size) {
-        final Matcher sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
-        return reportMatcher(arraySizeMatcher(sizeMatcher), double[].class);
+        final Matcher<Integer> sizeMatcher = MatcherSyntax.singleMatcherFragment(Integer.TYPE, size);
+        return argThat(double[].class, IsArrayWithSize.doubleArrayWithSize(sizeMatcher));
     }
 
     /**
@@ -2349,8 +2498,9 @@ public abstract class MoxieMatchers {
      *
      * @return <code>null</code>
      */
+    @SuppressWarnings("unchecked")
     static public <T> T captureTo(Class<T> clazz, Collection<? super T> destination) {
-        return reportMatcher(captureMatcher(destination), clazz);
+        return (T) argThat(clazz, (Matcher) captureMatcher(destination));
     }
 
     /**
@@ -2449,156 +2599,6 @@ public abstract class MoxieMatchers {
         };
     }
 
-    private static BaseMatcher arraySizeMatcher(final Matcher sizeMatcher) {
-        return new BaseMatcher() {
-            public boolean matches(Object o) {
-                return o != null && sizeMatcher.matches(Array.getLength(o));
-            }
-
-            public void describeTo(Description description) {
-                description.appendText("an array with length ");
-                sizeMatcher.describeTo(description);
-            }
-        };
-    }
-
-    // Hamcrest's IsArray matcher doesn't look as if it works on primitive arrays.
-    static Matcher isArrayMatcher(final List<Matcher> elementMatchers) {
-        return new BaseMatcher() {
-            public boolean matches(Object o) {
-                if (o == null || !o.getClass().isArray()) {
-                    return false;
-                }
-                int arraySize = Array.getLength(o);
-                if (elementMatchers.size() != arraySize) {
-                    return false;
-                }
-                for (int i = 0; i < arraySize; i++) {
-                    if (!elementMatchers.get(i).matches(Array.get(o, i))) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            public void describeTo(Description description) {
-                description.appendList("[", ", ", "]", elementMatchers);
-            }
-        };
-    }
-
-    // Hamcrest's IsArrayContaining matcher doesn't look as if it works on primitive arrays.
-    static Matcher isArrayContainingMatcher(final Matcher elementMatcher) {
-        return new BaseMatcher() {
-            public boolean matches(Object o) {
-                if (o == null || !o.getClass().isArray()) {
-                    return false;
-                }
-                int arraySize = Array.getLength(o);
-                for (int i = 0; i < arraySize; i++) {
-                    if (elementMatcher.matches(Array.get(o, i))) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            public void describeTo(Description description) {
-                description.appendText("an array containing ");
-                elementMatcher.describeTo(description);
-            }
-        };
-    }
-
-    static Matcher arrayEqualsMatcher(Object arrayValue) {
-        final List elementsList = MoxieUtils.listFromArray(arrayValue);
-        return new BaseMatcher() {
-            public boolean matches(Object o) {
-                if (o == null || !o.getClass().isArray()) {
-                    return false;
-                }
-                List oList = MoxieUtils.listFromArray(o);
-                return elementsList.equals(oList);
-            }
-
-            @SuppressWarnings("unchecked")
-            public void describeTo(Description description) {
-                description.appendValueList("[", ", ", "]", elementsList);
-            }
-        };
-    }
-
-    // Hamcrest's IsCloseTo matcher only works on Doubles.
-
-    static Matcher isCloseMatcher(final double value, final double delta) {
-        return new BaseMatcher() {
-            public boolean matches(Object o) {
-                if (o == null || !(o instanceof Number)) {
-                    return false;
-                }
-                return Math.abs(((Number) o).doubleValue() - value) <= delta;
-            }
-
-            public void describeTo(Description description) {
-                description.appendText("a Number within ").appendValue(delta).appendText(" of ").appendValue(value);
-            }
-        };
-    }
-
-    // Hamcrest's OrderingComparisons class appears broken.
-
-    static Matcher comparisonMatcher(final Comparable value, final boolean lessThan, final boolean equalTo, final boolean greaterThan) {
-        return new BaseMatcher() {
-
-            public void describeTo(Description description) {
-                description.appendText("a value ");
-                if (lessThan) {
-                    description.appendText("less than ");
-                }
-                if (equalTo) {
-                    if (lessThan) {
-                        description.appendText("or ");
-                    }
-                    description.appendText("equal to ");
-                }
-                if (greaterThan) {
-                    if (lessThan || equalTo) {
-                        description.appendText("or ");
-                    }
-                    description.appendText("greater than ");
-                }
-                description.appendValue(value);
-            }
-
-            public boolean matches(Object o) {
-                if (o == null) {
-                    return false;
-                }
-                @SuppressWarnings("unchecked")
-                int result = value.compareTo(o);
-                return (result > 0 && lessThan) ||
-                        (result == 0 && equalTo) ||
-                        (result < 0 && greaterThan);
-            }
-        };
-    }
-
-    static Matcher greaterThanOrEqualTo(Comparable value) {
-        return comparisonMatcher(value, false, true, true);
-    }
-
-    static Matcher greaterThan(Comparable value) {
-        return comparisonMatcher(value, false, false, true);
-    }
-
-    static Matcher lessThanOrEqualTo(Comparable value) {
-        return comparisonMatcher(value, true, true, false);
-    }
-
-    static Matcher lessThan(Comparable value) {
-        return comparisonMatcher(value, true, false, false);
-    }
-
     /**
      * <p>
      * Registers a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} with Moxie's magical parameter-matching mechanism.
@@ -2607,14 +2607,15 @@ public abstract class MoxieMatchers {
      * See the discussion in the summary javadoc for the {@link MoxieMatchers} class for more details.
      * </p>
      *
+     * @deprecated This method is equivalent to {@link #argThat(Class, org.hamcrest.Matcher) argThat(expectedType, matcher)}.  Use that method instead; for simplicity, this method will likely go away in a future release.
      * @param matcher      a Hamcrest {@link Matcher} to be registered
      * @param expectedType optional - type of the expected parameter (particularly important if matching a primitive parameter)
      * @param <T>          type of the expected parameter
      * @return <code>null</code> if <code>expectedType</code> is an object, or the primitive's default value if <code>expectedType</code> is a primitive
      */
+    @SuppressWarnings("unchecked")
     static public <T> T reportMatcher(Matcher matcher, Class<T> expectedType) {
-        getMatcherReports().add(new MatcherReport(matcher, expectedType));
-        return MoxieUtils.defaultValue(expectedType);
+        return argThat(expectedType, (Matcher<T>) matcher);
     }
 
     static LinkedList<MatcherReport> getMatcherReports() {

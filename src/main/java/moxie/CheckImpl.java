@@ -22,6 +22,7 @@
 
 package moxie;
 
+import moxie.hamcrest.IsArray;
 import org.hamcrest.Matcher;
 
 import java.util.List;
@@ -60,7 +61,8 @@ abstract class CheckImpl<C extends CheckImpl<C,I,R>, I extends Interception, R> 
 
     protected Object handleInvocation(InvocableAdapter invocable, Object[] params) {
         List<Matcher> argMatchers = MatcherSyntax.methodCall(invocable, params);
-        Matcher argsMatcher = MoxieMatchers.isArrayMatcher(argMatchers);
+        @SuppressWarnings("unchecked")
+        Matcher argsMatcher = new IsArray(argMatchers);
 
         int cursor = 0;
         if (groups != null) {

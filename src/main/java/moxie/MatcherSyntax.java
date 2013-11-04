@@ -22,6 +22,7 @@
 
 package moxie;
 
+import moxie.hamcrest.IsArray;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.IsEqual;
 
@@ -60,7 +61,8 @@ class MatcherSyntax {
         return shouldFullyConsumeMatcherReports(matcherListFragment(expectedParameterTypes, matchValues));
     }
 
-    static <T> Matcher singleMatcherFragment(Class<T> expectedParameterType, T matchValue) {
+    @SuppressWarnings("unchecked")
+    static <T> Matcher<T> singleMatcherFragment(Class<T> expectedParameterType, T matchValue) {
         return matcherListFragment(Collections.<Class<?>>singletonList(expectedParameterType), Collections.singletonList(matchValue)).get(0);
     }
 
@@ -116,11 +118,11 @@ class MatcherSyntax {
         return matchers;
     }
 
+    @SuppressWarnings("unchecked")
     static List<Matcher> methodCall(InvocableAdapter invocable, Object[] params) throws IllegalArgumentException {
+        List paramsList = params == null ? Collections.emptyList() : new ArrayList(Arrays.asList(params));
         LinkedList<MatcherReport> matcherReports = MoxieMatchers.getMatcherReports();
         List<Class<?>> paramTypes = new ArrayList<Class<?>>(Arrays.asList(invocable.getParameterTypes()));
-        @SuppressWarnings("unchecked")
-        List paramsList = params == null ? Collections.emptyList() : new ArrayList(Arrays.asList(params));
         Matcher varargMatcher = null;
         if (invocable.isVarArgs()) {
             Class<?> paramType = paramTypes.remove(paramTypes.size() - 1);
@@ -131,7 +133,7 @@ class MatcherSyntax {
             } else {
                 // construct array matcher to match elements of varargs array
                 List<Matcher> varArgMatchers = MatcherSyntax.matcherListFragment(paramType.getComponentType(), varParamsArray);
-                varargMatcher = MoxieMatchers.isArrayMatcher(varArgMatchers);
+                varargMatcher = new IsArray(varArgMatchers);
             }
         }
         List<Matcher> argMatchers = MatcherSyntax.matcherListExpression(paramTypes, paramsList);

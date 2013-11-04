@@ -32,6 +32,8 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.hamcrest.Description;
 import org.hamcrest.SelfDescribing;
 
 abstract class MoxieUtils {
@@ -203,12 +205,12 @@ abstract class MoxieUtils {
         return dest;
     }
 
-    static void describeExpectations(SimpleDescription desc, Collection<ExpectationImpl> unorderedExpectations, Collection<ExpectationImpl> orderedExpectations) {
+    static void describeExpectations(Description desc, Collection<ExpectationImpl> unorderedExpectations, Collection<ExpectationImpl> orderedExpectations) {
         describeIfNonEmpty(desc, "Expected (not in order):\n", unorderedExpectations);
         describeIfNonEmpty(desc, "Expected (in order):\n", orderedExpectations);
     }
 
-    static <T extends SelfDescribing> void describeIfNonEmpty(SimpleDescription desc, String message, Collection<T> selfDescribing) {
+    static <T extends SelfDescribing> void describeIfNonEmpty(Description desc, String message, Collection<T> selfDescribing) {
         if (selfDescribing != null && !selfDescribing.isEmpty()) {
             desc.appendText(message);
             desc.appendList("    ", "\n    ", "\n", new ArrayList<T>(selfDescribing));

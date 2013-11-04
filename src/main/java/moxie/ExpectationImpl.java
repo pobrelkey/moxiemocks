@@ -22,6 +22,7 @@
 
 package moxie;
 
+import moxie.hamcrest.IsArray;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.SelfDescribing;
@@ -250,7 +251,8 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         if (!this.invocable.equals(invocableAdapter)) {
             return false;
         }
-        Matcher argsMatcher = MoxieMatchers.isArrayMatcher(argMatchers);
+        @SuppressWarnings("unchecked")
+        Matcher argsMatcher = new IsArray(argMatchers);
         if (args == null) {
             args = new Object[0];
         }
