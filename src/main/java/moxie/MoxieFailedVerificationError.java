@@ -22,6 +22,8 @@
 
 package moxie;
 
+import moxie.hamcrest.SimpleDescription;
+
 import java.util.Collection;
 import java.util.List;
 

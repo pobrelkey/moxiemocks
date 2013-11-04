@@ -22,6 +22,8 @@
 
 package moxie;
 
+import moxie.hamcrest.SimpleDescription;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;

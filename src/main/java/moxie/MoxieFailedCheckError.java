@@ -22,6 +22,7 @@
 
 package moxie;
 
+import moxie.hamcrest.SimpleDescription;
 import org.hamcrest.Matcher;
 
 import java.util.List;

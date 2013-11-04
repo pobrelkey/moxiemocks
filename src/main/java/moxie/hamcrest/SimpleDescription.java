@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package moxie;
+package moxie.hamcrest;
 
 import org.hamcrest.Description;
 import org.hamcrest.SelfDescribing;
@@ -30,7 +30,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
 
-class SimpleDescription implements Description {
+public class SimpleDescription implements Description {
 
     private final PrintWriter printWriter;
     private final StringWriter stringWriter;
@@ -96,5 +96,13 @@ class SimpleDescription implements Description {
     @Override
     public String toString() {
         return stringWriter.toString();
+    }
+
+    public static String toString(SelfDescribing selfDescribing) {
+        return new SimpleDescription().appendDescriptionOf(selfDescribing).toString();
+    }
+
+    public static String asString(SelfDescribing selfDescribing) {
+        return toString(selfDescribing);
     }
 }

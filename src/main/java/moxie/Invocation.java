@@ -22,6 +22,7 @@
 
 package moxie;
 
+import moxie.hamcrest.SimpleDescription;
 import org.hamcrest.Description;
 import org.hamcrest.SelfDescribing;
 
@@ -110,8 +111,6 @@ class Invocation implements SelfDescribing {
 
     @Override
     public String toString() {
-        SimpleDescription desc = new SimpleDescription();
-        describeTo(desc);
-        return desc.toString();
+        return SimpleDescription.toString(this);
     }
 }
