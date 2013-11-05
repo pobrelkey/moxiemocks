@@ -211,6 +211,14 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
         return willConsecutivelyReturn(results);
     }
 
+    public E willDoNothing() {
+        return willReturn(null);
+    }
+
+    public E andDoNothing() {
+        return willDoNothing();
+    }
+
     @SuppressWarnings("unchecked")
     public E willConsecutivelyReturn(Iterable results) {
         for (Object result : results) {

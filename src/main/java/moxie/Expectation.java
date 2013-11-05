@@ -279,6 +279,34 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
 
     /**
      * <p>
+     * When a call fulfilling this expectation is received, do nothing.  This is most meaningful with void methods on
+     * spy objects; in these cases, the underlying method on the spy object is not called.
+     * </p>
+     * <p>
+     * Note that {@link #willDoNothing()} and {@link #andDoNothing()} do exactly the same thing -
+     * use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @return this object, for call chaining
+     */
+    E willDoNothing();
+
+    /**
+     * <p>
+     * When a call fulfilling this expectation is received, do nothing.  This is most meaningful with void methods on
+     * spy objects; in these cases, the underlying method on the spy object is not called.
+     * </p>
+     * <p>
+     * Note that {@link #willDoNothing()} and {@link #andDoNothing()} do exactly the same thing -
+     * use whichever method results in the syntax you prefer best.
+     * </p>
+     *
+     * @return this object, for call chaining
+     */
+    E andDoNothing();
+
+    /**
+     * <p>
      * When a call fulfilling this expectation is received, return the first value in the {@link Iterable}
      * on the first invocation, the second value on the second invocation, et cetera.
      * <p>
