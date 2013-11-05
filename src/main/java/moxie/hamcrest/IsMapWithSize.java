@@ -25,11 +25,16 @@ package moxie.hamcrest;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsEqual;
 
 import java.util.Map;
 
-public class IsMapWithSize<T extends Map> extends BaseMatcher<T> {
+/**
+ * Matches any {@link Map} whose size satisfies a nested {@link Matcher}.
+ * @param <T> type of the <code>Map</code to be matched
+ */
+public class IsMapWithSize<T extends Map> extends TypeSafeMatcher<T> {
     private final Matcher<? super Integer> sizeMatcher;
 
     public IsMapWithSize(Matcher<? super Integer> sizeMatcher) {
@@ -44,12 +49,19 @@ public class IsMapWithSize<T extends Map> extends BaseMatcher<T> {
         return mapWithSize(IsEqual.equalTo(size));
     }
 
-    public boolean matches(Object o) {
-        return o != null && sizeMatcher.matches(((Map) o).size());
+    @Override
+    protected boolean matchesSafely(T item) {
+        return sizeMatcher.matches(item.size());
     }
 
     public void describeTo(Description description) {
         description.appendText("a map with size ");
         sizeMatcher.describeTo(description);
+    }
+
+    @Override
+    protected void describeMismatchSafely(T item, Description mismatchDescription) {
+        mismatchDescription.appendText("map size ");
+        sizeMatcher.describeMismatch(item.size(), mismatchDescription);
     }
 }

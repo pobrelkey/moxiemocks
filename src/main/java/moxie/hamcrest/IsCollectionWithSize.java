@@ -25,11 +25,16 @@ package moxie.hamcrest;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsEqual;
 
 import java.util.Collection;
 
-public class IsCollectionWithSize<T extends Collection> extends BaseMatcher<T> {
+/**
+ * Matches any {@link Collection} whose size satisfies a nested {@link Matcher}.
+ * @param <T> type of the <code>Collection</code to be matched
+ */
+public class IsCollectionWithSize<T extends Collection> extends TypeSafeMatcher<T> {
     private final Matcher<? super Integer> sizeMatcher;
 
     public IsCollectionWithSize(Matcher<? super Integer> sizeMatcher) {
@@ -44,12 +49,19 @@ public class IsCollectionWithSize<T extends Collection> extends BaseMatcher<T> {
         return collectionWithSize(IsEqual.equalTo(size));
     }
 
-    public boolean matches(Object o) {
-        return o != null && sizeMatcher.matches(((Collection) o).size());
+    @Override
+    protected boolean matchesSafely(T item) {
+        return sizeMatcher.matches(item.size());
     }
 
     public void describeTo(Description description) {
         description.appendText("a collection with size ");
         sizeMatcher.describeTo(description);
+    }
+
+    @Override
+    protected void describeMismatchSafely(T item, Description mismatchDescription) {
+        mismatchDescription.appendText("collection size ");
+        sizeMatcher.describeMismatch(item.size(), mismatchDescription);
     }
 }

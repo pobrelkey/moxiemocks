@@ -25,11 +25,22 @@ package moxie.hamcrest;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsEqual;
 
 import java.lang.reflect.Array;
 
-public class IsArrayWithSize<T> extends BaseMatcher<T> {
+/**
+ * <p>
+ * Matches any array (including primitive arrays) whose size satisfies a nested {@link Matcher}.
+ * </p>
+ * <p>
+ * Intended as a substitute for Hamcrest's {@link org.hamcrest.collection.IsArrayWithSize} -
+ * unlike the original, this class can work with primitive arrays as well as arrays of objects.
+ * </p>
+ * @param <T> type of the array to be matched (NOT the element type of the array)
+ */
+public class IsArrayWithSize<T> extends TypeSafeMatcher<T> {
     private final Matcher sizeMatcher;
 
     public IsArrayWithSize(Matcher<? super Integer> sizeMatcher) {
@@ -145,12 +156,23 @@ public class IsArrayWithSize<T> extends BaseMatcher<T> {
         return arrayWithSize(0);
     }
 
-    public boolean matches(Object o) {
-        return o != null && sizeMatcher.matches(Array.getLength(o));
+    @Override
+    protected boolean matchesSafely(T item) {
+        return item.getClass().isArray() && sizeMatcher.matches(Array.getLength(item));
     }
 
     public void describeTo(Description description) {
         description.appendText("an array with size ");
         sizeMatcher.describeTo(description);
+    }
+
+    @Override
+    protected void describeMismatchSafely(T item, Description mismatchDescription) {
+        if (!item.getClass().isArray()) {
+            mismatchDescription.appendText("was not an array");
+        } else {
+            mismatchDescription.appendText("size ");
+            sizeMatcher.describeMismatch(Array.getLength(item), mismatchDescription);
+        }
     }
 }

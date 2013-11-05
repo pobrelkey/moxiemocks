@@ -34,25 +34,25 @@ class LambdaCheckImpl<R> extends CheckImpl<LambdaCheckImpl<R>, Interception, R> 
     }
 
     @SuppressWarnings("unchecked")
-    public LambdaCheckImpl<Void> on(ThrowingRunnable lambda) {
+    public LambdaCheckImpl<Void> onVoid(ThrowingRunnable lambda) {
         getMagicLambdaHelper().doInvoke(lambda, MagicLambdaHelper.RUNNABLE_METHOD);
         return (LambdaCheckImpl<Void>) this;
     }
 
-    public LambdaCheckImpl<Void> when(ThrowingRunnable lambda) {
-        return on(lambda);
+    public LambdaCheckImpl<Void> whenVoid(ThrowingRunnable lambda) {
+        return onVoid(lambda);
     }
 
-    public LambdaCheckImpl<Void> get(ThrowingRunnable lambda) {
-        return on(lambda);
+    public LambdaCheckImpl<Void> getVoid(ThrowingRunnable lambda) {
+        return onVoid(lambda);
     }
 
-    public LambdaCheckImpl<Void> got(ThrowingRunnable lambda) {
-        return on(lambda);
+    public LambdaCheckImpl<Void> gotVoid(ThrowingRunnable lambda) {
+        return onVoid(lambda);
     }
 
-    public LambdaCheckImpl<Void> that(ThrowingRunnable lambda) {
-        return on(lambda);
+    public LambdaCheckImpl<Void> thatVoid(ThrowingRunnable lambda) {
+        return onVoid(lambda);
     }
 
     @SuppressWarnings("unchecked")

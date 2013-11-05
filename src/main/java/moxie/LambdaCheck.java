@@ -67,14 +67,14 @@ public interface LambdaCheck<R> extends Check<LambdaCheck<R>, R> {
      * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
      * </p>
      * <p>
-     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #get(ThrowingRunnable) get()}, {@link #got(ThrowingRunnable) got()} and {@link #that(ThrowingRunnable) that()}
+     * Note that {@link #onVoid(ThrowingRunnable) onVoid()}, {@link #whenVoid(ThrowingRunnable) whenVoid()}, {@link #getVoid(ThrowingRunnable) getVoid()}, {@link #gotVoid(ThrowingRunnable) gotVoid()} and {@link #thatVoid(ThrowingRunnable) thatVoid()}
      * all do exactly the same thing - use whichever method results in the syntax you prefer best.
      * </p>
      *
      * @param lambda a lambda expression invoking the method to be checked
      * @return this object, for call chaining
      */
-    LambdaCheck<Void> that(ThrowingRunnable lambda);
+    LambdaCheck<Void> thatVoid(ThrowingRunnable lambda);
 
     /**
      * <p>
@@ -85,14 +85,14 @@ public interface LambdaCheck<R> extends Check<LambdaCheck<R>, R> {
      * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
      * </p>
      * <p>
-     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #get(ThrowingRunnable) get()}, {@link #got(ThrowingRunnable) got()} and {@link #that(ThrowingRunnable) that()}
+     * Note that {@link #onVoid(ThrowingRunnable) onVoid()}, {@link #whenVoid(ThrowingRunnable) whenVoid()}, {@link #getVoid(ThrowingRunnable) getVoid()}, {@link #gotVoid(ThrowingRunnable) gotVoid()} and {@link #thatVoid(ThrowingRunnable) thatVoid()}
      * all do exactly the same thing - use whichever method results in the syntax you prefer best.
      * </p>
      *
      * @param lambda a lambda expression invoking the method to be checked
      * @return this object, for call chaining
      */
-    LambdaCheck<Void> on(ThrowingRunnable lambda);
+    LambdaCheck<Void> onVoid(ThrowingRunnable lambda);
 
     /**
      * <p>
@@ -103,14 +103,14 @@ public interface LambdaCheck<R> extends Check<LambdaCheck<R>, R> {
      * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
      * </p>
      * <p>
-     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #get(ThrowingRunnable) get()}, {@link #got(ThrowingRunnable) got()} and {@link #that(ThrowingRunnable) that()}
+     * Note that {@link #onVoid(ThrowingRunnable) onVoid()}, {@link #whenVoid(ThrowingRunnable) whenVoid()}, {@link #getVoid(ThrowingRunnable) getVoid()}, {@link #gotVoid(ThrowingRunnable) gotVoid()} and {@link #thatVoid(ThrowingRunnable) thatVoid()}
      * all do exactly the same thing - use whichever method results in the syntax you prefer best.
      * </p>
      *
      * @param lambda a lambda expression invoking the method to be checked
      * @return this object, for call chaining
      */
-    LambdaCheck<Void> when(ThrowingRunnable lambda);
+    LambdaCheck<Void> whenVoid(ThrowingRunnable lambda);
 
     /**
      * <p>
@@ -121,14 +121,14 @@ public interface LambdaCheck<R> extends Check<LambdaCheck<R>, R> {
      * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
      * </p>
      * <p>
-     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #get(ThrowingRunnable) get()}, {@link #got(ThrowingRunnable) got()} and {@link #that(ThrowingRunnable) that()}
+     * Note that {@link #onVoid(ThrowingRunnable) onVoid()}, {@link #whenVoid(ThrowingRunnable) whenVoid()}, {@link #getVoid(ThrowingRunnable) getVoid()}, {@link #gotVoid(ThrowingRunnable) gotVoid()} and {@link #thatVoid(ThrowingRunnable) thatVoid()}
      * all do exactly the same thing - use whichever method results in the syntax you prefer best.
      * </p>
      *
      * @param lambda a lambda expression invoking the method to be checked
      * @return this object, for call chaining
      */
-    LambdaCheck<Void> get(ThrowingRunnable lambda);
+    LambdaCheck<Void> getVoid(ThrowingRunnable lambda);
 
     /**
      * <p>
@@ -139,14 +139,14 @@ public interface LambdaCheck<R> extends Check<LambdaCheck<R>, R> {
      * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
      * </p>
      * <p>
-     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #get(ThrowingRunnable) get()}, {@link #got(ThrowingRunnable) got()} and {@link #that(ThrowingRunnable) that()}
+     * Note that {@link #onVoid(ThrowingRunnable) onVoid()}, {@link #whenVoid(ThrowingRunnable) whenVoid()}, {@link #getVoid(ThrowingRunnable) getVoid()}, {@link #gotVoid(ThrowingRunnable) gotVoid()} and {@link #thatVoid(ThrowingRunnable) thatVoid()}
      * all do exactly the same thing - use whichever method results in the syntax you prefer best.
      * </p>
      *
      * @param lambda a lambda expression invoking the method to be checked
      * @return this object, for call chaining
      */
-    LambdaCheck<Void> got(ThrowingRunnable lambda);
+    LambdaCheck<Void> gotVoid(ThrowingRunnable lambda);
 
     /**
      * <p>

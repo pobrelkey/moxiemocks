@@ -32,21 +32,21 @@ class LambdaExpectationImpl<R> extends ExpectationImpl<LambdaExpectationImpl<R>,
     }
 
     @SuppressWarnings("unchecked")
-    public LambdaExpectationImpl<Void> on(ThrowingRunnable lambda) {
+    public LambdaExpectationImpl<Void> onVoid(ThrowingRunnable lambda) {
         getMagicLambdaHelper().doInvoke(lambda, MagicLambdaHelper.RUNNABLE_METHOD);
         return (LambdaExpectationImpl<Void>) this;
     }
 
-    public LambdaExpectationImpl<Void> when(ThrowingRunnable lambda) {
-        return on(lambda);
+    public LambdaExpectationImpl<Void> whenVoid(ThrowingRunnable lambda) {
+        return onVoid(lambda);
     }
 
-    public LambdaExpectationImpl<Void> will(ThrowingRunnable lambda) {
-        return on(lambda);
+    public LambdaExpectationImpl<Void> willVoid(ThrowingRunnable lambda) {
+        return onVoid(lambda);
     }
 
-    public LambdaExpectationImpl<Void> that(ThrowingRunnable lambda) {
-        return on(lambda);
+    public LambdaExpectationImpl<Void> thatVoid(ThrowingRunnable lambda) {
+        return onVoid(lambda);
     }
 
     @SuppressWarnings("unchecked")

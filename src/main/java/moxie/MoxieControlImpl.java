@@ -154,8 +154,8 @@ class MoxieControlImpl implements MoxieControl {
         return new LambdaExpectationImpl<Object>(this);
     }
 
-    public LambdaExpectation<Void> expect(ThrowingRunnable lambda) {
-        return expect().that(lambda);
+    public LambdaExpectation<Void> expectVoid(ThrowingRunnable lambda) {
+        return expect().thatVoid(lambda);
     }
 
     public <R> LambdaExpectation<R> expect(ThrowingSupplier<R> lambda) {
@@ -174,8 +174,8 @@ class MoxieControlImpl implements MoxieControl {
         return expect().anyTimes().atAnyTime();
     }
 
-    public LambdaExpectation<Void> stub(ThrowingRunnable lambda) {
-        return stub().that(lambda);
+    public LambdaExpectation<Void> stubVoid(ThrowingRunnable lambda) {
+        return stub().thatVoid(lambda);
     }
 
     public <R> LambdaExpectation<R> stub(ThrowingSupplier<R> lambda) {
@@ -196,8 +196,8 @@ class MoxieControlImpl implements MoxieControl {
         return new LambdaCheckImpl<Object>(this, invocations);
     }
 
-    public LambdaCheck<Void> check(ThrowingRunnable lambda) {
-        return check().that(lambda);
+    public LambdaCheck<Void> checkVoid(ThrowingRunnable lambda) {
+        return check().thatVoid(lambda);
     }
 
     public <R> LambdaCheck<R> check(ThrowingSupplier<R> lambda) {

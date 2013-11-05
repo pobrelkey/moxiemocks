@@ -24,8 +24,12 @@ package moxie.hamcrest;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.hamcrest.TypeSafeMatcher;
 
-public class IsInstanceOfArray extends BaseMatcher {
+/**
+ * Matches any array (including primitive arrays).
+ */
+public class IsInstanceOfArray<T> extends TypeSafeMatcher<T> {
     private static final BaseMatcher INSTANCE = new IsInstanceOfArray();
 
     private IsInstanceOfArray() { }
@@ -34,11 +38,17 @@ public class IsInstanceOfArray extends BaseMatcher {
         return INSTANCE;
     }
 
-    public boolean matches(Object o) {
-        return o != null && o.getClass().isArray();
+    @Override
+    protected boolean matchesSafely(T item) {
+        return item.getClass().isArray();
     }
 
     public void describeTo(Description description) {
         description.appendText("any array");
+    }
+
+    @Override
+    protected void describeMismatchSafely(T item, Description mismatchDescription) {
+        mismatchDescription.appendText("was not an array");
     }
 }

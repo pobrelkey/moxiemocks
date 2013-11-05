@@ -363,13 +363,13 @@ public interface MoxieControl {
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
      * </p>
      * <p>
-     * This method is a synonym for <code>expect().that(lambda)</code>.
+     * This method is a synonym for <code>expect().thatVoid(lambda)</code>.
      * </p>
      *
      * @param lambda a lambda expression invoking the method to be mocked, using {@link MoxieMatchers parameter matchers} as necessary
      * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to expect
      */
-    LambdaExpectation<Void> expect(ThrowingRunnable lambda);
+    LambdaExpectation<Void> expectVoid(ThrowingRunnable lambda);
 
     /**
      * <p>
@@ -439,13 +439,13 @@ public interface MoxieControl {
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
      * </p>
      * <p>
-     * This method is a synonym for <code>expect().anyTimes().atAnyTime().that(lambda)</code>.
+     * This method is a synonym for <code>expect().anyTimes().atAnyTime().thatVoid(lambda)</code>.
      * </p>
      *
      * @param lambda a lambda expression invoking the method to be stubbed, using {@link MoxieMatchers parameter matchers} as necessary
      * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to perform
      */
-    LambdaExpectation<Void> stub(ThrowingRunnable lambda);
+    LambdaExpectation<Void> stubVoid(ThrowingRunnable lambda);
 
     /**
      * <p>
@@ -511,13 +511,13 @@ public interface MoxieControl {
      * See the discussion in the summary javadoc for the {@link Check} interface for more details.
      * </p>
      * <p>
-     * This method is a synonym for <code>check().that(lambda)</code>.
+     * This method is a synonym for <code>check().thatVoid(lambda)</code>.
      * </p>
      *
      * @param lambda a lambda expression invoking the method to be checked, using {@link MoxieMatchers parameter matchers} as necessary
      * @return a {@link LambdaCheck} whose methods can be used to give details of what should have occurred
      */
-    LambdaCheck<Void> check(ThrowingRunnable lambda);
+    LambdaCheck<Void> checkVoid(ThrowingRunnable lambda);
 
     /**
      * <p>
