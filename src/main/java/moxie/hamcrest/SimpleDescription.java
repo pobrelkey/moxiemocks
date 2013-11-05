@@ -25,23 +25,28 @@ package moxie.hamcrest;
 import org.hamcrest.Description;
 import org.hamcrest.SelfDescribing;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
 
+/**
+ * <p>
+ * Provides a simple implementation of the {@link Description} interface backed by a {@link StringBuilder}.
+ * </p>
+ * <p>
+ * Intended as a substitute for Hamcrest's {@link org.hamcrest.StringDescription} - unlike that class this
+ * implementation has some bombproofing in case it's fed a value whose {@link Object#toString() toString()}
+ * method throws an error.  This is particularly important when building exception messages for
+ * the "real" cause of a test failure - this process should not curtail the test by throwing a second,
+ * far more obscure error from the guts of the test framework, leaving the user no wiser as to why their
+ * test has failed.
+ * </p>
+ */
 public class SimpleDescription implements Description {
 
-    private final PrintWriter printWriter;
-    private final StringWriter stringWriter;
-
-    public SimpleDescription() {
-        stringWriter = new StringWriter();
-        printWriter = new PrintWriter(stringWriter);
-    }
+    private final StringBuilder stringBuilder = new StringBuilder();
 
     public Description appendText(String s) {
-        printWriter.print(s);
+        stringBuilder.append(s);
         return this;
     }
 
@@ -57,7 +62,7 @@ public class SimpleDescription implements Description {
         } catch (Throwable e) {
             value = String.format("%s@%x", o.getClass().getName(), System.identityHashCode(o));
         }
-        printWriter.print(value);
+        stringBuilder.append(value);
         return this;
     }
 
@@ -66,42 +71,56 @@ public class SimpleDescription implements Description {
     }
 
     public <T> Description appendValueList(String start, String separator, String end, Iterable<T> values) {
-        printWriter.print(start);
+        stringBuilder.append(start);
         boolean first = true;
         for (T value : values) {
             if (!first) {
-                printWriter.print(separator);
+                stringBuilder.append(separator);
             }
             first = false;
             appendValue(value);
         }
-        printWriter.print(end);
+        stringBuilder.append(end);
         return this;
     }
 
     public Description appendList(String start, String separator, String end, Iterable<? extends SelfDescribing> values) {
-        printWriter.print(start);
+        stringBuilder.append(start);
         boolean first = true;
         for (SelfDescribing value : values) {
             if (!first) {
-                printWriter.print(separator);
+                stringBuilder.append(separator);
             }
             first = false;
             value.describeTo(this);
         }
-        printWriter.print(end);
+        stringBuilder.append(end);
         return this;
     }
 
+    /**
+     * Returns the description built up from calls to this object so far.
+     * @return the description
+     */
     @Override
     public String toString() {
-        return stringWriter.toString();
+        return stringBuilder.toString();
     }
 
+    /**
+     * Renders the description of a {@link SelfDescribing} to a {@link String}.
+     * @param selfDescribing the item whose description we'd like to obtain
+     * @return the description
+     */
     public static String toString(SelfDescribing selfDescribing) {
         return new SimpleDescription().appendDescriptionOf(selfDescribing).toString();
     }
 
+    /**
+     * Renders the description of a {@link SelfDescribing} to a {@link String}.
+     * @param selfDescribing the item whose description we'd like to obtain
+     * @return the description
+     */
     public static String asString(SelfDescribing selfDescribing) {
         return toString(selfDescribing);
     }

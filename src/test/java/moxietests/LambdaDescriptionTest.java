@@ -38,6 +38,6 @@ public class LambdaDescriptionTest {
             }
         };
 
-        Assert.assertEquals("a value matching the Predicate defined at LambdaDescriptionTest.java:15", SimpleDescription.asString(new LambdaMatcher(someLambda)));
+        Assert.assertEquals("a value matching the Predicate defined at LambdaDescriptionTest.java:37", SimpleDescription.asString(new LambdaMatcher(someLambda)));
     }
 }

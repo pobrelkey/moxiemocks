@@ -30,6 +30,7 @@ import javassist.bytecode.Descriptor;
 import javassist.bytecode.MethodInfo;
 import moxie.Predicate;
 import net.sf.cglib.proxy.Enhancer;
+import org.hamcrest.Matcher;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.objectweb.asm.AnnotationVisitor;
@@ -43,8 +44,13 @@ import org.objectweb.asm.Type;
 
 import java.io.IOException;
 
+/**
+ * Adapter that lets you quickly specify a custom {@link Matcher} using Java 8 lambda syntax.
+ * @param <T> type of the item to be matched
+ */
 public class LambdaMatcher<T> extends BaseMatcher<T> {
     private final Predicate<T> lambda;
+    private transient String lambdaDescription = null;
 
     public LambdaMatcher(Predicate<T> lambda) {
         this.lambda = lambda;
@@ -56,14 +62,19 @@ public class LambdaMatcher<T> extends BaseMatcher<T> {
     }
 
     public void describeTo(Description description) {
-        description.appendText("a value matching the Predicate ");
-        String whereDefined = LineNumberKludge.getWhereLambdaIsDefined(lambda);
-        if (whereDefined != null) {
-            description.appendText("defined at ");
-            description.appendText(whereDefined);
-        } else {
-            description.appendText(lambda.getClass().getName());
+        description.appendText("a value matching ").appendText(getLambdaDescription());
+    }
+
+    private String getLambdaDescription() {
+        if (lambdaDescription == null) {
+            String whereDefined = LineNumberKludge.getWhereLambdaIsDefined(lambda);
+            if (whereDefined != null) {
+                lambdaDescription = "the Predicate defined at " + whereDefined;
+            } else {
+                lambdaDescription = "the Predicate " + lambda.getClass().getName();
+            }
         }
+        return lambdaDescription;
     }
 
     private static class LineNumberKludge {

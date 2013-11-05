@@ -45,7 +45,7 @@ public class LambdaExpectationTest {
     @Test
     public void staticMethod_Runnable_happyPath() {
         // this is far prettier in Java 8, trust me...
-        Moxie.expect().times(2).andReturn("wibble").on(new ThrowingRunnable() {
+        Moxie.expect().times(2).andReturn("wibble").onVoid(new ThrowingRunnable() {
             public void run() {
                 PartiallyMocked.aStaticMethod(Moxie.startsWith("foo"));
             }
@@ -70,7 +70,7 @@ public class LambdaExpectationTest {
     @Test
     @PrepareForTest(fullyQualifiedNames = "moxietests.*")  // IMPORTANT - this PreparesForTest this method's lambda classes!
     public void constructor_happyPath() {
-        Moxie.expect().times(3).on(new ThrowingRunnable() {
+        Moxie.expect().times(3).onVoid(new ThrowingRunnable() {
             public void run() {
                 new PartiallyMocked(Moxie.startsWith("porridge"));
             }
@@ -93,12 +93,12 @@ public class LambdaExpectationTest {
     public void mockInstances_happyPath() {
         final List<String> mockList = Moxie.mock(List.class);
 
-        Moxie.stub().andReturn("frog").on(new ThrowingRunnable() {
+        Moxie.stub().andReturn("frog").onVoid(new ThrowingRunnable() {
             public void run() {
                 mockList.get(2);
             }
         });
-        Moxie.expect().times(2).andReturn("toad").on(new ThrowingRunnable() {
+        Moxie.expect().times(2).andReturn("toad").onVoid(new ThrowingRunnable() {
             public void run() {
                 mockList.get(Moxie.gt(6));
             }

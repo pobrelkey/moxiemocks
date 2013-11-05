@@ -31,7 +31,6 @@ import moxie.hamcrest.IsInstanceOfArray;
 import moxie.hamcrest.IsMapWithSize;
 import moxie.hamcrest.LambdaMatcher;
 import moxie.hamcrest.MatchesRegexp;
-import moxie.hamcrest.OrderingComparison;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -45,12 +44,12 @@ import org.hamcrest.core.IsInstanceOf;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsNull;
 import org.hamcrest.core.IsSame;
+import org.hamcrest.number.OrderingComparison;
 import org.hamcrest.text.IsEqualIgnoringCase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -1128,7 +1127,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T extends Comparable<T>> T geq(T value) {
-        return (T) argThat(Comparable.class, OrderingComparison.<Comparable>greaterThanOrEqualTo(value));
+        return (T) argThat(Comparable.class, (Matcher) OrderingComparison.greaterThanOrEqualTo(value));
     }
 
     /**
@@ -1201,7 +1200,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T extends Comparable<T>> T gt(T value) {
-        return (T) argThat(Comparable.class, OrderingComparison.<Comparable>greaterThan(value));
+        return (T) argThat(Comparable.class, (Matcher) OrderingComparison.greaterThan(value));
     }
 
     /**
@@ -1274,7 +1273,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T extends Comparable<T>> T leq(T value) {
-        return (T) argThat(Comparable.class, OrderingComparison.<Comparable>lessThanOrEqualTo(value));
+        return (T) argThat(Comparable.class, (Matcher) OrderingComparison.lessThanOrEqualTo(value));
     }
 
     /**
@@ -1347,7 +1346,7 @@ public abstract class MoxieMatchers {
      */
     @SuppressWarnings("unchecked")
     static public <T extends Comparable<T>> T lt(T value) {
-        return (T) argThat(Comparable.class, OrderingComparison.<Comparable>lessThan(value));
+        return (T) argThat(Comparable.class, (Matcher) OrderingComparison.lessThan(value));
     }
 
     /**

@@ -24,30 +24,48 @@ package moxie.hamcrest;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 
-// Hamcrest's IsCloseTo matcher only works on Doubles.
-public class IsCloseTo<T extends Number> extends BaseMatcher<T> {
+/**
+ * <p>
+ * Matches any {@link Number} whose {@link Number#doubleValue() doubleValue()} is equal to a desired value
+ * to within an acceptable tolerance.
+ * </p>
+ * <p>
+ * Intended to be a drop-in replacement for Hamcrest's {@link org.hamcrest.number.IsCloseTo} - unlike the original,
+ * it can work with any <code>Number</code> and not just {@link Double}s (so it works with
+ * {@link java.math.BigDecimal BigDecimal}s, {@link Integer}s, {@link Long}s, {@link Float}s, etc.).
+ * </p>
+ * @param <T> type of the <code>Number</code> to be matched
+ */
+public class IsCloseTo<T extends Number> extends TypeSafeMatcher<T> {
     private final double value;
-    private final double delta;
+    private final double tolerance;
 
-    public IsCloseTo(double value, double delta) {
+    public IsCloseTo(double value, double tolerance) {
         this.value = value;
-        this.delta = delta;
+        this.tolerance = tolerance;
     }
 
-    public static <T extends Number> IsCloseTo<T> closeTo(final double value, final double delta) {
-        return new IsCloseTo<T>(value, delta);
+    public static <T extends Number> IsCloseTo<T> closeTo(final double value, final double tolerance) {
+        return new IsCloseTo<T>(value, tolerance);
     }
 
-    public boolean matches(Object o) {
-        if (o == null || !(o instanceof Number)) {
-            return false;
-        }
-        return Math.abs(((Number) o).doubleValue() - value) <= delta;
+    @Override
+    protected boolean matchesSafely(T item) {
+        return variation(item) <= tolerance;
+    }
+
+    private double variation(T item) {
+        return Math.abs(item.doubleValue() - value);
     }
 
     public void describeTo(Description description) {
-        description.appendText("a Number within ").appendValue(delta).appendText(" of ").appendValue(value);
+        description.appendText("a Number within ").appendValue(tolerance).appendText(" of ").appendValue(value);
+    }
+
+    @Override
+    protected void describeMismatchSafely(T item, Description mismatchDescription) {
+        mismatchDescription.appendText("was outside of tolerance by").appendValue(variation(item)-tolerance);
     }
 }

@@ -25,37 +25,58 @@ package moxie.hamcrest;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsEqual;
 
 import java.lang.reflect.Array;
 
-// Hamcrest's IsArrayContaining matcher doesn't look as if it works on primitive arrays.
-public class IsArrayContaining<T> extends BaseMatcher<T[]> {
+/**
+ * <p>
+ * Matches any array (including primitive arrays) where any element satisfies a nested {@link Matcher}.
+ * </p>
+ * <p>
+ * Intended as a substitute for Hamcrest's {@link org.hamcrest.collection.IsArrayContaining} -
+ * unlike the original, this class can work with primitive arrays as well as arrays of objects.
+ * </p>
+ * @param <T> type of the array to be matched (NOT the element type of the array)
+ */
+public class IsArrayContaining<T> extends TypeSafeMatcher<T> {
     private final Matcher elementMatcher;
 
-    public IsArrayContaining(Matcher<? super T> elementMatcher) {
+    public IsArrayContaining(Matcher elementMatcher) {
         this.elementMatcher = elementMatcher;
     }
 
-    public static <T> IsArrayContaining<T> hasItemInArray(Matcher<? super T> elementMatcher) {
-        return new IsArrayContaining<T>(elementMatcher);
+    public static <T> IsArrayContaining<T[]> hasItemInArray(Matcher<? super T> elementMatcher) {
+        return new IsArrayContaining<T[]>(elementMatcher);
     }
 
-    public static <T> IsArrayContaining<T> hasItemInArray(T element) {
-        return new IsArrayContaining<T>(IsEqual.equalTo(element));
+    public static <T> IsArrayContaining<T[]> hasItemInArray(T element) {
+        return new IsArrayContaining<T[]>(IsEqual.equalTo(element));
     }
 
-    public boolean matches(Object o) {
-        if (o == null || !o.getClass().isArray()) {
+    @Override
+    protected boolean matchesSafely(T item) {
+        if (!item.getClass().isArray()) {
             return false;
         }
-        int arraySize = Array.getLength(o);
+        int arraySize = Array.getLength(item);
         for (int i = 0; i < arraySize; i++) {
-            if (elementMatcher.matches(Array.get(o, i))) {
+            if (elementMatcher.matches(Array.get(item, i))) {
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    protected void describeMismatchSafely(T item, Description mismatchDescription) {
+        if (!item.getClass().isArray()) {
+            mismatchDescription.appendText("was not an array");
+        } else {
+            mismatchDescription.appendText("had no elements which were ");
+            elementMatcher.describeTo(mismatchDescription);
+        }
     }
 
     public void describeTo(Description description) {

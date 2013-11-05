@@ -64,6 +64,7 @@ public class StackOverflow6392946Test {
     // xmlStreamWriter's parameters don't add up to "blah blah", so the test would fail without the catch clause.
     // Also note that the final assert is false.
     @Test
+    @SuppressWarnings("deprecation")
     public void sadPathTest1() throws XMLStreamException{
         // We've specified the deprecated IGNORE_BACKGROUND_FAILURES option as otherwise Moxie works very hard
         // to ensure that unexpected invocations can't get silently swallowed (so this test will fail).

@@ -22,9 +22,9 @@
 
 package moxie.hamcrest;
 
-import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsEqual;
 
 import java.lang.reflect.Array;
@@ -32,17 +32,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-// Hamcrest's IsArray matcher doesn't look as if it works on primitive arrays.
-public class IsArray<T> extends BaseMatcher<T> {
+/**
+ * <p>
+ * Matches any array (including primitive arrays) where each element of the array satisfies the corresponding
+ * {@link Matcher} in a sequence of <code>Matcher</code>s, and with the same number of elements as the
+ * sequence of <code>Matcher</code>s.
+ * </p>
+ * <p>
+ * Intended as a substitute for Hamcrest's {@link org.hamcrest.collection.IsArrayContaining} -
+ * unlike the original, this class can work with primitive arrays as well as arrays of objects.
+ * </p>
+ * @param <T> type of the array to be matched (NOT the element type of the array)
+ */
+public class IsArray<T> extends TypeSafeMatcher<T> {
     private final List<Matcher> elementMatchers;
 
     @SuppressWarnings("unchecked")
     public IsArray(Matcher... elementMatchers) {
-        this((List) Arrays.asList(elementMatchers));
+        this((List) Arrays.asList(elementMatchers.clone()));
     }
 
     public IsArray(List<Matcher> elementMatchers) {
-        this.elementMatchers = elementMatchers;
+        this.elementMatchers = new ArrayList<Matcher>(elementMatchers);
     }
 
     static public <T> IsArray<T[]> array(Matcher<? super T>... elementMatchers) {
@@ -151,20 +162,43 @@ public class IsArray<T> extends BaseMatcher<T> {
     }
 
 
-    public boolean matches(Object o) {
-        if (o == null || !o.getClass().isArray()) {
+    @Override
+    protected boolean matchesSafely(T item) {
+        if (!item.getClass().isArray()) {
             return false;
         }
-        int arraySize = Array.getLength(o);
+        int arraySize = Array.getLength(item);
         if (elementMatchers.size() != arraySize) {
             return false;
         }
         for (int i = 0; i < arraySize; i++) {
-            if (!elementMatchers.get(i).matches(Array.get(o, i))) {
+            if (!elementMatchers.get(i).matches(Array.get(item, i))) {
                 return false;
             }
         }
         return true;
+    }
+
+    @Override
+    protected void describeMismatchSafely(T item, Description mismatchDescription) {
+        if (!item.getClass().isArray()) {
+            mismatchDescription.appendText("was not an array");
+            return;
+        }
+        int arraySize = Array.getLength(item);
+        if (elementMatchers.size() != arraySize) {
+            mismatchDescription.appendText("length was ").appendValue(arraySize);
+            return;
+        }
+        for (int i = 0; i < arraySize; i++) {
+            Matcher elementMatcher = elementMatchers.get(i);
+            Object element = Array.get(item, i);
+            if (!elementMatcher.matches(element)) {
+                mismatchDescription.appendText("element ").appendValue(i).appendText(" ");
+                elementMatcher.describeMismatch(element, mismatchDescription);
+                return;
+            }
+        }
     }
 
     public void describeTo(Description description) {

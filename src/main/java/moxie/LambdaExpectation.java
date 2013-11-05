@@ -67,14 +67,14 @@ public interface LambdaExpectation<R> extends Expectation<LambdaExpectation<R>,R
      * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
      * </p>
      * <p>
-     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * Note that {@link #onVoid(ThrowingRunnable) onVoid()}, {@link #whenVoid(ThrowingRunnable) whenVoid()}, {@link #willVoid(ThrowingRunnable) willVoid()} and {@link #thatVoid(ThrowingRunnable) thatVoid()}
      * all do exactly the same thing - use whichever method results in the syntax you prefer best.
      * </p>
      *
      * @param lambda a lambda expression invoking the method to be checked
      * @return this object, for call chaining
      */
-    LambdaExpectation<Void> that(ThrowingRunnable lambda);
+    LambdaExpectation<Void> thatVoid(ThrowingRunnable lambda);
 
     /**
      * <p>
@@ -85,14 +85,14 @@ public interface LambdaExpectation<R> extends Expectation<LambdaExpectation<R>,R
      * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
      * </p>
      * <p>
-     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * Note that {@link #onVoid(ThrowingRunnable) onVoid()}, {@link #whenVoid(ThrowingRunnable) whenVoid()}, {@link #willVoid(ThrowingRunnable) willVoid()} and {@link #thatVoid(ThrowingRunnable) thatVoid()}
      * all do exactly the same thing - use whichever method results in the syntax you prefer best.
      * </p>
      *
      * @param lambda a lambda expression invoking the method to be checked
      * @return this object, for call chaining
      */
-    LambdaExpectation<Void> on(ThrowingRunnable lambda);
+    LambdaExpectation<Void> onVoid(ThrowingRunnable lambda);
 
     /**
      * <p>
@@ -103,14 +103,14 @@ public interface LambdaExpectation<R> extends Expectation<LambdaExpectation<R>,R
      * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
      * </p>
      * <p>
-     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * Note that {@link #onVoid(ThrowingRunnable) onVoid()}, {@link #whenVoid(ThrowingRunnable) whenVoid()}, {@link #willVoid(ThrowingRunnable) willVoid()} and {@link #thatVoid(ThrowingRunnable) thatVoid()}
      * all do exactly the same thing - use whichever method results in the syntax you prefer best.
      * </p>
      *
      * @param lambda a lambda expression invoking the method to be checked
      * @return this object, for call chaining
      */
-    LambdaExpectation<Void> when(ThrowingRunnable lambda);
+    LambdaExpectation<Void> whenVoid(ThrowingRunnable lambda);
 
     /**
      * <p>
@@ -121,14 +121,14 @@ public interface LambdaExpectation<R> extends Expectation<LambdaExpectation<R>,R
      * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
      * </p>
      * <p>
-     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * Note that {@link #onVoid(ThrowingRunnable) onVoid()}, {@link #whenVoid(ThrowingRunnable) whenVoid()}, {@link #willVoid(ThrowingRunnable) willVoid()} and {@link #thatVoid(ThrowingRunnable) thatVoid()}
      * all do exactly the same thing - use whichever method results in the syntax you prefer best.
      * </p>
      *
      * @param lambda a lambda expression invoking the method to be checked
      * @return this object, for call chaining
      */
-    LambdaExpectation<Void> will(ThrowingRunnable lambda);
+    LambdaExpectation<Void> willVoid(ThrowingRunnable lambda);
 
     /**
      * <p>
@@ -139,7 +139,7 @@ public interface LambdaExpectation<R> extends Expectation<LambdaExpectation<R>,R
      * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
      * </p>
      * <p>
-     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * Note that {@link #on(ThrowingSupplier) on()}, {@link #when(ThrowingSupplier) when()}, {@link #will(ThrowingSupplier) will()} and {@link #that(ThrowingSupplier) that()}
      * all do exactly the same thing - use whichever method results in the syntax you prefer best.
      * </p>
      *
@@ -158,7 +158,7 @@ public interface LambdaExpectation<R> extends Expectation<LambdaExpectation<R>,R
      * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
      * </p>
      * <p>
-     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * Note that {@link #on(ThrowingSupplier) on()}, {@link #when(ThrowingSupplier) when()}, {@link #will(ThrowingSupplier) will()} and {@link #that(ThrowingSupplier) that()}
      * all do exactly the same thing - use whichever method results in the syntax you prefer best.
      * </p>
      *
@@ -177,7 +177,7 @@ public interface LambdaExpectation<R> extends Expectation<LambdaExpectation<R>,R
      * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
      * </p>
      * <p>
-     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * Note that {@link #on(ThrowingSupplier) on()}, {@link #when(ThrowingSupplier) when()}, {@link #will(ThrowingSupplier) will()} and {@link #that(ThrowingSupplier) that()}
      * all do exactly the same thing - use whichever method results in the syntax you prefer best.
      * </p>
      *
@@ -196,7 +196,7 @@ public interface LambdaExpectation<R> extends Expectation<LambdaExpectation<R>,R
      * along with any {@link MoxieMatchers matcher invocations} necessary to specify parameter matching.
      * </p>
      * <p>
-     * Note that {@link #on(ThrowingRunnable) on()}, {@link #when(ThrowingRunnable) when()}, {@link #will(ThrowingRunnable) will()} and {@link #that(ThrowingRunnable) that()}
+     * Note that {@link #on(ThrowingSupplier) on()}, {@link #when(ThrowingSupplier) when()}, {@link #will(ThrowingSupplier) will()} and {@link #that(ThrowingSupplier) that()}
      * all do exactly the same thing - use whichever method results in the syntax you prefer best.
      * </p>
      *

@@ -25,18 +25,24 @@ package moxie.hamcrest;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 
 import java.util.regex.Pattern;
 
-public class MatchesRegexp<T> extends BaseMatcher<T> {
+/**
+ * Matches any object whose {@link Object#toString() string representation} matches a provided regular expression.
+ * @param <T> the type of the item to be matched
+ */
+public class MatchesRegexp<T> extends TypeSafeMatcher<T> {
     private final Pattern pattern;
 
     public MatchesRegexp(Pattern pattern) {
         this.pattern = pattern;
     }
 
-    public boolean matches(Object o) {
-        return (o != null) && pattern.matcher(o.toString()).matches();
+    @Override
+    protected boolean matchesSafely(T item) {
+        return pattern.matcher(item.toString()).matches();
     }
 
     public void describeTo(Description description) {
