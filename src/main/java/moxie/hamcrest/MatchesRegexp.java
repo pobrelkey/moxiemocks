@@ -30,7 +30,8 @@ import org.hamcrest.TypeSafeMatcher;
 import java.util.regex.Pattern;
 
 /**
- * Matches any object whose {@link Object#toString() string representation} matches a provided regular expression.
+ * Matches any object whose string representation (as returned by the {@link Object#toString() toString()} method)
+ * matches a provided regular expression.
  * @param <T> the type of the item to be matched
  */
 public class MatchesRegexp<T> extends TypeSafeMatcher<T> {

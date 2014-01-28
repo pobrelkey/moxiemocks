@@ -26,7 +26,7 @@ package moxie;
  * <p>
  * Domain-specific language methods for setting out the details of a retrospective mock validation.
  * </p>
- * <p/>
+ * <p>&nbsp;</p>
  * <h2>Syntax Overview</h2>
  * <p>
  * A typical Moxie check statement on a mock object looks like this:
@@ -68,7 +68,7 @@ package moxie;
  * will contain a certain substring, etc.) - see method descriptions on that class for more details.
  * </dd>
  * </dl>
- * <p/>
+ * <p>&nbsp;</p>
  * <p>
  * The syntax for specifying checks on static methods and constructorss is slightly different, but reads
  * similarly - see documentation on the {@link ClassCheck} interface for further detail:
@@ -77,7 +77,7 @@ package moxie;
  * <span style="background-color: LightBlue">Moxie.check(SomeClass.class)</span><span
  * style="background-color: LightPink">.returned(Moxie.startsWith("x")).once()</span><span
  * style="background-color: LightGreen">.on("someStaticMethod", Moxie.endsWith("y"))</span>;
- * <br />
+ * <br>
  * <span style="background-color: LightBlue">Moxie.check(SomeClass.class)</span><span
  * style="background-color: LightPink">.atLeast(3)</span><span
  * style="background-color: LightGreen">.onNew("constructor args or matchers")</span>;
@@ -91,21 +91,19 @@ package moxie;
  * <span style="background-color: LightBlue">Moxie.check()</span><span
  * style="background-color: LightPink">.returned(Moxie.lt(100)).times(3)</span><span
  * style="background-color: Khaki">.on(<span
- * style="background-color: LightGreen">() -> &#123; mock.someMethod(Moxie.hasSubstring("foo")); &#125;</span>)</span>;
- * <br />
+ * style="background-color: LightGreen">() -&gt; &#123; mock.someMethod(Moxie.hasSubstring("foo")); &#125;</span>)</span>;
+ * <br>
  * <span style="background-color: LightBlue">Moxie.check()</span><span
  * style="background-color: LightPink">.returned(Moxie.startsWith("x")).once()</span><span
  * style="background-color: Khaki">.on(<span
- * style="background-color: LightGreen">() -> &#123; SomeClass.someStaticMethod(Moxie.endsWith("y")); &#125;</span>)</span>;
- * <br />
+ * style="background-color: LightGreen">() -&gt; &#123; SomeClass.someStaticMethod(Moxie.endsWith("y")); &#125;</span>)</span>;
+ * <br>
  * <span style="background-color: LightBlue">Moxie.check()</span><span
  * style="background-color: LightPink">.atLeast(3)</span><span
  * style="background-color: Khaki">.on(<span
- * style="background-color: LightGreen">() -> &#123; new SomeClass("constructor args or matchers"); &#125;</span>)</span>;
+ * style="background-color: LightGreen">() -&gt; &#123; new SomeClass("constructor args or matchers"); &#125;</span>)</span>;
  * </code></blockquote>
- * <p>
  * <h2>Condition Syntax</h2>
- * </p>
  * <p>
  * The "middle bit" of the check statement can contain zero or more condition-setting methods:
  * </p>
@@ -154,19 +152,19 @@ package moxie;
  * in the mocked class, including them would make no sense.
  * </p></dd>
  * </dl>
- * <p/>
+ * <p>&nbsp;</p>
  * <h2>Subclasses</h2>
- * <p/>
+ * <p>&nbsp;</p>
  * <p>
  * Note that most of the useful methods on this class have been migrated to one of its three subclasses -
  * please see the documentation of these classes for more detail:
+ * </p>
  * <ul>
  * <li>{@link ObjectCheck} - for checking calls on most mock/spy objects in the traditional manner.</li>
  * <li>{@link ClassCheck} - for checking calls to static/constructor methods (reflection-based API).</li>
  * <li>{@link LambdaCheck} - lets one specify mock calls (either on individual mocks or to statics/constructors)
  *     using Java 8 lambda syntax.</li>
  * </ul>
- * </p>
  */
 public interface Check<C extends Check<C, R>, R> extends Cardinality<C>  {
 

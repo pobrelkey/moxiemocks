@@ -28,7 +28,7 @@ package moxie;
  * </p>
  * <p>
  * This is largely the same interface as
- * <code></code><a href="http://download.java.net/jdk8/docs/api/java/util/function/Supplier.html">java.util.function.Supplier</a></code>
+ * <code><a href="http://download.java.net/jdk8/docs/api/java/util/function/Supplier.html">java.util.function.Supplier</a></code>
  * in Java 8, modified to throw {@link Exception} to make mocking methods that throw checked exceptions easier.
  * </p>
  *

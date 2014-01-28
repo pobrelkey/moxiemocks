@@ -32,7 +32,7 @@ import java.util.Collection;
 
 /**
  * Matches any {@link Collection} whose size satisfies a nested {@link Matcher}.
- * @param <T> type of the <code>Collection</code to be matched
+ * @param <T> type of the <code>Collection</code> to be matched
  */
 public class IsCollectionWithSize<T extends Collection> extends TypeSafeMatcher<T> {
     private final Matcher<? super Integer> sizeMatcher;
