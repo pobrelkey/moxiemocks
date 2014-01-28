@@ -40,6 +40,7 @@ class JDKProxyFactory<T> extends ProxyFactory<T> {
         }
         try {
             constructor = (Constructor<T>) Proxy.getProxyClass(interfaces.get(0).getClassLoader(), interfaces.toArray(new Class[interfaces.size()])).getConstructor(InvocationHandler.class);
+            constructor.setAccessible(true);
         } catch (NoSuchMethodException e) {
             throw new MoxieUnexpectedError(e);
         }
