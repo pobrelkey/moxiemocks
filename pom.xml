@@ -13,7 +13,7 @@
     <groupId>org.moxiemocks</groupId>
     <artifactId>moxie</artifactId>
     <packaging>jar</packaging>
-    <version>1.1</version>
+    <version>1.1.1-SNAPSHOT</version>
     <name>Moxie</name>
     <description>Moxie: a wicked good Java mocking library</description>
     <url>http://moxiemocks.org/</url>
@@ -25,9 +25,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:http://moxiemocks.googlecode.com/svn/tags/moxie-1.1</connection>
-        <developerConnection>scm:svn:https://moxiemocks.googlecode.com/svn/tags/moxie-1.1</developerConnection>
-        <url>http://moxiemocks.googlecode.com/svn/tags/moxie-1.1</url>
+        <connection>scm:svn:http://moxiemocks.googlecode.com/svn/trunk/</connection>
+        <developerConnection>scm:svn:https://moxiemocks.googlecode.com/svn/trunk/</developerConnection>
+        <url>http://moxiemocks.googlecode.com/svn/trunk/</url>
     </scm>
     <distributionManagement>
         <site>
