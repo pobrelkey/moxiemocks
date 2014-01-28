@@ -29,7 +29,7 @@ package moxie;
  * </p>
  * <p>
  * Note that this is essentially the same interface as
- * <code></code><a href="http://download.java.net/jdk8/docs/api/java/util/function/Predicate.html">java.util.function.Predicate</a></code>
+ * <code><a href="http://download.java.net/jdk8/docs/api/java/util/function/Predicate.html">java.util.function.Predicate</a></code>
  * in Java 8; Moxie uses its own version of this interface to make APIs
  * using this interface available on pre-1.8 JVMs where the above interface
  * is not available.

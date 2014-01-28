@@ -27,7 +27,7 @@ package moxie;
  * Represents an ordered list of expectations that should occur in a strict order across mocks; or,
  * an unordered set of expectations which should be separately verifiable as complete.
  * </p>
- * <p/>
+ * <p>&nbsp;</p>
  * <h2>Creation</h2>
  * <p>
  * You can create a <code>Group</code> by calling {@link MoxieControl#group(MoxieOptions...) MoxieControl.group()}.
@@ -48,7 +48,7 @@ package moxie;
  * <p>
  * The default is to create {@link MoxieOptions#ORDERED} groups.
  * </p>
- * <p/>
+ * <p>&nbsp;</p>
  * <h2>Usage in expectation-driven tests</h2>
  * <p>
  * Use the {@link Expectation#inGroup(Group...) Expectation.inGroup()} method to associate an expectation
@@ -65,12 +65,12 @@ package moxie;
  * Moxie.expect(presidents).inGroup(sequence).willReturn("Washington").on().get(0);
  * Moxie.expect(stooges).inGroup(sequence).willReturn("Moe").on().get(0);
  * Moxie.expect(presidents).inGroup(sequence).willReturn("Kennedy").on().get(34);
- * <p/>
+ * &nbsp;
  * // ...this will pass...
  * presidents.get(0);
  * stooges.get(0);
  * presidents.get(34);
- * <p/>
+ * &nbsp;
  * // ...but any other sequence of these calls will fail, e.g.:
  * stooges.get(0);
  * presidents.get(34);
@@ -87,14 +87,14 @@ package moxie;
  * Moxie.expect(presidents).inGroup(sequence).willReturn("Lincoln").on().get(15);
  * Moxie.expect(stooges).inGroup(sequence).willReturn("Larry").on().get(1);
  * Moxie.expect(stooges).inGroup(sequence).willReturn("Curly").on().get(2);
- * <p/>
+ * &nbsp;
  * // ...this will pass...
- * for (int i = 0; i < 3; i++) {
+ * for (int i = 0; i &lt; 3; i++) {
  *     presidents.get(15);
  *     stooges.get(1);
  *     stooges.get(2);
  * }
- * <p/>
+ * &nbsp;
  * // ...but another time through the loop will cause a failure:
  * presidents.get(15);
  * stooges.get(1);
@@ -110,20 +110,20 @@ package moxie;
  * Moxie.expect(presidents).inGroup(checkpoint).willReturn("GHW Bush").on().get(40);
  * Moxie.expect(presidents).willReturn("Clinton").on().get(41);
  * Moxie.expect(presidents).willReturn("GW Bush").on().get(42);
- * <p/>
+ * &nbsp;
  * presidents.get(40);
  * presidents.get(39);
- * <p/>
+ * &nbsp;
  * // Here we can check that just the expectations in "checkpoint" have been fulfilled
  * Moxie.verify(checkpoint);
- * <p/>
+ * &nbsp;
  * presidents.get(41);
  * presidents.get(42);
- * <p/>
+ * &nbsp;
  * // verify all expectations
  * Moxie.verify();
  * </pre>
- * <p/>
+ * <p>&nbsp;</p>
  * <h2>Usage in check-driven tests</h2>
  * <p>
  * Use the {@link Check#inGroup(Group...) Check.inGroup()} method to associate a check
@@ -138,23 +138,23 @@ package moxie;
  * List&lt;String&gt; realPresidentsList = Arrays.asList(
  *     "Washington", "J Adams", "Jefferson", "Madison", "Monroe", "JQ Adams", "Jackson");
  * List&lt;String&gt; presidents = Moxie.spy(realPresidentsList, MoxieOptions.PERMISSIVE);
- * <p/>
+ * &nbsp;
  * presidents.get(1);  // returns "J Adams"
  * presidents.get(2);  // returns "Jefferson"
  * presidents.get(5);  // returns "JQ Adams"
  * presidents.get(6);  // returns "Jackson"
- * <p/>
+ * &nbsp;
  * // This will pass...
  * Group sequence1 = Moxie.group();
  * Moxie.check(presidents).inGroup(sequence1).returned(Moxie.endsWith("Adams")).times(2).on().get(Moxie.anyInt());
  * Moxie.check(presidents).inGroup(sequence1).returned("Jackson").on().get(Moxie.anyInt());
- * <p/>
+ * &nbsp;
  * // ...but this will fail:
  * Group sequence2 = Moxie.group();
  * Moxie.check(presidents).inGroup(sequence2).returned(Moxie.endsWith("Adams")).times(2).on().get(Moxie.anyInt());
  * Moxie.check(presidents).inGroup(sequence2).returned("Jefferson").on().get(Moxie.anyInt());
  * </pre>
- * <p/>
+ * <p>&nbsp;</p>
  * <h2>Caveat</h2>
  * <p>
  * Note that the behaviors of <code>Group</code>s with respect to expectations and checks

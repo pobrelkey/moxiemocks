@@ -59,7 +59,7 @@ import java.util.regex.Pattern;
  * <p>
  * Static class whose methods magically signal Moxie to flexibly match parameters of a mock expectation.
  * </p>
- * <p/>
+ * <p>&nbsp;</p>
  * <h2>What are these methods?</h2>
  * <p>
  * On certain method calls where you specify values that Moxie should expect as part of observed behavior -
@@ -70,7 +70,7 @@ import java.util.regex.Pattern;
  * These are used to generate <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher}s
  * which will be matched against the actual value(s).
  * </p>
- * <p/>
+ * <p>&nbsp;</p>
  * <h2>How do they work?</h2>
  * <p>
  * (The gory details of the magic behind this class follow - you may safely skip to the next section
@@ -98,7 +98,7 @@ import java.util.regex.Pattern;
  * (Note that this does not occur in methods like {@link #and(Object[]) and()}, {@link #or(Object[]) or()}
  * and {@link #not(Object) not()} which may themselves be part of matcher expressions.)
  * </p>
- * <p/>
+ * <p>&nbsp;</p>
  * <h2>What do I need to remember?</h2>
  * <ul>
  * <li>Never save the result of a call to <code>MoxieMatchers</code> to a variable - always plug it straight in to where it needs to go.</li>

@@ -32,7 +32,7 @@ import java.util.Map;
 
 /**
  * Matches any {@link Map} whose size satisfies a nested {@link Matcher}.
- * @param <T> type of the <code>Map</code to be matched
+ * @param <T> type of the <code>Map</code> to be matched
  */
 public class IsMapWithSize<T extends Map> extends TypeSafeMatcher<T> {
     private final Matcher<? super Integer> sizeMatcher;

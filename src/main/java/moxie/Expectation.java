@@ -28,7 +28,7 @@ import java.lang.reflect.InvocationHandler;
  * <p>
  * Domain-specific language methods for setting out the details of a mock object expectation.
  * </p>
- * <p/>
+ * <p>&nbsp;</p>
  * <h2>Syntax Overview</h2>
  * <p>
  * A typical Moxie expectation statement on a mock object looks like this:
@@ -79,7 +79,7 @@ import java.lang.reflect.InvocationHandler;
  * <blockquote><code>
  * <span style="background-color: LightBlue">Moxie.expect(SomeClass.class)</span><span
  * style="background-color: LightPink">.times(2).andReturn("wibble")</span><span
- * style="background-color: LightGreen">.on("aStaticMethod", Moxie.gt(5))</span>;<br />
+ * style="background-color: LightGreen">.on("aStaticMethod", Moxie.gt(5))</span>;<br>
  * <span style="background-color: LightBlue">Moxie.expect(SomeClass.class)</span><span
  * style="background-color: LightPink">.once()</span><span
  * style="background-color: LightGreen">.onNew("constructor args", Moxie.hasSubstring("or matchers"))</span>;
@@ -93,19 +93,17 @@ import java.lang.reflect.InvocationHandler;
  * <span style="background-color: LightBlue">Moxie.expect()</span><span
  * style="background-color: LightPink">.willReturn("someValue").atLeastOnce()</span><span
  * style="background-color: Khaki">.on(<span
- * style="background-color: LightGreen">() -> &#123; mock.someMethod(Moxie.leq(42)); &#125;</span>)</span>;<br />
+ * style="background-color: LightGreen">() -&gt; &#123; mock.someMethod(Moxie.leq(42)); &#125;</span>)</span>;<br>
  * <span style="background-color: LightBlue">Moxie.expect()</span><span
  * style="background-color: LightPink">.times(2).andReturn("wibble")</span><span
  * style="background-color: Khaki">.on(<span
- * style="background-color: LightGreen">() -> &#123; SomeClass.aStaticMethod(Moxie.gt(5)); &#125;</span>)</span>;<br />
+ * style="background-color: LightGreen">() -&gt; &#123; SomeClass.aStaticMethod(Moxie.gt(5)); &#125;</span>)</span>;<br>
  * <span style="background-color: LightBlue">Moxie.expect()</span><span
  * style="background-color: LightPink">.once()</span><span
  * style="background-color: Khaki">.on(<span
- * style="background-color: LightGreen">() -> &#123; new SomeClass("constructor args", Moxie.hasSubstring("or matchers")); &#125;</span>)</span>;
+ * style="background-color: LightGreen">() -&gt; &#123; new SomeClass("constructor args", Moxie.hasSubstring("or matchers")); &#125;</span>)</span>;
  * </code></blockquote>
- * <p>
  * <h2>Conditions and Behaviors</h2>
- * </p>
  * <p>
  * The "middle bit" of the expectation statement can contain zero or more condition/expectation setting methods:
  * </p>
@@ -152,7 +150,7 @@ import java.lang.reflect.InvocationHandler;
  * <code>"three"</code> across three consecutive calls, use the following:
  * </p>
  * <blockquote style="text-indent: -4em; padding-left: 4em"><code>
- * Moxie<nobr>.expect(mock)</nobr><wbr /><nobr>.andReturn(1)</nobr><wbr /><nobr>.andThrow(new Exception("Two!"))</nobr><wbr /><nobr>.andReturn("three")</nobr><wbr /><nobr>.times(3)</nobr><wbr /><nobr>.on().someMethod();</nobr>
+ * Moxie<span style="white-space:nowrap">.expect(mock)</span><span style="white-space:nowrap">.andReturn(1)</span><span style="white-space:nowrap">.andThrow(new Exception("Two!"))</span><span style="white-space:nowrap">.andReturn("three")</span><span style="white-space:nowrap">.times(3)</span><span style="white-space:nowrap">.on().someMethod();</span>
  * </code></blockquote>
  * <p>
  * This works equally effectively as the "consecutively" methods described above, which are essentially just shorthand
@@ -184,19 +182,19 @@ import java.lang.reflect.InvocationHandler;
  * mocks.
  * </p></dd>
  * </dl>
- * <p/>
+ * <p>&nbsp;</p>
  * <h2>Subclasses</h2>
- * <p/>
+ * <p>&nbsp;</p>
  * <p>
  * Note that most of the useful methods on this class have been migrated to one of its three subclasses -
  * please see the documentation of these classes for more detail:
+ * </p>
  * <ul>
  * <li>{@link ObjectExpectation} - for setting expectations on most mock/spy objects in the traditional manner.</li>
  * <li>{@link ClassExpectation} - for expectations on static/constructor methods (reflection-based API).</li>
  * <li>{@link LambdaExpectation} - lets one specify mock calls (either on individual mocks or to statics/constructors)
  *     using Java 8 lambda syntax.</li>
  * </ul>
- * </p>
  */
 public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality<E> {
 
