@@ -23,23 +23,23 @@
 package moxie;
 
 /**
- * <p>
+ *
  * Domain-specific language methods for setting out the details of a retrospective mock validation.
- * </p>
- * <p>&nbsp;</p>
- * <h2>Syntax Overview</h2>
  * <p>
+ * &nbsp;
+ * <h3>Syntax Overview</h3>
+ *
  * A typical Moxie check statement on a mock object looks like this:
- * </p>
+ * <p>
  * <blockquote><code>
  * <span style="background-color: LightBlue">Moxie.check(mock)</span><span
  * style="background-color: LightPink">.returned(Moxie.lt(100)).times(3)</span><span
  * style="background-color: Khaki">.on()</span><span
  * style="background-color: LightGreen">.someMethod(Moxie.hasSubstring("foo"))</span>;
  * </code></blockquote>
- * <p>
+ *
  * It can be understood in four parts:
- * </p>
+ * <p>
  * <dl>
  * <dt><span style="font-weight: bold; background-color: LightBlue;">The first bit: identify the mock</span></dt>
  * <dd>
@@ -68,11 +68,10 @@ package moxie;
  * will contain a certain substring, etc.) - see method descriptions on that class for more details.
  * </dd>
  * </dl>
- * <p>&nbsp;</p>
- * <p>
+ *
  * The syntax for specifying checks on static methods and constructorss is slightly different, but reads
  * similarly - see documentation on the {@link ClassCheck} interface for further detail:
- * </p>
+ * <p>
  * <blockquote><code>
  * <span style="background-color: LightBlue">Moxie.check(SomeClass.class)</span><span
  * style="background-color: LightPink">.returned(Moxie.startsWith("x")).once()</span><span
@@ -82,11 +81,11 @@ package moxie;
  * style="background-color: LightPink">.atLeast(3)</span><span
  * style="background-color: LightGreen">.onNew("constructor args or matchers")</span>;
  * </code></blockquote>
- * <p>
+ *
  * Finally, {@link LambdaCheck}s let one perform checks on static methods and constructors with a refactorable
  * syntax that goes well with Java 8 lambdas.  (You can of course use this on older versions of Java, but the
  * corresponding anonymous-inner-class syntax is more cumbersome.)  Some examples:
- * </p>
+ * <p>
  * <blockquote><code>
  * <span style="background-color: LightBlue">Moxie.check()</span><span
  * style="background-color: LightPink">.returned(Moxie.lt(100)).times(3)</span><span
@@ -103,62 +102,63 @@ package moxie;
  * style="background-color: Khaki">.on(<span
  * style="background-color: LightGreen">() -&gt; &#123; new SomeClass("constructor args or matchers"); &#125;</span>)</span>;
  * </code></blockquote>
- * <h2>Condition Syntax</h2>
- * <p>
+ *
+ * &nbsp;
+ * <h3>Condition Syntax</h3>
+ *
  * The "middle bit" of the check statement can contain zero or more condition-setting methods:
- * </p>
+ * <p>
  * <dl>
  * <dt style="font-weight: bold">setting the expected number of invocations ({@link Cardinality} methods)</dt>
- * <dd><p>
+ * <dd>
  * The <code>Check</code> interface extends the {@link Cardinality} interface; methods from this interface
  * (like {@link Cardinality#never() never()}, {@link Cardinality#atLeastOnce() atLeastOnce()}, {@link Cardinality#atLeast(int) atLeast(int)},
  * {@link Cardinality#atMost(int) atMost(int)}) can be used to specify how many times the method should have
  * been called.
- * </p><p>
+ * <p>
  * If none of these methods are invoked, the default behavior is {@link Cardinality#once() once()}.
- * </p></dd>
+ * <p></dd>
  * <dt style="font-weight: bold">negation: {@link #didNot()}</dt>
- * <dd><p>
+ * <dd>
  * {@link #didNot()} negates the sense of the check; an error will be raised if a method invocation (or set of invocations)
  * is found that matches the check, rather than if one is not found.
- * </p></dd>
+ * <p></dd>
  * <dt style="font-weight: bold">interaction with {@link Expectation}s: {@link #unexpectedly()}</dt>
- * <dd><p>
+ * <dd>
  * If {@link #unexpectedly()} is specified, the check will only match method invocations that did not fulfill
  * {@link Expectation expectations} (including {@link Moxie#stub(Object) stubs}).
- * </p><p>
+ * <p>
  * <i>Caveat:</i> the ability to mix ahead-of-time expectation setting and after-the-fact checking in the same test
  * is provided for completeness and as an experimental feature.  Used carelessly, it is a sure way to render your tests
  * incomprehensible and unmaintainable.
- * </p></dd>
+ * <p></dd>
  * <dt style="font-weight: bold">associating checks with a {@link Group}: {@link #inGroup(Group...) inGroup()}</dt>
- * <dd><p>
+ * <dd>
  * By using a {@link Group}, checks can be made where method ordering is significant.  (Checks do not pay any attention
  * to the ordering of method calls otherwise.)
- * </p></dd>
+ * <p></dd>
  * <dt style="font-weight: bold">checking returned/thrown values: {@link ObjectCheck#returned(Object) returned()} and {@link ObjectCheck#threw(Throwable) threw()}</dt>
- * <dd><p>
+ * <dd>
  * On spy objects (and mocks with esoteric handlers), {@link ObjectCheck#returned(Object) returned()} and {@link ObjectCheck#threw(Throwable) threw()}
  * include the value returned/thrown by the method in the check.  You can use {@link MoxieMatchers} methods to perform a
  * flexible match.
- * </p><p>
+ * <p>
  * These methods have identically-functional aliases, {@link ObjectCheck#returnValue(Object) returnValue()} and {@link ObjectCheck#throwException(Throwable) throwException()},
  * which give checks that use {@link #didNot()} a nicer-sounding alternative syntax.
- * </p><p>
+ * <p>
  * Note that these methods cannot be used on final, private, static or constructor methods (thus they are only available
  * on the {@link ObjectCheck} interface).  The way these are implemented in Moxie involves using PowerMock to replace
  * the original implementation of the method/constructor with a stub; as {@link ObjectCheck#returned(Object) returned()}
  * and {@link ObjectCheck#threw(Throwable) threw()} are intended to verify the behavior of the underlying implementation
  * in the mocked class, including them would make no sense.
- * </p></dd>
+ * <p></dd>
  * </dl>
- * <p>&nbsp;</p>
- * <h2>Subclasses</h2>
- * <p>&nbsp;</p>
- * <p>
+ * &nbsp;
+ * <h3>Subclasses</h3>
+ *
  * Note that most of the useful methods on this class have been migrated to one of its three subclasses -
  * please see the documentation of these classes for more detail:
- * </p>
+ * <p>
  * <ul>
  * <li>{@link ObjectCheck} - for checking calls on most mock/spy objects in the traditional manner.</li>
  * <li>{@link ClassCheck} - for checking calls to static/constructor methods (reflection-based API).</li>
@@ -169,38 +169,38 @@ package moxie;
 public interface Check<C extends Check<C, R>, R> extends Cardinality<C>  {
 
     /**
-     * <p>
+     *
      * Inverts the sense of the match; an error will be raised if
      * a call to the specified method matching this check is found,
      * rather than if one is not found.
-     * </p>
+     * <p>
      *
      * @return this object, for call chaining
      */
     C didNot();
 
     /**
-     * <p>
+     *
      * This check will only match invocations that did not match a previously specified {@link Moxie#expect(Object) expectation}.
-     * </p>
      * <p>
+     *
      * Only makes sense in conjunction with {@link MoxieOptions#PERMISSIVE} mocks.
-     * </p>
+     * <p>
      *
      * @return this object, for call chaining
      */
     C unexpectedly();
 
     /**
-     * <p>
+     *
      * Check that the method executed after any methods already successfully checked as part of the given group(s).
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Group} interface for more details.
-     * </p>
      * <p>
+     *
      * This call will raise an error if any {@link MoxieOptions#UNORDERED} groups are specified.
-     * </p>
+     * <p>
      *
      * @param group one or more {@link Group}s
      * @return this object, for call chaining
@@ -208,16 +208,16 @@ public interface Check<C extends Check<C, R>, R> extends Cardinality<C>  {
     C inGroup(Group... group);
 
     /**
-     * <p>
+     *
      * Check that the relevant method threw the given {@link Throwable}.
-     * </p>
      * <p>
+     *
      * Note that you can use the {@link moxie.MoxieMatchers matcher methods} to match on the exception object.
-     * </p>
      * <p>
+     *
      * Note also that that {@link #throwException(Throwable) throwException()} and {@link #threw(Throwable) threw()}
      * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param throwable the {@link Throwable} thrown, or a matcher invocation
      * @return this object, for call chaining
@@ -225,16 +225,16 @@ public interface Check<C extends Check<C, R>, R> extends Cardinality<C>  {
     C throwException(Throwable throwable);
 
     /**
-     * <p>
+     *
      * Check that the relevant method threw the given {@link Throwable}.
-     * </p>
      * <p>
+     *
      * Note that you can use the {@link moxie.MoxieMatchers matcher methods} to match on the exception object.
-     * </p>
      * <p>
+     *
      * Note also that that {@link #throwException(Throwable) throwException()} and {@link #threw(Throwable) threw()}
      * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param throwable the {@link Throwable} thrown, or a matcher invocation
      * @return this object, for call chaining
@@ -242,16 +242,16 @@ public interface Check<C extends Check<C, R>, R> extends Cardinality<C>  {
     C threw(Throwable throwable);
 
     /**
-     * <p>
+     *
      * Check that the relevant method returned the given value.
-     * </p>
      * <p>
+     *
      * Note that you can use the {@link moxie.MoxieMatchers matcher methods} to match on the return value.
-     * </p>
      * <p>
+     *
      * Note also that that {@link #returnValue(Object) returnValue()} and {@link #returned(Object) returned()}
      * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param returnValue the value returned, or a matcher invocation
      * @return this object, for call chaining
@@ -259,16 +259,16 @@ public interface Check<C extends Check<C, R>, R> extends Cardinality<C>  {
     C returnValue(R returnValue);
 
     /**
-     * <p>
+     *
      * Check that the relevant method returned the given value.
-     * </p>
      * <p>
+     *
      * Note that you can use the {@link moxie.MoxieMatchers matcher methods} to match on the return value.
-     * </p>
      * <p>
+     *
      * Note also that that {@link #returnValue(Object) returnValue()} and {@link #returned(Object) returned()}
      * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param returnValue the value returned, or a matcher invocation
      * @return this object, for call chaining

@@ -33,15 +33,15 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * <p>
+ *
  * Matches any array (including primitive arrays) where each element of the array satisfies the corresponding
  * {@link Matcher} in a sequence of <code>Matcher</code>s, and with the same number of elements as the
  * sequence of <code>Matcher</code>s.
- * </p>
  * <p>
+ *
  * Intended as a substitute for Hamcrest's {@link org.hamcrest.collection.IsArrayContaining} -
  * unlike the original, this class can work with primitive arrays as well as arrays of objects.
- * </p>
+ * <p>
  * @param <T> type of the array to be matched (NOT the element type of the array)
  */
 public class IsArray<T> extends TypeSafeMatcher<T> {

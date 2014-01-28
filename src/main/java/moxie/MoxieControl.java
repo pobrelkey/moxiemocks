@@ -67,17 +67,17 @@ public interface MoxieControl {
     <T> T mock(Class<T> clazz, String name, MoxieOptions... options);
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param constructorArgs     values to be passed to the constructor
@@ -87,17 +87,17 @@ public interface MoxieControl {
     <T> T mock(Class<T> clazz, Object... constructorArgs);
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param constructorArgTypes the parameter signature of the constructor to be used
@@ -108,17 +108,17 @@ public interface MoxieControl {
     <T> T mock(Class<T> clazz, Class[] constructorArgTypes, Object[] constructorArgs);
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param name                the name of the mock object - will be used in error messages
@@ -129,17 +129,17 @@ public interface MoxieControl {
     <T> T mock(Class<T> clazz, String name, Object[] constructorArgs);
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param name                the name of the mock object - will be used in error messages
@@ -151,17 +151,17 @@ public interface MoxieControl {
     <T> T mock(Class<T> clazz, String name, Class[] constructorArgTypes, Object[] constructorArgs);
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param constructorArgs     values to be passed to the constructor
@@ -172,17 +172,17 @@ public interface MoxieControl {
     <T> T mock(Class<T> clazz, Object[] constructorArgs, MoxieOptions... options);
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param constructorArgTypes the parameter signature of the constructor to be used
@@ -194,17 +194,17 @@ public interface MoxieControl {
     <T> T mock(Class<T> clazz, Class[] constructorArgTypes, Object[] constructorArgs, MoxieOptions... options);
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param name                the name of the mock object - will be used in error messages
@@ -216,17 +216,17 @@ public interface MoxieControl {
     <T> T mock(Class<T> clazz, String name, Object[] constructorArgs, MoxieOptions... options);
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param name                the name of the mock object - will be used in error messages
@@ -262,18 +262,18 @@ public interface MoxieControl {
     <T> T spy(T realObject, String name, MoxieOptions... options);
 
     /**
-     * <p>
+     *
      * Creates a new {@link Group} to represent a group of calls to be tracked across mocks.
-     * </p>
      * <p>
+     *
      * The returned object can then be passed to {@link Expectation#inGroup(Group...) Expectation.inGroup()}
      * or {@link Check#inGroup(Group...)  Check.inGroup()} to associate expectations/checks
      * with the group.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Group}
      * interface for more details.
-     * </p>
+     * <p>
      *
      * @param options {@link MoxieOptions} which should apply to the group (currently either {@link MoxieOptions#ORDERED} or {@link MoxieOptions#UNORDERED})
      * @return a new {@link Group}
@@ -281,18 +281,18 @@ public interface MoxieControl {
     Group group(MoxieOptions... options);
 
     /**
-     * <p>
+     *
      * Creates a new {@link Group} to represent a group of calls to be tracked across mocks.
-     * </p>
      * <p>
+     *
      * The returned object can then be passed to {@link Expectation#inGroup(Group...) Expectation.inGroup()}
      * or {@link Check#inGroup(Group...)  Check.inGroup()} to associate expectations/checks
      * with the group.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Group}
      * interface for more details.
-     * </p>
+     * <p>
      *
      * @param name    the name of the group - will be used in error messages
      * @param options {@link MoxieOptions} which should apply to the group (currently either {@link MoxieOptions#ORDERED} or {@link MoxieOptions#UNORDERED})
@@ -301,12 +301,12 @@ public interface MoxieControl {
     Group group(String name, MoxieOptions... options);
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which an expectation is set on a mock.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
+     * <p>
      *
      * @param mockObject the mock or spy object on which the expectation is to be set
      * @param <T>        type of the mock or spy object
@@ -315,12 +315,12 @@ public interface MoxieControl {
     <T> ObjectExpectation<T> expect(T mockObject);
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which an expectation is set on static or constructor methods of a class.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
+     * <p>
      *
      * @param clazz the class on which the expectation is to be set
      * @param <T> the class on which the expectation is to be set
@@ -329,12 +329,12 @@ public interface MoxieControl {
     <T> ClassExpectation<T> expect(Class<T> clazz);
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which an expectation is set on static or constructor methods of a class.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
+     * <p>
      *
      * @param clazz the class on which the expectation is to be set
      * @param options {@link MoxieOptions} which should apply for the class mock (ignored after the first invocation for any class)
@@ -344,27 +344,27 @@ public interface MoxieControl {
     <T> ClassExpectation<T> expect(Class<T> clazz, MoxieOptions... options);
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which an expectation is set using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
+     * <p>
      *
      * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to expect
      */
     LambdaExpectation<Object> expect();
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which an expectation is set using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
      * <p>
+     *
      * This method is a synonym for <code>expect().thatVoid(lambda)</code>.
-     * </p>
+     * <p>
      *
      * @param lambda a lambda expression invoking the method to be mocked, using {@link MoxieMatchers parameter matchers} as necessary
      * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to expect
@@ -372,15 +372,15 @@ public interface MoxieControl {
     LambdaExpectation<Void> expectVoid(ThrowingRunnable lambda);
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which an expectation is set using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
      * <p>
+     *
      * This method is a synonym for <code>expect().that(lambda)</code>.
-     * </p>
+     * <p>
      *
      * @param lambda a lambda expression invoking the method to be mocked, using {@link MoxieMatchers parameter matchers} as necessary
      * @param <R> return type of the method/constructor to be mocked
@@ -389,12 +389,12 @@ public interface MoxieControl {
     <R> LambdaExpectation<R> expect(ThrowingSupplier<R> lambda);
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which an stub expectation is set on a mock.
-     * </p>
      * <p>
+     *
      * Synonym for <code>expect(mockObject).anyTimes().atAnyTime()</code>.
-     * </p>
+     * <p>
      *
      * @param mockObject the mock or spy object on which the expectation is to be set
      * @param <T>        type of the mock or spy object
@@ -403,12 +403,12 @@ public interface MoxieControl {
     <T> ObjectExpectation<T> stub(T mockObject);
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which an expectation is set on static or constructor methods of a class.
-     * </p>
      * <p>
+     *
      * Synonym for <code>expect(clazz).anyTimes().atAnyTime()</code>.
-     * </p>
+     * <p>
      *
      * @param clazz the class on which the expectation is to be set
      * @param <T> the class on which the expectation is to be set
@@ -417,30 +417,30 @@ public interface MoxieControl {
     <T> ClassExpectation<T> stub(Class<T> clazz);
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a stub expectation is set using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
      * <p>
+     *
      * This method is a synonym for <code>expect().anyTimes().atAnyTime()</code>.
-     * </p>
+     * <p>
      *
      * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to perform
      */
     LambdaExpectation<Object> stub();
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a stub expectation is set using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
      * <p>
+     *
      * This method is a synonym for <code>expect().anyTimes().atAnyTime().thatVoid(lambda)</code>.
-     * </p>
+     * <p>
      *
      * @param lambda a lambda expression invoking the method to be stubbed, using {@link MoxieMatchers parameter matchers} as necessary
      * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to perform
@@ -448,15 +448,15 @@ public interface MoxieControl {
     LambdaExpectation<Void> stubVoid(ThrowingRunnable lambda);
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a stub expectation is set using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
      * <p>
+     *
      * This method is a synonym for <code>expect().anyTimes().atAnyTime().that(lambda)</code>.
-     * </p>
+     * <p>
      *
      * @param lambda a lambda expression invoking the method to be stubbed, using {@link MoxieMatchers parameter matchers} as necessary
      * @param <R> return type of the method/constructor to be stubbed
@@ -465,12 +465,12 @@ public interface MoxieControl {
     <R> LambdaExpectation<R> stub(ThrowingSupplier<R> lambda);
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a check is performed against a mock after use.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Check} interface for more details.
-     * </p>
+     * <p>
      *
      * @param mockObject the mock or spy object on which the check is to be performed
      * @param <T>        type of the mock or spy object
@@ -479,12 +479,12 @@ public interface MoxieControl {
     <T> ObjectCheck<T> check(T mockObject);
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a check is performed on a static method or constructor of a class after use.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Check} interface for more details.
-     * </p>
+     * <p>
      *
      * @param clazz the class on which the check is to be performed
      * @return a {@link ClassCheck} whose methods can be used to give details of what should have occurred
@@ -492,27 +492,27 @@ public interface MoxieControl {
     ClassCheck check(Class clazz);
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a check is performed, as specified using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Check} interface for more details.
-     * </p>
+     * <p>
      *
      * @return a {@link LambdaCheck} whose methods can be used to give details of what should have occurred
      */
     LambdaCheck<Object> check();
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a check is performed, as specified using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Check} interface for more details.
-     * </p>
      * <p>
+     *
      * This method is a synonym for <code>check().thatVoid(lambda)</code>.
-     * </p>
+     * <p>
      *
      * @param lambda a lambda expression invoking the method to be checked, using {@link MoxieMatchers parameter matchers} as necessary
      * @return a {@link LambdaCheck} whose methods can be used to give details of what should have occurred
@@ -520,15 +520,15 @@ public interface MoxieControl {
     LambdaCheck<Void> checkVoid(ThrowingRunnable lambda);
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a check is performed, as specified using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Check} interface for more details.
-     * </p>
      * <p>
+     *
      * This method is a synonym for <code>check().that(lambda)</code>.
-     * </p>
+     * <p>
      *
      * @param lambda a lambda expression invoking the method to be checked, using {@link MoxieMatchers parameter matchers} as necessary
      * @param <R> return type of the method/constructor to be checked
@@ -537,80 +537,80 @@ public interface MoxieControl {
     <R> LambdaCheck<R> check(ThrowingSupplier<R> lambda);
 
     /**
-     * <p>
+     *
      * Verify that no calls other than those matched by previous {@link #check checks} occurred on the given mock(s).
-     * </p>
      * <p>
+     *
      * If no parameters are given, this check is performed against all active mock/spy objects.
-     * </p>
+     * <p>
      *
      * @param mockObjects one or more mock/spy objects to be checked
      */
     void checkNothingElseHappened(Object... mockObjects);
 
     /**
-     * <p>
+     *
      * Verify that no calls other than those matched by previous {@link #expect expectations}
      * or {@link #check checks} occurred on the given mock(s).
-     * </p>
      * <p>
+     *
      * If no parameters are given, this check is performed against all active mock/spy objects.
-     * </p>
+     * <p>
      *
      * @param mockObjects one or more mock/spy objects to be checked
      */
     void checkNothingElseUnexpectedHappened(Object... mockObjects);
 
     /**
-     * <p>
+     *
      * Verify {@link #expect expectations} on, and then deactivate, the given mock/spy objects.
-     * </p>
      * <p>
+     *
      * After verification, the given mocks/spies will cease to be active; attempts to call methods on them
      * or perform {@link #check checks} against them will raise an error.
-     * </p>
      * <p>
+     *
      * If no parameters are given, verification is performed against all active mock/spy objects.
-     * </p>
+     * <p>
      *
      * @param mockObjects one or more mock/spy objects to be checked
      */
     void verify(Object... mockObjects);
 
     /**
-     * <p>
+     *
      * Verify {@link #expect expectations} on the given mock/spy objects.
-     * </p>
      * <p>
+     *
      * Unlike {@link #verify verify()}, the given objects remain active after this method returns.
-     * </p>
      * <p>
+     *
      * If no parameters are given, verification is performed against all active mock/spy objects.
-     * </p>
+     * <p>
      *
      * @param mockObjects one or more mock/spy objects to be checked
      */
     void verifySoFar(Object... mockObjects);
 
     /**
-     * <p>
+     *
      * Verify {@link #expect expectations} on the given mock/spy objects, then make them
      * forget about any expectations or invocations up to this point.
-     * </p>
      * <p>
+     *
      * If no parameters are given, this is done for all active mock/spy objects.
-     * </p>
+     * <p>
      *
      * @param mockObjects one or more mock/spy objects to be verified and reset
      */
     void verifyAndReset(Object... mockObjects);
 
     /**
-     * <p>
+     *
      * Verify {@link #expect expectations} on the given mock/spy object, make it
      * forget about any expectations or invocations up to this point, and set new
      * {@link MoxieOptions options}.
-     * </p>
+     * <p>
      *
      * @param mockObject   a mock/spy object to be verified and reset
      * @param firstOption  an option that should henceforth apply to the given mock
@@ -619,30 +619,30 @@ public interface MoxieControl {
     void verifyAndReset(Object mockObject, MoxieOptions firstOption, MoxieOptions... otherOptions);
 
     /**
-     * <p>
+     *
      * Makes the given mock/spy objects forget about any expectations or invocations up to this point.
-     * </p>
      * <p>
+     *
      * Note that this method performs no verification as to whether {@link #expect expectations}
      * have been satisfied; for that, use {@link #verifyAndReset}.
-     * </p>
      * <p>
+     *
      * If no parameters are given, all active mock/spy objects are reset.
-     * </p>
+     * <p>
      *
      * @param mockObjects one or more mock/spy objects to be reset
      */
     void reset(Object... mockObjects);
 
     /**
-     * <p>
+     *
      * Make the given mock/spy object forget about any expectations or invocations up to this point,
      * and set new {@link MoxieOptions options}.
-     * </p>
      * <p>
+     *
      * Note that this method performs no verification as to whether {@link #expect expectations}
      * have been satisfied; for that, use {@link #verifyAndReset}.
-     * </p>
+     * <p>
      *
      * @param mockObject   a mock/spy object to be reset
      * @param firstOption  an option that should henceforth apply to the given mock
@@ -651,25 +651,25 @@ public interface MoxieControl {
     void reset(Object mockObject, MoxieOptions firstOption, MoxieOptions... otherOptions);
 
     /**
-     * <p>
+     *
      * Deactivate the given mock/spy objects without verifying expectations.
-     * </p>
      * <p>
+     *
      * If no parameters are given, this is done for all active mock/spy objects.
-     * </p>
+     * <p>
      *
      * @param mockObjects one or more mock/spy objects to be deactivated
      */
     void deactivate(Object... mockObjects);
 
     /**
-     * <p>
+     *
      * Raises an error if any mock/spy objects are still active.
-     * </p>
      * <p>
+     *
      * Useful for troubleshooting possible interactions between tests, and possible test memory leaks
      * due to Moxie holding on to active mocks long past their time.
-     * </p>
+     * <p>
      *
      */
     void checkNoActiveMocks();

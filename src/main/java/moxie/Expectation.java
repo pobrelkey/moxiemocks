@@ -25,23 +25,23 @@ package moxie;
 import java.lang.reflect.InvocationHandler;
 
 /**
- * <p>
+ *
  * Domain-specific language methods for setting out the details of a mock object expectation.
- * </p>
- * <p>&nbsp;</p>
- * <h2>Syntax Overview</h2>
  * <p>
+ * &nbsp;
+ * <h3>Syntax Overview</h3>
+ *
  * A typical Moxie expectation statement on a mock object looks like this:
- * </p>
+ * <p>
  * <blockquote><code>
  * <span style="background-color: LightBlue">Moxie.expect(mock)</span><span
  * style="background-color: LightPink">.willReturn("someValue").atLeastOnce()</span><span
  * style="background-color: Khaki">.on()</span><span
  * style="background-color: LightGreen">.someMethod(Moxie.leq(42))</span>;
  * </code></blockquote>
- * <p>
+ *
  * It can be understood in four parts:
- * </p>
+ * <p>
  * <dl>
  * <dt><span style="font-weight: bold; background-color: LightBlue;">The first bit: identify the mock</span></dt>
  * <dd>
@@ -72,10 +72,10 @@ import java.lang.reflect.InvocationHandler;
  * will contain a certain substring, etc.) - see method descriptions on that class for more details.
  * </dd>
  * </dl>
- * <p>
+ *
  * The syntax for setting expectations on static methods and constructors is slightly different, but reads
  * similarly - see documentation on the {@link ClassExpectation} interface for further detail:
- * </p>
+ * <p>
  * <blockquote><code>
  * <span style="background-color: LightBlue">Moxie.expect(SomeClass.class)</span><span
  * style="background-color: LightPink">.times(2).andReturn("wibble")</span><span
@@ -84,11 +84,11 @@ import java.lang.reflect.InvocationHandler;
  * style="background-color: LightPink">.once()</span><span
  * style="background-color: LightGreen">.onNew("constructor args", Moxie.hasSubstring("or matchers"))</span>;
  * </code></blockquote>
- * <p>
+ *
  * Finally, {@link LambdaExpectation}s let one set expectations on static methods and constructors with a
  * refactorable syntax that goes well with Java 8 lambdas.  (You can of course use this on older versions
  * of Java, but the corresponding anonymous-inner-class syntax is more cumbersome.)  Some examples:
- * </p>
+ * <p>
  * <blockquote><code>
  * <span style="background-color: LightBlue">Moxie.expect()</span><span
  * style="background-color: LightPink">.willReturn("someValue").atLeastOnce()</span><span
@@ -103,92 +103,93 @@ import java.lang.reflect.InvocationHandler;
  * style="background-color: Khaki">.on(<span
  * style="background-color: LightGreen">() -&gt; &#123; new SomeClass("constructor args", Moxie.hasSubstring("or matchers")); &#125;</span>)</span>;
  * </code></blockquote>
- * <h2>Conditions and Behaviors</h2>
- * <p>
+ *
+ * &nbsp;
+ * <h3>Conditions and Behaviors</h3>
+ *
  * The "middle bit" of the expectation statement can contain zero or more condition/expectation setting methods:
- * </p>
+ * <p>
  * <dl>
  * <dt style="font-weight: bold">setting the expected number of invocations ({@link Cardinality} methods)</dt>
- * <dd><p>
+ * <dd>
  * The <code>Expectation</code> interface extends the {@link Cardinality} interface; methods from this interface
  * (like {@link Cardinality#never() never()}, {@link Cardinality#atLeastOnce() atLeastOnce()}, {@link Cardinality#atLeast(int) atLeast(int)},
  * {@link Cardinality#atMost(int) atMost(int)}) can be used to specify how many times we expect this method call
  * to be received.
- * </p><p>
+ * <p>
  * If none of these methods are invoked, the default behavior is {@link Cardinality#once() once()}.
- * </p></dd>
+ * <p></dd>
  * <dt style="font-weight: bold">setting stub behavior</dt>
- * <dd><p>
+ * <dd>
  * We can specify what the mock object will do when the method is called using the
  * {@link #andReturn(Object) andReturn()}, {@link #andThrow(Throwable) andThrow()}, {@link #andDelegateTo(Object) andDelegateTo()}
  * and {@link #andHandleWith(InvocationHandler) andHandleWith()} methods.  (Note that these methods have the aliases
  * {@link #willReturn(Object) willReturn()}, {@link #willThrow(Throwable) willThrow()}, {@link #willDelegateTo(Object) willDelegateTo()}
  * and {@link #willHandleWith(InvocationHandler) willHandleWith()}, respectively; they do exactly the same thing as their
  * similarly-named cousins.)
- * </p><p>
+ * <p>
  * Note that on spy objects, calling one of these methods specifies behavior that will be performed instead of
  * delegating to the underlying object.  If you wish to verify that the underlying object returns/throws something,
  * read on.
- * </p><p>
+ * <p>
  * If none of these methods are invoked, the default behavior for mocks is to do nothing on void methods
  * and return the default value (<code>null</code> for objects, zero/<code>false</code> for primitives)
  * on non-void methods; for spies, the default behavior is to delegate to the same method on the object
  * being spied upon.
- * </p></dd>
+ * <p></dd>
  * <dt style="font-weight: bold">setting stub behavior on consecutive calls</dt>
- * <dd><p>
+ * <dd>
  * Sometimes we want the method to exhibit different behavior on consecutive calls - for instance, an iterator
  * may return a series of different values as it traverses a collection.  The {@link #andConsecutivelyReturn(Object...) andConsecutivelyReturn()}
  * method can be used for this purpose.  Similarly, {@link #andConsecutivelyThrow(Throwable...) andConsecutivelyThrow()}
  * will specify a series of <code>Throwable</code>s to be thrown on successive method calls. (These methods have
  * the aliases {@link #willConsecutivelyReturn(Object...) willConsecutivelyReturn()} and
  * {@link #willConsecutivelyThrow(Throwable...) willConsecutivelyThrow()} respectively.)
- * </p><p>
+ * <p>
  * If we want to mix and match returning values and throwing <code>Throwable</code>s on consecutive calls, we can
  * accomplish this by calling multiple behavior-setting methods within an expectation statement. For example,
  * to get a method to return the value <code>1</code>, then throw an <code>Exception</code>, then return the value
  * <code>"three"</code> across three consecutive calls, use the following:
- * </p>
+ * <p>
  * <blockquote style="text-indent: -4em; padding-left: 4em"><code>
  * Moxie<span style="white-space:nowrap">.expect(mock)</span><span style="white-space:nowrap">.andReturn(1)</span><span style="white-space:nowrap">.andThrow(new Exception("Two!"))</span><span style="white-space:nowrap">.andReturn("three")</span><span style="white-space:nowrap">.times(3)</span><span style="white-space:nowrap">.on().someMethod();</span>
  * </code></blockquote>
- * <p>
+ *
  * This works equally effectively as the "consecutively" methods described above, which are essentially just shorthand
  * for this longer notation.
- * </p></dd>
+ * <p></dd>
  * <dt style="font-weight: bold">verifying returned/thrown values (spies only)</dt>
- * <dd><p>
+ * <dd>
  * On spy objects, you can use the {@link ObjectExpectation#andVerifyReturn(Object) andVerifyReturn()} and
  * {@link ObjectExpectation#andVerifyThrow(Throwable) andVerifyThrow()} methods (and their aliases,
  * {@link ObjectExpectation#willReturnVerified(Object) willReturnVerified()} and
  * {@link ObjectExpectation#willThrowVerified(Throwable) willThrowVerified()}) to check that the object spied upon
  * returns/throws a given value.  You can use {@link MoxieMatchers} methods to perform a
  * flexible match.
- * </p><p>
+ * <p>
  * Note that these methods only make any sense on spy objects; if used on mock objects,
  * they will throw an error.
- * </p></dd>
+ * <p></dd>
  * <dt style="font-weight: bold">associating expectations with a {@link Group}: {@link #inGroup(Group...) inGroup()}</dt>
- * <dd><p>
+ * <dd>
  * The {@link #inGroup(Group...) inGroup()} method makes an expectation part of a {@link Group}, allowing us to verify
  * the ordering of a set of calls across mocks, or to verify a partial set of expectations midway through the test.
  * See the discussion and examples in the summary javadoc of the {@link Group} interface for more details.
- * </p></dd>
+ * <p></dd>
  * <dt style="font-weight: bold">specifying that ordering doesn't matter: {@link #atAnyTime()} ({@link MoxieOptions#ORDERED ORDERED} mocks only)</dt>
- * <dd><p>
+ * <dd>
  * Mocks/spies created with the {@link MoxieOptions#ORDERED ORDERED} option verify the order in which method calls
  * are received. By calling {@link #atAnyTime()} when setting up the expectation, we can specify that order
  * checking will not be performed on this expectation.  This call is meaningless on {@link MoxieOptions#UNORDERED UNORDERED}
  * mocks.
- * </p></dd>
+ * <p></dd>
  * </dl>
- * <p>&nbsp;</p>
- * <h2>Subclasses</h2>
- * <p>&nbsp;</p>
- * <p>
+ * &nbsp;
+ * <h3>Subclasses</h3>
+ *
  * Note that most of the useful methods on this class have been migrated to one of its three subclasses -
  * please see the documentation of these classes for more detail:
- * </p>
+ * <p>
  * <ul>
  * <li>{@link ObjectExpectation} - for setting expectations on most mock/spy objects in the traditional manner.</li>
  * <li>{@link ClassExpectation} - for expectations on static/constructor methods (reflection-based API).</li>
@@ -207,26 +208,26 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
     E inGroup(Group... groups);
 
     /**
-     * <p>
+     *
      * Specifies that this expectation may be fulfilled at any time.
-     * </p>
      * <p>
+     *
      * Only meaningful for {@link MoxieOptions#ORDERED ORDERED} mocks - expectations on which <code>atAnyTime()</code> is called
      * will not be checked as part of the mock's call ordering.
-     * </p>
+     * <p>
      *
      * @return this object, for call chaining
      */
     E atAnyTime();
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, return the given value.
-     * </p>
      * <p>
+     *
      * Note that {@link #willReturn(Object) willReturn()} and {@link #andReturn(Object) andReturn()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param result the value to be returned
      * @return this object, for call chaining
@@ -234,13 +235,13 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
     E willReturn(R result);
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, return the given value.
-     * </p>
      * <p>
+     *
      * Note that {@link #willReturn(Object) willReturn()} and {@link #andReturn(Object) andReturn()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param result the value to be returned
      * @return this object, for call chaining
@@ -248,13 +249,13 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
     E andReturn(R result);
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, return the first value on the first invocation,
      * the second value on the second invocation, et cetera.
-     * <p>
+     *
      * Note that {@link #willConsecutivelyReturn(Object...) willConsecutivelyReturn()} and {@link #andConsecutivelyReturn(Object...) andConsecutivelyReturn()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param results the values to be returned
      * @return this object, for call chaining
@@ -262,13 +263,13 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
     E willConsecutivelyReturn(R... results);
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, return the first value on the first invocation,
      * the second value on the second invocation, et cetera.
-     * <p>
+     *
      * Note that {@link #willConsecutivelyReturn(Object...) willConsecutivelyReturn()} and {@link #andConsecutivelyReturn(Object...) andConsecutivelyReturn()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param results the values to be returned
      * @return this object, for call chaining
@@ -276,41 +277,41 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
     E andConsecutivelyReturn(R... results);
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, do nothing.  This is most meaningful with void methods on
      * spy objects; in these cases, the underlying method on the spy object is not called.
-     * </p>
      * <p>
+     *
      * Note that {@link #willDoNothing()} and {@link #andDoNothing()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @return this object, for call chaining
      */
     E willDoNothing();
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, do nothing.  This is most meaningful with void methods on
      * spy objects; in these cases, the underlying method on the spy object is not called.
-     * </p>
      * <p>
+     *
      * Note that {@link #willDoNothing()} and {@link #andDoNothing()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @return this object, for call chaining
      */
     E andDoNothing();
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, return the first value in the {@link Iterable}
      * on the first invocation, the second value on the second invocation, et cetera.
-     * <p>
+     *
      * Note that {@link #willConsecutivelyReturn(Iterable) willConsecutivelyReturn()} and {@link #andConsecutivelyReturn(Iterable) andConsecutivelyReturn()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param results the values to be returned
      * @return this object, for call chaining
@@ -318,13 +319,13 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
     E willConsecutivelyReturn(Iterable results);
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, return the first value in the {@link Iterable}
      * on the first invocation, the second value on the second invocation, et cetera.
-     * <p>
+     *
      * Note that {@link #willConsecutivelyReturn(Iterable) willConsecutivelyReturn()} and {@link #andConsecutivelyReturn(Iterable) andConsecutivelyReturn()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param results the values to be returned
      * @return this object, for call chaining
@@ -332,13 +333,13 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
     E andConsecutivelyReturn(Iterable results);
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, throw the given {@link Throwable}.
-     * </p>
      * <p>
+     *
      * Note that {@link #willThrow(Throwable) willThrow()} and {@link #andThrow(Throwable) andThrow()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param throwable the {@link Throwable} to be thrown
      * @return this object, for call chaining
@@ -346,13 +347,13 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
     E willThrow(Throwable throwable);
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, throw the given {@link Throwable}.
-     * </p>
      * <p>
+     *
      * Note that {@link #willThrow(Throwable) willThrow()} and {@link #andThrow(Throwable) andThrow()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param throwable the {@link Throwable} to be thrown
      * @return this object, for call chaining
@@ -360,13 +361,13 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
     E andThrow(Throwable throwable);
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, throw the first {@link Throwable} on the first invocation,
      * the second {@link Throwable} on the second invocation, et cetera.
-     * <p>
+     *
      * Note that {@link #willConsecutivelyThrow(Throwable...) willConsecutivelyThrow()} and {@link #andConsecutivelyThrow(Throwable...) andConsecutivelyThrow()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param throwables the {@link Throwable}s to be thrown
      * @return this object, for call chaining
@@ -375,13 +376,13 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
 
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, throw the first {@link Throwable} on the first invocation,
      * the second {@link Throwable} on the second invocation, et cetera.
-     * <p>
+     *
      * Note that {@link #willConsecutivelyThrow(Throwable...) willConsecutivelyThrow()} and {@link #andConsecutivelyThrow(Throwable...) andConsecutivelyThrow()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param throwables the {@link Throwable}s to be thrown
      * @return this object, for call chaining
@@ -389,13 +390,13 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
     E andConsecutivelyThrow(Throwable... throwables);
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, delegate the call to the given object.
-     * </p>
      * <p>
+     *
      * Note that {@link #willDelegateTo(Object) willDelegateTo()} and {@link #andDelegateTo(Object) andDelegateTo()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param delegate the object to which the call should be delegated
      * @return this object, for call chaining
@@ -403,13 +404,13 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
     E willDelegateTo(Object delegate);
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, delegate the call to the given object.
-     * </p>
      * <p>
+     *
      * Note that {@link #willDelegateTo(Object) willDelegateTo()} and {@link #andDelegateTo(Object) andDelegateTo()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param delegate the object to which the call should be delegated
      * @return this object, for call chaining
@@ -417,13 +418,13 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
     E andDelegateTo(Object delegate);
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, handle the call using the given {@link java.lang.reflect.InvocationHandler}.
-     * </p>
      * <p>
+     *
      * Note that {@link #willHandleWith(java.lang.reflect.InvocationHandler) willHandleWith()} and {@link #andHandleWith(java.lang.reflect.InvocationHandler) andHandleWith()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param handler the {@link java.lang.reflect.InvocationHandler} that should handle this call
      * @return this object, for call chaining
@@ -431,13 +432,13 @@ public interface Expectation<E extends Expectation<E, R>, R> extends Cardinality
     E willHandleWith(InvocationHandler handler);
 
     /**
-     * <p>
+     *
      * When a call fulfilling this expectation is received, handle the call using the given {@link java.lang.reflect.InvocationHandler}.
-     * </p>
      * <p>
+     *
      * Note that {@link #willHandleWith(java.lang.reflect.InvocationHandler) willHandleWith()} and {@link #andHandleWith(java.lang.reflect.InvocationHandler) andHandleWith()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param handler the {@link java.lang.reflect.InvocationHandler} that should handle this call
      * @return this object, for call chaining

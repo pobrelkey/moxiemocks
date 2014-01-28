@@ -22,12 +22,12 @@
 package moxie;
 
 /**
- * <p>
+ *
  * Error thrown when an attempt is made to invoke the original implementation of
  * a method prepared for mocking by PowerMock (final/private/static methods,
  * constructors, or any method on a final class).
- * </p>
  * <p>
+ *
  * On most {@link MoxieOptions#PARTIAL PARTIAL} mocks (or methods where
  * {@link moxie.ObjectExpectation#andCallOriginal() andCallOriginal()} is specified),
  * the mock object is a subclass of the mocked class; for every overridable method,
@@ -38,7 +38,7 @@ package moxie;
  * the original implementation and replace it with a stub that delegates to Moxie.
  * Any attempts to get Moxie to delegate to the original implementation in this situation
  * will result in this error.
- * </p>
+ * <p>
  */
 public class MoxieZombieMethodInvocationError extends Error {
     MoxieZombieMethodInvocationError(String s) {

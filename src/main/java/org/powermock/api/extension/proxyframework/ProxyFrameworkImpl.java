@@ -20,16 +20,16 @@ import org.powermock.reflect.spi.ProxyFramework;
 import java.lang.reflect.Method;
 
 /**
- * <p>
+ *
  * Internal class used by PowerMock.
- * </p>
  * <p>
+ *
  * Implemented in an org.powermock package because the core PowerMock library leaves this class unimplemented -
  * it insists that you provide a separate implementation specific to your mock object library.  (This is mostly
  * a consequence of Mockito using their own fork of CGLIB.)  This implementation should work correctly for Moxie,
  * EasyMock and Mockito, and in theory should allow you to use PowerMock with all three in the same classpath/JVM
  * (I'm not daft enough to actually try this though).
- * </p>
+ * <p>
  *
  */
 public class ProxyFrameworkImpl implements ProxyFramework {

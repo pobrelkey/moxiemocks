@@ -29,20 +29,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>
+ *
  * JUnit 4 unit test runner which automatically sets up mocks prior to each test method, and verifies them afterwards.
- * </p>
  * <p>
+ *
  * Under the covers, this class just tacks a {@link MoxieRule} onto your test instance - see documentation
  * for that class for more details of usage.  This class is provided mainly for backwards compatibility,
  * and to mollify people who think JUnit 4.7+ {@link org.junit.Rule Rule}s are ugly.
  * Provided you have a recent enough version of JUnit, you really ought to use {@link MoxieRule} instead -
  * especially if you want to use PowerMock for static/constructor mocking (in which case you'd need to use
  * PowerMock's <code>PowerMockRunner</code> instead of this class).
- * </p>
  * <p>
+ *
  * Use <code>MoxieRunner</code> by adding the <code>@RunWith(MoxieRunner.class)</code> annotation to your test classes.
- * </p>
+ * <p>
  */
 public class MoxieRunner extends BlockJUnit4ClassRunner {
 

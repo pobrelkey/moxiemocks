@@ -31,13 +31,13 @@ import org.hamcrest.core.IsEqual;
 import java.lang.reflect.Array;
 
 /**
- * <p>
+ *
  * Matches any array (including primitive arrays) where any element satisfies a nested {@link Matcher}.
- * </p>
  * <p>
+ *
  * Intended as a substitute for Hamcrest's {@link org.hamcrest.collection.IsArrayContaining} -
  * unlike the original, this class can work with primitive arrays as well as arrays of objects.
- * </p>
+ * <p>
  * @param <T> type of the array to be matched (NOT the element type of the array)
  */
 public class IsArrayContaining<T> extends TypeSafeMatcher<T> {
