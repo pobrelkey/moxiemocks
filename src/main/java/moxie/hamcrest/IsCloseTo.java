@@ -27,15 +27,15 @@ import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
 /**
- * <p>
+ *
  * Matches any {@link Number} whose {@link Number#doubleValue() doubleValue()} is equal to a desired value
  * to within an acceptable tolerance.
- * </p>
  * <p>
+ *
  * Intended to be a drop-in replacement for Hamcrest's {@link org.hamcrest.number.IsCloseTo} - unlike the original,
  * it can work with any <code>Number</code> and not just {@link Double}s (so it works with
  * {@link java.math.BigDecimal BigDecimal}s, {@link Integer}s, {@link Long}s, {@link Float}s, etc.).
- * </p>
+ * <p>
  * @param <T> type of the <code>Number</code> to be matched
  */
 public class IsCloseTo<T extends Number> extends TypeSafeMatcher<T> {

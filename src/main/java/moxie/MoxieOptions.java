@@ -38,54 +38,54 @@ public enum MoxieOptions implements MoxieFlags {
     ORDERED(true, null, null, null, null),
 
     /**
-     * <p>
+     *
      * Calls to this mock that do not fulfill any previously specified expectation will
      * perform the default behavior without raising an error.
-     * </p>
      * <p>
+     *
      * On normal mocks, the default behavior for most methods is to return the method return type's default value
      * (<code>null</code> for methods returning objects, zero or <code>false</code> for methods
      * returning primitives).  The exceptions are three methods from {@link Object}:
-     * </p>
+     * <p>
      * <ul>
      * <li>{@link Object#hashCode() hashCode()} returns the value of {@link System#identityHashCode(Object) System.identityHashCode()} for the mock.</li>
      * <li>{@link Object#equals(Object) equals()} implements referential equality.</li>
      * <li>{@link Object#toString() toString()} returns a default string giving the name of the mock object.</li>
      * </ul>
-     * <p>
+     *
      * On {@link #PARTIAL} mocks, the default behavior is to pass control to the method on the class being mocked.
-     * </p>
      * <p>
+     *
      * On spies, the default behavior is always to delegate to the underlying object.
-     * </p>
+     * <p>
      */
     PERMISSIVE(null, true, null, null, null),
 
     /**
-     * <p>
+     *
      * Calls to this mock that do not fulfill any previously specified expectation will raise an error.
-     * </p>
      * <p>
+     *
      * Note that {@link Object#hashCode() hashCode()}, {@link Object#equals(Object) equals()}, {@link Object#toString() toString()}
      * and {@link Object#finalize() finalize()} will not raise errors on <code>PRESCRIPTIVE</code> mocks/spies
      * unless a {@link Expectation#never() never()} expectation is explicitly set for those methods.  
-     * </p>
+     * <p>
      */
     PRESCRIPTIVE(null, false, null, null, null),
 
     /**
-     * <p>
+     *
      * The default behavior for methods on this mock will be to pass control to the original implementation
      * of the method on the concrete class being mocked.
-     * </p>
      * <p>
+     *
      * This option only makes sense for mocks of concrete classes; specifying it for an interface mock
      * or a spy will raise an {@link IllegalArgumentException}.
-     * </p>
      * <p>
+     *
      * Most users of this option will probably want to specify {@link #PERMISSIVE} at the same time,
      * lest unexpected method calls raise an error.
-     * </p>
+     * <p>
      */
     PARTIAL(null ,null, true, null, null),
 

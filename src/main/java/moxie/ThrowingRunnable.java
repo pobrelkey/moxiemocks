@@ -23,13 +23,13 @@
 package moxie;
 
 /**
- * <p>
+ *
  * Interface for a no-arg method object that does not return a value.
- * </p>
  * <p>
+ *
  * This is largely the same interface as {@link java.lang.Runnable}, modified to throw {@link Exception}
  * to make mocking methods that throw checked exceptions easier.
- * </p>
+ * <p>
  */
 public interface ThrowingRunnable {
     /**

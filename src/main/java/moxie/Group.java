@@ -23,18 +23,18 @@
 package moxie;
 
 /**
- * <p>
+ *
  * Represents an ordered list of expectations that should occur in a strict order across mocks; or,
  * an unordered set of expectations which should be separately verifiable as complete.
- * </p>
- * <p>&nbsp;</p>
- * <h2>Creation</h2>
  * <p>
+ * &nbsp;
+ * <h3>Creation</h3>
+ *
  * You can create a <code>Group</code> by calling {@link MoxieControl#group(MoxieOptions...) MoxieControl.group()}.
- * </p>
  * <p>
+ *
  * By passing {@link MoxieOptions options} to this method, you can create <code>Group</code>s of two different types:
- * </p>
+ * <p>
  * <ul>
  * <li>
  * {@link MoxieOptions#ORDERED} <code>Group</code>s can be used to tie together expectations across mocks that
@@ -45,18 +45,18 @@ package moxie;
  * like to verify as having been fulfilled at some intermediate stage of the test.
  * </li>
  * </ul>
- * <p>
+ *
  * The default is to create {@link MoxieOptions#ORDERED} groups.
- * </p>
- * <p>&nbsp;</p>
- * <h2>Usage in expectation-driven tests</h2>
  * <p>
+ * &nbsp;
+ * <h3>Usage in expectation-driven tests</h3>
+ *
  * Use the {@link Expectation#inGroup(Group...) Expectation.inGroup()} method to associate an expectation
  * with a <code>Group</code>.
- * </p>
  * <p>
+ *
  * Example using {@link MoxieOptions#ORDERED} <code>Group</code>s:
- * </p>
+ * <p>
  * <pre>
  * // Given these expectations...
  * List&lt;String&gt; presidents = Moxie.mock(List.class);
@@ -76,10 +76,10 @@ package moxie;
  * presidents.get(34);
  * presidents.get(0);
  * </pre>
- * <p>
+ *
  * Note that you can set a number of times you expect an {@link MoxieOptions#ORDERED} <code>Group</code>
  * to execute beginning-to-end using the {@link #willBeCalled()} method:
- * </p>
+ * <p>
  * <pre>
  * List&lt;String&gt; presidents = Moxie.mock(List.class);
  * List&lt;String&gt; stooges = Moxie.mock(List.class);
@@ -100,9 +100,9 @@ package moxie;
  * stooges.get(1);
  * stooges.get(2);
  * </pre>
- * <p>
+ *
  * Example using {@link MoxieOptions#UNORDERED} <code>Group</code>s:
- * </p>
+ * <p>
  * <pre>
  * List&lt;String&gt; presidents = Moxie.mock(List.class);
  * Group checkpoint = Moxie.group(MoxieOptions.UNORDERED);
@@ -123,17 +123,17 @@ package moxie;
  * // verify all expectations
  * Moxie.verify();
  * </pre>
- * <p>&nbsp;</p>
- * <h2>Usage in check-driven tests</h2>
- * <p>
+ * &nbsp;
+ * <h3>Usage in check-driven tests</h3>
+ *
  * Use the {@link Check#inGroup(Group...) Check.inGroup()} method to associate a check
  * with an {@link MoxieOptions#ORDERED} <code>Group</code>.  The check will then only match
  * invocations that occurred after the most recently matched invocation whose check was
  * associated with any of the specified <code>Group</code>s.
- * </p>
  * <p>
+ *
  * Example:
- * </p>
+ * <p>
  * <pre>
  * List&lt;String&gt; realPresidentsList = Arrays.asList(
  *     "Washington", "J Adams", "Jefferson", "Madison", "Monroe", "JQ Adams", "Jackson");
@@ -154,26 +154,26 @@ package moxie;
  * Moxie.check(presidents).inGroup(sequence2).returned(Moxie.endsWith("Adams")).times(2).on().get(Moxie.anyInt());
  * Moxie.check(presidents).inGroup(sequence2).returned("Jefferson").on().get(Moxie.anyInt());
  * </pre>
- * <p>&nbsp;</p>
- * <h2>Caveat</h2>
- * <p>
+ * &nbsp;
+ * <h3>Caveat</h3>
+ *
  * Note that the behaviors of <code>Group</code>s with respect to expectations and checks
  * are distinct and unrelated; expectations associated with a <code>Group</code> will have
  * no effect on its behavior towards checks, and vice versa.
- * </p>
  * <p>
+ *
  * Of course, if you're intermixing expectations and checks, you may already be
  * well on your way to an unreadable and unmaintainable test - simplify, simplify.
- * </p>
+ * <p>
  */
 public interface Group {
     /**
-     * <p>
+     *
      * Domain-specific language method - used to specify how many times this group should be fulfilled from beginning to end.
-     * </p>
      * <p>
+     *
      * Only meaningful for {@link MoxieOptions#ORDERED ORDERED} groups, and with regard to expectations rather than checks.
-     * </p>
+     * <p>
      *
      * @return a {@link Cardinality} whose methods will return this group
      */

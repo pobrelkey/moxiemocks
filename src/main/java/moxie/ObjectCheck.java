@@ -22,83 +22,83 @@
 package moxie;
 
 /**
- * <p>
+ *
  * Interface containing domain-specific language methods called in "the middle bit" of statements that perform
  * post-invocation verifications on mock object instances.
- * </p>
  * <p>
+ *
  * See documentation on the parent {@link Check} interface for a high-level introduction to the syntax.
- * </p>
+ * <p>
  *
  * @param <T> Type of the mock object on which checks are being carried out.
  */
 public interface ObjectCheck<T> extends Check<ObjectCheck<T>,Object>, Cardinality<ObjectCheck<T>> {
 
     /**
-     * <p>
+     *
      * The method that this check should match follows this call.
-     * </p>
      * <p>
+     *
      * Note that {@link #on()}, {@link #when()}, {@link #get()} and {@link #got()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @return a magic proxy object, on which you should call the method to be verified
      */
     T on();
 
     /**
-     * <p>
+     *
      * The method that this check should match follows this call.
-     * </p>
      * <p>
+     *
      * Note that {@link #on()}, {@link #when()}, {@link #get()} and {@link #got()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @return a magic proxy object, on which you should call the method to be verified
      */
     T when();
 
     /**
-     * <p>
+     *
      * The method that this check should match follows this call.
-     * </p>
      * <p>
+     *
      * Note that {@link #on()}, {@link #when()}, {@link #get()} and {@link #got()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @return a magic proxy object, on which you should call the method to be verified
      */
     T get();
 
     /**
-     * <p>
+     *
      * The method that this check should match follows this call.
-     * </p>
      * <p>
+     *
      * Note that {@link #on()}, {@link #when()}, {@link #get()} and {@link #got()} do exactly the same thing -
      * use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @return a magic proxy object, on which you should call the method to be verified
      */
     T got();
 
     /**
-     * <p>
+     *
      * Reflectively specify the method on which this check is to be performed.
-     * </p>
      * <p>
+     *
      * Use this method to check invocations of protected or package-private methods which cannot be specified using the
      * no-parameters version of this method because they are inaccessible from your test class.
-     * </p>
      * <p>
+     *
      * Note that {@link #on(String, Object...) on()}, {@link #when(String, Object...) when()},
      * {@link #get(String, Object...) get()} and {@link #got(String, Object...) got()}
      * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param methodName  The name of the method to be checked
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
@@ -106,18 +106,18 @@ public interface ObjectCheck<T> extends Check<ObjectCheck<T>,Object>, Cardinalit
     void on(String methodName, Object... params);
 
     /**
-     * <p>
+     *
      * Reflectively specify the method on which this check is to be performed.
-     * </p>
      * <p>
+     *
      * Use this method to check invocations of protected or package-private methods which cannot be specified using the
      * no-parameters version of this method because they are inaccessible from your test class.
-     * </p>
      * <p>
+     *
      * Note that {@link #on(String, Object...) on()}, {@link #when(String, Object...) when()},
      * {@link #get(String, Object...) get()} and {@link #got(String, Object...) got()}
      * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param methodName  The name of the method to be checked
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
@@ -125,18 +125,18 @@ public interface ObjectCheck<T> extends Check<ObjectCheck<T>,Object>, Cardinalit
     void when(String methodName, Object... params);
 
     /**
-     * <p>
+     *
      * Reflectively specify the method on which this check is to be performed.
-     * </p>
      * <p>
+     *
      * Use this method to check invocations of protected or package-private methods which cannot be specified using the
      * no-parameters version of this method because they are inaccessible from your test class.
-     * </p>
      * <p>
+     *
      * Note that {@link #on(String, Object...) on()}, {@link #when(String, Object...) when()},
      * {@link #get(String, Object...) get()} and {@link #got(String, Object...) got()}
      * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param methodName  The name of the method to be checked
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
@@ -144,18 +144,18 @@ public interface ObjectCheck<T> extends Check<ObjectCheck<T>,Object>, Cardinalit
     void get(String methodName, Object... params);
 
     /**
-     * <p>
+     *
      * Reflectively specify the method on which this check is to be performed.
-     * </p>
      * <p>
+     *
      * Use this method to check invocations of protected or package-private methods which cannot be specified using the
      * no-parameters version of this method because they are inaccessible from your test class.
-     * </p>
      * <p>
+     *
      * Note that {@link #on(String, Object...) on()}, {@link #when(String, Object...) when()},
      * {@link #get(String, Object...) get()} and {@link #got(String, Object...) got()}
      * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param methodName  The name of the method to be checked
      * @param params      Values or {@link MoxieMatchers} invocations matching the parameters to be verified
@@ -163,18 +163,18 @@ public interface ObjectCheck<T> extends Check<ObjectCheck<T>,Object>, Cardinalit
     void got(String methodName, Object... params);
 
     /**
-     * <p>
+     *
      * Reflectively specify the method on which this check is to be performed.
-     * </p>
      * <p>
+     *
      * Use this method to check invocations of protected or package-private methods which cannot be specified using the
      * no-parameters version of this method because they are inaccessible from your test class.
-     * </p>
      * <p>
+     *
      * Note that {@link #on(String, Class[], Object...) on()}, {@link #when(String, Class[], Object...) when()},
      * {@link #get(String, Class[], Object...) get()} and {@link #got(String, Class[], Object...) got()}
      * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param methodName      The name of the method to be checked
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
@@ -183,18 +183,18 @@ public interface ObjectCheck<T> extends Check<ObjectCheck<T>,Object>, Cardinalit
     void on(String methodName, Class[] paramSignature, Object... params);
 
     /**
-     * <p>
+     *
      * Reflectively specify the method on which this check is to be performed.
-     * </p>
      * <p>
+     *
      * Use this method to check invocations of protected or package-private methods which cannot be specified using the
      * no-parameters version of this method because they are inaccessible from your test class.
-     * </p>
      * <p>
+     *
      * Note that {@link #on(String, Class[], Object...) on()}, {@link #when(String, Class[], Object...) when()},
      * {@link #get(String, Class[], Object...) get()} and {@link #got(String, Class[], Object...) got()}
      * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param methodName      The name of the method to be checked
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
@@ -203,18 +203,18 @@ public interface ObjectCheck<T> extends Check<ObjectCheck<T>,Object>, Cardinalit
     void when(String methodName, Class[] paramSignature, Object... params);
 
     /**
-     * <p>
+     *
      * Reflectively specify the method on which this check is to be performed.
-     * </p>
      * <p>
+     *
      * Use this method to check invocations of protected or package-private methods which cannot be specified using the
      * no-parameters version of this method because they are inaccessible from your test class.
-     * </p>
      * <p>
+     *
      * Note that {@link #on(String, Class[], Object...) on()}, {@link #when(String, Class[], Object...) when()},
      * {@link #get(String, Class[], Object...) get()} and {@link #got(String, Class[], Object...) got()}
      * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param methodName      The name of the method to be checked
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature
@@ -223,18 +223,18 @@ public interface ObjectCheck<T> extends Check<ObjectCheck<T>,Object>, Cardinalit
     void get(String methodName, Class[] paramSignature, Object... params);
 
     /**
-     * <p>
+     *
      * Reflectively specify the method on which this check is to be performed.
-     * </p>
      * <p>
+     *
      * Use this method to check invocations of protected or package-private methods which cannot be specified using the
      * no-parameters version of this method because they are inaccessible from your test class.
-     * </p>
      * <p>
+     *
      * Note that {@link #on(String, Class[], Object...) on()}, {@link #when(String, Class[], Object...) when()},
      * {@link #get(String, Class[], Object...) get()} and {@link #got(String, Class[], Object...) got()}
      * do exactly the same thing - use whichever method results in the syntax you prefer best.
-     * </p>
+     * <p>
      *
      * @param methodName      The name of the method to be checked
      * @param paramSignature  Array of {@link Class} objects forming the method's parameter signature

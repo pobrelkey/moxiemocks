@@ -29,17 +29,17 @@ import java.util.Arrays;
 import java.util.Collections;
 
 /**
- * <p>
+ *
  * Provides a simple implementation of the {@link Description} interface backed by a {@link StringBuilder}.
- * </p>
  * <p>
+ *
  * Intended as a substitute for Hamcrest's {@link org.hamcrest.StringDescription} - unlike that class this
  * implementation has some bombproofing in case it's fed a value whose {@link Object#toString() toString()}
  * method throws an error.  This is particularly important when building exception messages for
  * the "real" cause of a test failure - this process should not curtail the test by throwing a second,
  * far more obscure error from the guts of the test framework, leaving the user no wiser as to why their
  * test has failed.
- * </p>
+ * <p>
  */
 public class SimpleDescription implements Description {
 

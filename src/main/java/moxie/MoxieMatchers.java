@@ -56,50 +56,50 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * <p>
+ *
  * Static class whose methods magically signal Moxie to flexibly match parameters of a mock expectation.
- * </p>
- * <p>&nbsp;</p>
- * <h2>What are these methods?</h2>
  * <p>
+ * &nbsp;
+ * <h3>What are these methods?</h3>
+ *
  * On certain method calls where you specify values that Moxie should expect as part of observed behavior -
  * for example, method parameters on mock object calls, or return values on calls to spy objects - you can
  * use the methods on <code>MoxieMatchers</code> to set flexible criteria for each parameter.
- * </p>
  * <p>
+ *
  * These are used to generate <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher}s
  * which will be matched against the actual value(s).
- * </p>
- * <p>&nbsp;</p>
- * <h2>How do they work?</h2>
  * <p>
+ * &nbsp;
+ * <h3>How do they work?</h3>
+ *
  * (The gory details of the magic behind this class follow - you may safely skip to the next section
  * if this bores/confuses you.)
- * </p>
  * <p>
+ *
  * Every time you call a method on <code>MoxieMatchers</code>, a <code>Matcher</code> is pushed onto a stack,
  * along with (in many cases, especially for primitives) an expected parameter type.  The method then returns
  * the default value (<code>null</code> for methods returning an object, zero/<code>false</code> for methods
  * returning a primitive value).
- * </p>
  * <p>
+ *
  * When you call a method that can take matcher invocations as parameters and the matcher stack is non-empty,
  * the arguments to that method are examined from right to left.  For arguments that are equal to the default value,
  * the <code>Matcher</code> on top of the stack is popped off and used (unless it expects a value of an
  * incompatible type, in which case an error is raised).  For non-default arguments, an
  * {@link org.hamcrest.core.IsEqual IsEqual} matcher is created which will match on a value equal to that argument.
- * </p>
  * <p>
+ *
  * When you call a method that can take matcher invocations as parameters and the matcher stack is empty,
  * an {@link org.hamcrest.core.IsEqual IsEqual} matcher is created for each parameter.
- * </p>
  * <p>
+ *
  * At the end of this process, the matcher stack is checked, and an error is raised if it is non-empty.
  * (Note that this does not occur in methods like {@link #and(Object[]) and()}, {@link #or(Object[]) or()}
  * and {@link #not(Object) not()} which may themselves be part of matcher expressions.)
- * </p>
- * <p>&nbsp;</p>
- * <h2>What do I need to remember?</h2>
+ * <p>
+ * &nbsp;
+ * <h3>What do I need to remember?</h3>
  * <ul>
  * <li>Never save the result of a call to <code>MoxieMatchers</code> to a variable - always plug it straight in to where it needs to go.</li>
  * <li>If you're using a <code>MoxieMatchers</code> call anywhere in a method call, make sure all zero/<code>false</code>/<code>null</code>
@@ -247,13 +247,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an object parameter using the given custom matcher.
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param clazz   Type of the parameter to be matched
      * @param matcher a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
@@ -277,13 +277,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array parameter or varargs array using the given custom matcher.
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param clazz   Constituent type of the array
      * @param matcher A <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} to which the argument will be passed
@@ -385,13 +385,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an object parameter using a Java 8 lambda expression.
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param clazz   Type of the parameter to be matched
      * @param lambda a {@link Predicate} to which the argument will be passed
@@ -414,13 +414,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array parameter or varargs array using a Java 8 lambda expression.
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param clazz   Constituent type of the array
      * @param lambda a {@link Predicate} to which the argument will be passed
@@ -631,13 +631,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches any non-<code>null</code> parameter.
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -656,13 +656,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches only when the parameter is <code>null</code>.
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -681,12 +681,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Synonym for {@link #isNotNull(Class) isNotNull}.
-     * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1042,13 +1042,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches a parameter whose {@link String} representation matches the given regular expression pattern.
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param clazz   Type of the object to be matched
      * @param pattern Regular expression to match against object's string representation
@@ -1068,13 +1068,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches a parameter whose {@link String} representation matches the given {@link Pattern}.
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param clazz   Type of the object to be matched
      * @param pattern Regular expression to match against object's string representation
@@ -1396,12 +1396,12 @@ public abstract class MoxieMatchers {
 
 
     /**
-     * <p>
+     *
      * Matches an array of <code>boolean</code> values matching the given array.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may be either constants or {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1411,12 +1411,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>byte</code> values matching the given array.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may be either constants or {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1426,12 +1426,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>char</code> values matching the given array.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may be either constants or {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1441,12 +1441,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>double</code> values matching the given array.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may be either constants or {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1456,12 +1456,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>float</code> values matching the given array.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may be either constants or {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1471,12 +1471,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>int</code> values matching the given array.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may be either constants or {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1486,12 +1486,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>long</code> values matching the given array.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may be either constants or {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1501,12 +1501,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>short</code> values matching the given array.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may be either constants or {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1516,12 +1516,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of values matching the given array.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may be either constants or {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1532,12 +1532,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>boolean</code> values equal to the given array according to the rules of {@link Arrays#equals(Object[],Object[]) Arrays.equals()}.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may NOT be {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1546,12 +1546,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>byte</code> values equal to the given array according to the rules of {@link Arrays#equals(Object[],Object[]) Arrays.equals()}.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may NOT be {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1560,12 +1560,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>char</code> values equal to the given array according to the rules of {@link Arrays#equals(Object[],Object[]) Arrays.equals()}.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may NOT be {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1574,12 +1574,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>double</code> values equal to the given array according to the rules of {@link Arrays#equals(Object[],Object[]) Arrays.equals()}.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may NOT be {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1588,12 +1588,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>float</code> values equal to the given array according to the rules of {@link Arrays#equals(Object[],Object[]) Arrays.equals()}.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may NOT be {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1602,12 +1602,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>int</code> values equal to the given array according to the rules of {@link Arrays#equals(Object[],Object[]) Arrays.equals()}.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may NOT be {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1616,12 +1616,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>long</code> values equal to the given array according to the rules of {@link Arrays#equals(Object[],Object[]) Arrays.equals()}.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may NOT be {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1630,12 +1630,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>short</code> values equal to the given array according to the rules of {@link Arrays#equals(Object[],Object[]) Arrays.equals()}.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may NOT be {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1644,12 +1644,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of values equal to the given array according to the rules of {@link Arrays#equals(Object[],Object[]) Arrays.equals()}.
-     * </p>
      * <p>
+     *
      * Note that the elements of the array may NOT be {@link MoxieMatchers} invocations.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1670,13 +1670,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches a non-primitive array containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
-     * </p>
      * <p>
+     *
      * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
      * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(Object[]) array()}.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1702,13 +1702,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>boolean</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
-     * </p>
      * <p>
+     *
      * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
      * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(boolean...) array()}.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1734,13 +1734,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>byte</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
-     * </p>
      * <p>
+     *
      * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
      * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(byte...) array()}.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1766,13 +1766,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>char</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
-     * </p>
      * <p>
+     *
      * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
      * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(char...) array()}.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1798,13 +1798,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>short</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
-     * </p>
      * <p>
+     *
      * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
      * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(short...) array()}.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1830,13 +1830,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>int</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
-     * </p>
      * <p>
+     *
      * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
      * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(int...) array()}.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1862,13 +1862,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>long</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
-     * </p>
      * <p>
+     *
      * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
      * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(long...)  array()}.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1894,13 +1894,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>float</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
-     * </p>
      * <p>
+     *
      * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
      * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(float...) array()}.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1926,13 +1926,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an array of <code>double</code> containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
-     * </p>
      * <p>
+     *
      * Note that the order in which the values to be matched are specified is not significant; the array merely needs to
      * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#array(double...) array()}.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1958,13 +1958,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches a {@link java.util.Collection Collection} containing an element matching the given parameter (which may be a {@link MoxieMatchers} invocation).
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param collectionClass  Type of the collection to be matched
      * @param item             Item to be found in the collection (raw value or {@link MoxieMatchers} invocation)
@@ -1977,13 +1977,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches a {@link java.util.Collection Collection} containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
-     * </p>
      * <p>
+     *
      * Note that the order in which the values to be matched are specified is not significant; the collection merely needs to
      * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#collection(Object...) collection()}.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -1993,17 +1993,17 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches a {@link java.util.Collection Collection} containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations).
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
      * <p>
+     *
      * Note that the order in which the values to be matched are specified is not significant; the collection merely needs to
      * contain a match for each given parameter in any order.  For a matcher where ordering is significant, use {@link MoxieMatchers#collection(Object...) collection()}.
-     * </p>
+     * <p>
      *
      * @param collectionClass  Type of the collection to be matched
      * @param items            Items to be found in the collection (raw values or {@link MoxieMatchers} invocations)
@@ -2020,9 +2020,9 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches a {@link java.util.Collection Collection} or {@link java.lang.Iterable Iterable} containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations), in order.
-     * </p>
+     * <p>
      *
      * @param items            Values to be found in the collection (raw values or {@link MoxieMatchers} invocations)
      * @return <code>null</code>
@@ -2033,13 +2033,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches a {@link java.util.Collection Collection} or {@link java.lang.Iterable Iterable} containing elements matching the given parameters (which may be {@link MoxieMatchers} invocations), in order.
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param collectionClass  Type of the collection to be matched
      * @param items            Values to be found in the collection (raw values or {@link MoxieMatchers} invocations)
@@ -2064,13 +2064,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches a {@link java.util.Map Map} containing an entry whose key and value match the given parameters (which may be {@link MoxieMatchers} invocations).
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param mapClass Type of the map to be matched
      * @param key      Key of the desired entry (raw value or {@link MoxieMatchers} invocation)
@@ -2097,13 +2097,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches a {@link java.util.Map Map} containing an entry whose key matches the given parameter (which may be a {@link MoxieMatchers} invocation).
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param mapClass Type of the map to be matched
      * @param key      Key to be found in the map (raw value or {@link MoxieMatchers} invocation)
@@ -2127,13 +2127,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches a {@link java.util.Map Map} containing an entry whose value matches the given parameter (which may be a {@link MoxieMatchers} invocation).
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param mapClass Type of the map to be matched
      * @param value    Value to be found in the map (raw value or {@link MoxieMatchers} invocation)
@@ -2159,13 +2159,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an object having a JavaBeans-style getter method exposing a property with the given name, which returns the given value (which may be a {@link MoxieMatchers} invocation).
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param clazz         Type of the object on which to look for the property
      * @param propertyName  Name of the property to match - for example, a property name of "count" implies a getter named <code>getCount()</code>
@@ -2290,13 +2290,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches a {@link Collection} of the specified size.  (The size may be a {@link MoxieMatchers} invocation.)
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param collectionClass  Type of the expected collection
      * @param size             Desired size of the collection (raw value or {@link MoxieMatchers} invocation)
@@ -2319,13 +2319,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches an {@link Iterable} of the specified size.  (The size may be a {@link MoxieMatchers} invocation.)
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param iterableClass  Type of the expected iterable
      * @param size           Desired size of the iterable (raw value or {@link MoxieMatchers} invocation)
@@ -2349,13 +2349,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches a {@link Map} of the specified size.  (The size may be a {@link MoxieMatchers} invocation.)
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param mapClass  Type of the expected map
      * @param size      Desired size of the map (raw value or {@link MoxieMatchers} invocation)
@@ -2377,13 +2377,13 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Matches a non-primitive array of the specified length.  (The length may be a {@link MoxieMatchers} invocation.)
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @param clazz  Constituent type of the array
      * @param size   Desired size of the array (raw value or {@link MoxieMatchers} invocation)
@@ -2486,14 +2486,14 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Special matcher used to capture method parameters for later inspection in your tests.
      * When this matcher is run, the matcher will add the value encountered to the given collection, then exit successfully.
-     * </p>
      * <p>
+     *
      * The class argument to this method is not matched against the value passed to the mocked method; it is provided
      * as a convenient way of specifying the type parameter for those who wish to statically import this method.
-     * </p>
+     * <p>
      *
      * @return <code>null</code>
      */
@@ -2599,12 +2599,12 @@ public abstract class MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Registers a <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> {@link Matcher} with Moxie's magical parameter-matching mechanism.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link MoxieMatchers} class for more details.
-     * </p>
+     * <p>
      *
      * @deprecated This method is equivalent to {@link #argThat(Class, org.hamcrest.Matcher) argThat(expectedType, matcher)}.  Use that method instead; for simplicity, this method will likely go away in a future release.
      * @param matcher      a Hamcrest {@link Matcher} to be registered

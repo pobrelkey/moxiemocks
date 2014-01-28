@@ -27,31 +27,31 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 /**
- * <p>
+ *
  * JUnit 4 {@link org.junit.rules.MethodRule MethodRule} which automatically sets up mocks prior to each test method, and verifies them afterwards.
- * </p>
  * <p>
+ *
  * Use <code>MoxieRule</code> by adding an annotated field to your test, as follows - this will cause <code>MoxieRule</code>
  * to get picked up and used by the JUnit 4 test runner.
- * </p>
+ * <p>
  * <blockquote><pre>
  * &#64;org.junit.Rule
  * public MoxieRule moxie = new MoxieRule();
  * </pre></blockquote>
- * <p>
+ *
  * <code>MoxieRule</code> will use {@link Moxie#autoMock(Object...) Moxie.autoMock()} before each test method
  * to populate annotated fields on your test instance with mock/spy objects.  After the method completes, it will
  * {@link Moxie#verify(Object...) verify} your mocks if the test was otherwise successful, then
  * {@link Moxie#autoUnMock(Object...) Moxie.autoUnmock()} your test instance.
- * </p>
+ * <p>
 
  */
 public class MoxieRule implements MethodRule {
     private final MoxieControl control;
 
     /**
-     * <p>Creates a new {@link MoxieRule} using the {@link Moxie#threadLocalControl() thread-local instance}
-     * of {@link MoxieControl}.</p>
+     * Creates a new {@link MoxieRule} using the {@link Moxie#threadLocalControl() thread-local instance}
+     * of {@link MoxieControl}.<p>
      */
     public MoxieRule() {
         this(Moxie.threadLocalControl());
@@ -59,7 +59,7 @@ public class MoxieRule implements MethodRule {
 
 
     /**
-     * <p>Creates a new {@link MoxieRule} using a user-specified instance of {@link MoxieControl}.</p>
+     * Creates a new {@link MoxieRule} using a user-specified instance of {@link MoxieControl}.<p>
      *
      * @param control the {@link MoxieControl} instance this thread should use
      */

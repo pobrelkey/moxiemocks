@@ -23,24 +23,24 @@
 package moxie;
 
 /**
- * <p>
- * Static class of convenience methods for Moxie, a wicked good Java mocking library.
- * </p>
  *
+ * Static class of convenience methods for Moxie, a wicked good Java mocking library.
  * <p>
+ *
+ *
  * Methods on this class fall into one of the following categories:
- * </p>
+ * <p>
  * <ul>
- * <li><p><b>{@link MoxieControl} creation</b> - Use {@link Moxie#newControl() newControl()} to create a new
+ * <li><b>{@link MoxieControl} creation</b> - Use {@link Moxie#newControl() newControl()} to create a new
  * {@link MoxieControl}, or {@link Moxie#threadLocalControl() threadLocalControl()} to access the same thread-local
- * instance of {@link MoxieControl} used by {@link MoxieRunner}.</p></li>
- * <li><p><b>Thread-local {@link MoxieControl} methods</b> - Most of the static methods on this class delegate to the
+ * instance of {@link MoxieControl} used by {@link MoxieRunner}.<p></li>
+ * <li><b>Thread-local {@link MoxieControl} methods</b> - Most of the static methods on this class delegate to the
  * instance of {@link MoxieControl} returned by {@link Moxie#threadLocalControl() threadLocalControl()}.
  * Using the thread-local instance should suffice
  * for most people, and using the methods on this class will save the extra line of code involved in explicitly
- * creating a {@link MoxieControl}.</p></li>
- * <li><p><b>{@link MoxieMatchers} methods</b> - For convenience this class inherits from {@link MoxieMatchers}, enabling
- * you to use those methods with less typing/fewer <code>import</code> statements.</p></li>
+ * creating a {@link MoxieControl}.<p></li>
+ * <li><b>{@link MoxieMatchers} methods</b> - For convenience this class inherits from {@link MoxieMatchers}, enabling
+ * you to use those methods with less typing/fewer <code>import</code> statements.<p></li>
  * </ul>
  *
  * @see moxie.MoxieControl
@@ -57,13 +57,13 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Returns a proxy to a thread-local instance of {@link MoxieControl}.
-     * </p>
      * <p>
+     *
      * This is the same {@link MoxieControl} instance used by {@link MoxieRunner}, but not {@link MoxieRule} -
      * see {@link MoxieRule#getControl() MoxieRule.getControl()}.
-     * </p>
+     * <p>
      *
      * @return a proxy to a thread-local instance of {@link MoxieControl}
      */
@@ -72,9 +72,9 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Creates and returns a fresh instance of {@link MoxieControl}.
-     * </p>
+     * <p>
      * @return a newly created {@link MoxieControl}
      */
     static public MoxieControl newControl() {
@@ -137,17 +137,17 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param constructorArgs     values to be passed to the constructor
@@ -159,17 +159,17 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param constructorArgTypes the parameter signature of the constructor to be used
@@ -182,17 +182,17 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param name                the name of the mock object - will be used in error messages
@@ -205,17 +205,17 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param name                the name of the mock object - will be used in error messages
@@ -229,17 +229,17 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param constructorArgs     values to be passed to the constructor
@@ -252,17 +252,17 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param constructorArgTypes the parameter signature of the constructor to be used
@@ -276,17 +276,17 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param name                the name of the mock object - will be used in error messages
@@ -300,17 +300,17 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Creates a mock object of the given type, calling a constructor with the given arguments to instantiate the mock.
      * This method is provided for partial mocking of objects that use constructor dependency injection,
      * and to ease portability of legacy JMock 1/EasyMock tests.
-     * </p>
      * <p>
+     *
      * You don't need to call this method if you are mocking a concrete class without a no-arg constructor.
      * By default Moxie uses the <a href="http://www.objenesis.org/">Objenesis</a> library to instantiate mocks -
      * this uses JVM black magic to create objects without calling their constructors.  Moxie will revert
      * to using constructors if Objenesis isn't on the classpath.
-     * </p>
+     * <p>
      *
      * @param clazz               the class that the mock should extend
      * @param name                the name of the mock object - will be used in error messages
@@ -355,18 +355,18 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Creates a new {@link Group} to represent a group of calls to be tracked across mocks.
-     * </p>
      * <p>
+     *
      * The returned object can then be passed to {@link Expectation#inGroup(Group...) Expectation.inGroup()}
      * or {@link Check#inGroup(Group...)  Check.inGroup()} to associate expectations/checks
      * with the group.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Group}
      * interface for more details.
-     * </p>
+     * <p>
      *
      * @param options {@link MoxieOptions} which should apply to the group (currently either {@link MoxieOptions#ORDERED} or {@link MoxieOptions#UNORDERED})
      * @return a new {@link Group}
@@ -377,18 +377,18 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Creates a new {@link Group} to represent a group of calls to be tracked across mocks.
-     * </p>
      * <p>
+     *
      * The returned object can then be passed to {@link Expectation#inGroup(Group...) Expectation.inGroup()}
      * or {@link Check#inGroup(Group...)  Check.inGroup()} to associate expectations/checks
      * with the group.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Group}
      * interface for more details.
-     * </p>
+     * <p>
      *
      * @param name    the name of the group - will be used in error messages
      * @param options {@link MoxieOptions} which should apply to the group (currently either {@link MoxieOptions#ORDERED} or {@link MoxieOptions#UNORDERED})
@@ -400,12 +400,12 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which an expectation is set on a mock.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
+     * <p>
      *
      * @param mockObject the mock or spy object on which the expectation is to be set
      * @param <T>        type of the mock or spy object
@@ -417,12 +417,12 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which an expectation is set on static or constructor methods of a class.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
+     * <p>
      *
      * @param clazz the class on which the expectation is to be set
      * @param <T> the class on which the expectation is to be set
@@ -434,12 +434,12 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which an expectation is set using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
+     * <p>
      *
      * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to expect
      * @see MoxieControl#expect()
@@ -449,15 +449,15 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which an expectation is set using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
      * <p>
+     *
      * This method is a synonym for <code>expect().thatVoid(lambda)</code>.
-     * </p>
+     * <p>
      *
      * @param lambda a lambda expression invoking the method to be mocked, using {@link MoxieMatchers parameter matchers} as necessary
      * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to expect
@@ -468,15 +468,15 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which an expectation is set using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
      * <p>
+     *
      * This method is a synonym for <code>expect().that(lambda)</code>.
-     * </p>
+     * <p>
      *
      * @param lambda a lambda expression invoking the method to be mocked, using {@link MoxieMatchers parameter matchers} as necessary
      * @param <R> return type of the method/constructor to be mocked
@@ -488,12 +488,12 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which an stub expectation is set on a mock.
-     * </p>
      * <p>
+     *
      * Synonym for <code>expect(mockObject).anyTimes().atAnyTime()</code>.
-     * </p>
+     * <p>
      *
      * @param mockObject the mock or spy object on which the expectation is to be set
      * @param <T>        type of the mock or spy object
@@ -505,12 +505,12 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which an expectation is set on static or constructor methods of a class.
-     * </p>
      * <p>
+     *
      * Synonym for <code>expect(clazz).anyTimes().atAnyTime()</code>.
-     * </p>
+     * <p>
      *
      * @param clazz the class on which the expectation is to be set
      * @return a {@link ClassExpectation} whose methods can be used to give details of what behavior to expect
@@ -521,15 +521,15 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a stub expectation is set using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
      * <p>
+     *
      * This method is a synonym for <code>expect().anyTimes().atAnyTime()</code>.
-     * </p>
+     * <p>
      *
      * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to perform
      * @see MoxieControl#stub()
@@ -539,15 +539,15 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a stub expectation is set using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
      * <p>
+     *
      * This method is a synonym for <code>expect().anyTimes().atAnyTime().thatVoid(lambda)</code>.
-     * </p>
+     * <p>
      *
      * @param lambda a lambda expression invoking the method to be stubbed, using {@link MoxieMatchers parameter matchers} as necessary
      * @return a {@link LambdaExpectation} whose methods can be used to give details of what behavior to perform
@@ -558,15 +558,15 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a stub expectation is set using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Expectation} interface for more details.
-     * </p>
      * <p>
+     *
      * This method is a synonym for <code>expect().anyTimes().atAnyTime().that(lambda)</code>.
-     * </p>
+     * <p>
      *
      * @param lambda a lambda expression invoking the method to be stubbed, using {@link MoxieMatchers parameter matchers} as necessary
      * @param <R> return type of the method/constructor to be stubbed
@@ -578,12 +578,12 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a check is performed against a mock after use.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Check} interface for more details.
-     * </p>
+     * <p>
      *
      * @param mockObject the mock or spy object on which the check is to be performed
      * @param <T>        type of the mock or spy object
@@ -595,12 +595,12 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a check is performed on a static method or constructor of a class after use.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Check} interface for more details.
-     * </p>
+     * <p>
      *
      * @param clazz the class on which the check is to be performed
      * @return a {@link ClassCheck} whose methods can be used to give details of what should have occurred
@@ -611,12 +611,12 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a check is performed, as specified using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Check} interface for more details.
-     * </p>
+     * <p>
      *
      * @return a {@link LambdaCheck} whose methods can be used to give details of what should have occurred
      * @see MoxieControl#check()
@@ -626,15 +626,15 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a check is performed, as specified using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Check} interface for more details.
-     * </p>
      * <p>
+     *
      * This method is a synonym for <code>check().thatVoid(lambda)</code>.
-     * </p>
+     * <p>
      *
      * @param lambda a lambda expression invoking the method to be checked, using {@link MoxieMatchers parameter matchers} as necessary
      * @return a {@link LambdaCheck} whose methods can be used to give details of what should have occurred
@@ -645,15 +645,15 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Domain-specific language method - starts a clause in which a check is performed, as specified using Java 8 lambda syntax.
-     * </p>
      * <p>
+     *
      * See the discussion in the summary javadoc for the {@link Check} interface for more details.
-     * </p>
      * <p>
+     *
      * This method is a synonym for <code>check().that(lambda)</code>.
-     * </p>
+     * <p>
      *
      * @param lambda a lambda expression invoking the method to be checked, using {@link MoxieMatchers parameter matchers} as necessary
      * @param <R> return type of the method/constructor to be checked
@@ -665,12 +665,12 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Verify that no calls other than those matched by previous {@link #check checks} occurred on the given mock(s).
-     * </p>
      * <p>
+     *
      * If no parameters are given, this check is performed against all active mock/spy objects.
-     * </p>
+     * <p>
      *
      * @param mockObjects one or more mock/spy objects to be checked
      * @see MoxieControl#checkNothingElseHappened(Object...)
@@ -680,13 +680,13 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Verify that no calls other than those matched by previous {@link #expect expectations}
      * or {@link #check checks} occurred on the given mock(s).
-     * </p>
      * <p>
+     *
      * If no parameters are given, this check is performed against all active mock/spy objects.
-     * </p>
+     * <p>
      *
      * @param mockObjects one or more mock/spy objects to be checked
      * @see MoxieControl#checkNothingElseUnexpectedHappened(Object...)
@@ -696,16 +696,16 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Verify {@link #expect expectations} on, and then deactivate, the given mock/spy objects.
-     * </p>
      * <p>
+     *
      * After verification, the given mocks/spies will cease to be active; attempts to call methods on them
      * or perform {@link #check checks} against them will raise an error.
-     * </p>
      * <p>
+     *
      * If no parameters are given, verification is performed against all active mock/spy objects.
-     * </p>
+     * <p>
      *
      * @param mockObjects one or more mock/spy objects to be checked
      * @see MoxieControl#verify(Object...)
@@ -715,15 +715,15 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Verify {@link #expect expectations} on the given mock/spy objects.
-     * </p>
      * <p>
+     *
      * Unlike {@link #verify verify()}, the given objects remain active after this method returns.
-     * </p>
      * <p>
+     *
      * If no parameters are given, verification is performed against all active mock/spy objects.
-     * </p>
+     * <p>
      *
      * @param mockObjects one or more mock/spy objects to be checked
      * @see MoxieControl#verifySoFar(Object...)
@@ -733,13 +733,13 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Verify {@link #expect expectations} on the given mock/spy objects, then make them
      * forget about any expectations or invocations up to this point.
-     * </p>
      * <p>
+     *
      * If no parameters are given, this is done for all active mock/spy objects.
-     * </p>
+     * <p>
      *
      * @param mockObjects one or more mock/spy objects to be verified and reset
      * @see MoxieControl#verifyAndReset(Object...)
@@ -749,11 +749,11 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Verify {@link #expect expectations} on the given mock/spy object, make it
      * forget about any expectations or invocations up to this point, and set new
      * {@link MoxieOptions options}.
-     * </p>
+     * <p>
      *
      * @param mockObject   a mock/spy object to be verified and reset
      * @param firstOption  an option that should henceforth apply to the given mock
@@ -765,16 +765,16 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Makes the given mock/spy objects forget about any expectations or invocations up to this point.
-     * </p>
      * <p>
+     *
      * Note that this method performs no verification as to whether {@link #expect expectations}
      * have been satisfied; for that, use {@link #verifyAndReset}.
-     * </p>
      * <p>
+     *
      * If no parameters are given, all active mock/spy objects are reset.
-     * </p>
+     * <p>
      *
      * @param mockObjects one or more mock/spy objects to be reset
      * @see MoxieControl#reset(Object...)
@@ -784,14 +784,14 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Make the given mock/spy object forget about any expectations or invocations up to this point,
      * and set new {@link MoxieOptions options}.
-     * </p>
      * <p>
+     *
      * Note that this method performs no verification as to whether {@link #expect expectations}
      * have been satisfied; for that, use {@link #verifyAndReset}.
-     * </p>
+     * <p>
      *
      * @param mockObject   a mock/spy object to be reset
      * @param firstOption  an option that should henceforth apply to the given mock
@@ -803,12 +803,12 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Deactivate the given mock/spy objects without verifying expectations.
-     * </p>
      * <p>
+     *
      * If no parameters are given, this is done for all active mock/spy objects.
-     * </p>
+     * <p>
      *
      * @param mockObjects one or more mock/spy objects to be deactivated
      * @see MoxieControl#deactivate(Object...)
@@ -818,13 +818,13 @@ public abstract class Moxie extends MoxieMatchers {
     }
 
     /**
-     * <p>
+     *
      * Raises an error if any mock/spy objects are still active.
-     * </p>
      * <p>
+     *
      * Useful for troubleshooting possible interactions between tests, and possible test memory leaks
      * due to Moxie holding on to active mocks long past their time.
-     * </p>
+     * <p>
      *
      * @see moxie.MoxieControl#checkNoActiveMocks()
      */
