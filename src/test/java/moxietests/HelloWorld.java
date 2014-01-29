@@ -22,10 +22,10 @@
 
 package moxietests;
 
-import junit.framework.Assert;
 import moxie.Moxie;
 import moxie.MoxieOptions;
 import moxie.MoxieUnexpectedInvocationError;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class HelloWorld {

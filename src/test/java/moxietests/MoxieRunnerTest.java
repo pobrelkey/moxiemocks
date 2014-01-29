@@ -22,11 +22,11 @@
 
 package moxietests;
 
-import junit.framework.Assert;
 import moxie.Mock;
 import moxie.Moxie;
 import moxie.MoxieRunner;
 import moxie.Spy;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

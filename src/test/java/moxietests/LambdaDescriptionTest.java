@@ -22,10 +22,10 @@
 
 package moxietests;
 
-import junit.framework.Assert;
 import moxie.Predicate;
 import moxie.hamcrest.LambdaMatcher;
 import moxie.hamcrest.SimpleDescription;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class LambdaDescriptionTest {
