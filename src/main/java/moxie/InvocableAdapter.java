@@ -36,4 +36,7 @@ interface InvocableAdapter {
     String getName();
 
     Class getDeclaringClass();
+
+    boolean matches(InvocableAdapter that);
+
 }
