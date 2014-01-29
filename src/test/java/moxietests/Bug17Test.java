@@ -22,14 +22,15 @@
 
 package moxietests;
 
-import java.util.List;
-import junit.framework.Assert;
 import moxie.Moxie;
 import moxie.MoxieOptions;
 import moxie.MoxieRule;
 import moxie.MoxieSyntaxError;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.util.List;
 
 public class Bug17Test {
 

@@ -22,7 +22,7 @@
 
 package moxietests;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 public class PartiallyMocked {
     public PartiallyMocked(String blah) {
