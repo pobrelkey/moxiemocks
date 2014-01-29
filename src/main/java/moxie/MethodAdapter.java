@@ -57,6 +57,33 @@ class MethodAdapter implements InvocableAdapter {
         return method.getDeclaringClass();
     }
 
+    public boolean matches(InvocableAdapter o) {
+        if (!(o instanceof MethodAdapter)) return false;
+        MethodAdapter that = (MethodAdapter) o;
+        if (method.equals(that.method)) return true;
+
+        // Right, so maybe it's an interface method...
+
+        // Needs to have the same name and arity.
+        Class<?>[] thisParamTypes = this.method.getParameterTypes();
+        Class<?>[] thatParamTypes = that.method.getParameterTypes();
+        if (!(this.method.getName().equals(that.method.getName()) &&
+                thisParamTypes.length == thatParamTypes.length)) return false;
+
+        // Needs to have been declared in a parent type (e.g. a superinterface).
+        if (!that.method.getDeclaringClass().isAssignableFrom(this.method.getDeclaringClass())) return false;
+
+        // Return types must be plausible.
+        if (!that.method.getReturnType().isAssignableFrom(this.method.getReturnType())) return false;
+
+        // Parameter types must be plausible.
+        for (int i = 0; i < thisParamTypes.length; i++) {
+            if (!thatParamTypes[i].isAssignableFrom(thisParamTypes[i])) return false;
+        }
+
+        return true;
+    }
+
     public Class<?>[] getParameterTypes() {
         return method.getParameterTypes();
     }

@@ -58,6 +58,10 @@ class ConstructorAdapter implements InvocableAdapter {
         return constructor.getDeclaringClass();
     }
 
+    public boolean matches(InvocableAdapter that) {
+        return this.equals(that);
+    }
+
     public Constructor getConstructor() {
         return constructor;
     }

@@ -256,7 +256,7 @@ abstract class ExpectationImpl<E extends ExpectationImpl<E, I>, I extends Interc
     }
 
     boolean match(InvocableAdapter invocableAdapter, Object[] args, MethodBehavior behavior, GroupImpl group) {
-        if (!this.invocable.equals(invocableAdapter)) {
+        if (!this.invocable.matches(invocableAdapter)) {
             return false;
         }
         @SuppressWarnings("unchecked")
