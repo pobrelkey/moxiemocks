@@ -21,24 +21,18 @@
         <license>
             <name>MIT License</name>
             <distribution>repo</distribution>
-            <url>http://moxiemocks.org/LICENSE.txt</url>
+            <url>https://github.com/pobrelkey/moxiemocks/blob/LICENSE.md</url>
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:http://moxiemocks.googlecode.com/svn/trunk/</connection>
-        <developerConnection>scm:svn:https://moxiemocks.googlecode.com/svn/trunk/</developerConnection>
-        <url>http://moxiemocks.googlecode.com/svn/trunk/</url>
+        <url>https://github.com/pobrelkey/moxiemocks</url>
+        <connection>scm:git:git://github.com/pobrelkey/moxiemocks</connection>
+        <developerConnection>scm:git:git@github.com:pobrelkey/moxiemocks.git</developerConnection>
     </scm>
-    <distributionManagement>
-        <site>
-            <id>www.moxiemocks.org</id>
-            <url>scpexe://www.moxiemocks.org/opt/www/www.moxiemocks.org/htdocs/mvn/</url>
-        </site>
-    </distributionManagement>
     <developers>
         <developer>
             <name>Robert Pelkey</name>
-            <url>http://moxiemocks.org/contact-rob.html</url>
+            <url>http://github.org/pobrelkey</url>
         </developer>
     </developers>
 
@@ -109,7 +103,7 @@
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.17.1-GA</version>
+            <version>3.20.0-GA</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -192,6 +186,25 @@
                 <configuration>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.9</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>site-deploy</phase>
+                        <configuration>
+                            <server>github-pobrelkey</server>
+                            <message>generating maven site</message>
+                            <path>mvn</path>
+                            <merge>true</merge>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

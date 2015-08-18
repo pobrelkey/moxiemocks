@@ -77,8 +77,6 @@ public class HelloWorld {
         } catch (MoxieUnexpectedInvocationError e) {
             // expected
         }
-
-        Moxie.verify();
     }
 
     private static class TestException extends RuntimeException {
