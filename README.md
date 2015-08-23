@@ -11,7 +11,7 @@ Moxie is a library for creating mock objects in Java.  It aims to enable prescri
 * **Refactorable** - method name/signature changes using refactoring tools will be reflected in your tests. 
 * **Easy** - integrates with JUnit 4 to automatically create and verify mocks on your test objects. (You can still do this manually.) 
 
-Want to get Moxie? See the download page, or use Maven:
+Moxie is ovailable through Maven Central:
 
 ```xml
 <dependency>
