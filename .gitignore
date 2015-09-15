@@ -1,3 +1,7 @@
 .idea
 *.iml
 target
+*.orig
+*~
+pom.xml.versionsBackup
+*.swp
