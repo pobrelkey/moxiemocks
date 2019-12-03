@@ -4,6 +4,7 @@ moxiemocks
 [![Build Status](https://travis-ci.org/pobrelkey/moxiemocks.svg?branch=master)](https://travis-ci.org/pobrelkey/moxiemocks)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.moxiemocks/moxie/badge.png)](http://search.maven.org/#search|gav|1|g%3A%22org.moxiemocks%22%20AND%20a%3A%22moxie%22)
 
+> :warning: **UPDATE 12/2019: Moxiemocks is no longer actively maintained.**  You'll probably want to use [Mockito](https://site.mockito.org/) instead - it's battle-tested, and at any rate their mocking syntax and feature set have improved since I first wrote Moxie.
 
 Moxie is a library for creating mock objects in Java.  It aims to enable prescriptive mock tests with an easy-to-use syntax:
 
